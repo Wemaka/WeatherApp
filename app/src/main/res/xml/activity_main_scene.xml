@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+        <KeyFrameSet>
+            <KeyAttribute
+                motion:motionTarget="@+id/imgHeaderBackground"
+                motion:framePosition="100"
+                android:alpha="0" />
+            <KeyAttribute
+                motion:motionTarget="@+id/imgHeaderBackground"
+                motion:framePosition="65"
+                android:alpha="0" />
+            <KeyPosition
+                motion:motionTarget="@+id/imgHeaderBackground"
+                motion:framePosition="60"
+                motion:keyPositionType="deltaRelative"
+                motion:percentY="0.3" />
+            <KeyAttribute
+                motion:motionTarget="@+id/tvMainDegree"
+                motion:framePosition="50">
+                <CustomAttribute
+                    motion:attributeName="textColor"
+                    motion:customColorValue="@color/white" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/tvMainDegree"
+                motion:framePosition="60">
+                <CustomAttribute
+                    motion:attributeName="textColor"
+                    motion:customColorValue="@color/black" />
+            </KeyAttribute>
+            <KeyPosition
+                motion:motionTarget="@+id/tvMainDegree"
+                motion:framePosition="80"
+                motion:keyPositionType="deltaRelative"
+                motion:percentX="1"
+                motion:percentY="0.85" />
+            <KeyPosition
+                motion:motionTarget="@+id/imgMainWeatherIcon"
+                motion:framePosition="80"
+                motion:keyPositionType="deltaRelative"
+                motion:percentX="1"
+                motion:percentY="0.85" />
+            <KeyAttribute
+                motion:motionTarget="@+id/tvCityCountry"
+                motion:framePosition="50">
+                <CustomAttribute
+                    motion:attributeName="textColor"
+                    motion:customColorValue="@color/white" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/tvCityCountry"
+                motion:framePosition="60">
+                <CustomAttribute
+                    motion:attributeName="textColor"
+                    motion:customColorValue="@color/black" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/tvFeelsLike"
+                motion:framePosition="50">
+                <CustomAttribute
+                    motion:attributeName="textColor"
+                    motion:customColorValue="@color/white" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/tvFeelsLike"
+                motion:framePosition="60">
+                <CustomAttribute
+                    motion:attributeName="textColor"
+                    motion:customColorValue="@color/black" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/imgSearchIcon"
+                motion:framePosition="50">
+                <CustomAttribute
+                    motion:attributeName="colorFilter"
+                    motion:customColorValue="@color/white" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/imgSearchIcon"
+                motion:framePosition="60">
+                <CustomAttribute
+                    motion:attributeName="colorFilter"
+                    motion:customColorValue="@color/black" />
+            </KeyAttribute>
+            <KeyPosition
+                motion:motionTarget="@+id/tvWeatherMainText"
+                motion:framePosition="10"
+                motion:keyPositionType="deltaRelative"
+                motion:percentX="0.5" />
+            <KeyPosition
+                motion:motionTarget="@+id/clDateDegrees"
+                motion:framePosition="70"
+                motion:keyPositionType="deltaRelative"
+                motion:percentY="0.5" />
+            <KeyPosition
+                motion:motionTarget="@+id/tvFeelsLike"
+                motion:framePosition="60"
+                motion:keyPositionType="deltaRelative"
+                motion:percentX="0.9"
+                motion:percentY="0.75" />
+        </KeyFrameSet>
+
+        <OnSwipe
+            motion:dragDirection="dragUp"
+            motion:touchAnchorId="@id/sMain"
+            motion:touchAnchorSide="top"
+            motion:maxAcceleration="15" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/lnrlNavigateButtons"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="0dp">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="@color/backgroundPinkLight" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/imgMainWeatherIcon"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toTopOf="@+id/tvWeatherMainText"
+            motion:layout_constraintVertical_bias="0.3"
+            android:layout_marginEnd="22dp"
+            motion:layout_constraintTop_toBottomOf="@+id/imgSearchIcon"
+            motion:layout_constraintVertical_chainStyle="packed" />
+        <Constraint
+            android:id="@+id/tvCityCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="50dp">
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/white" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/imgSearchIcon"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="22dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="50dp">
+            <CustomAttribute
+                motion:attributeName="colorFilter"
+                motion:customColorValue="@color/white" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/tvMainDegree"
+            android:layout_width="wrap_content"
+            android:layout_height="135dp"
+            motion:layout_constraintBottom_toTopOf="@+id/clDateDegrees"
+            motion:layout_constraintTop_toBottomOf="@+id/tvCityCountry"
+            android:layout_marginStart="22dp"
+            motion:layout_constraintStart_toStartOf="parent">
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/white" />
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customFloatValue="112" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/tvWeatherMainText"
+            android:layout_height="wrap_content"
+            motion:layout_constraintStart_toStartOf="@+id/imgMainWeatherIcon"
+            android:layout_marginTop="11dp"
+            motion:layout_constraintBottom_toTopOf="@+id/clDateDegrees"
+            motion:layout_constraintEnd_toEndOf="@+id/imgMainWeatherIcon"
+            android:layout_width="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/imgMainWeatherIcon" />
+        <Constraint
+            android:id="@+id/toolbar"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="-30dp">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="@color/backgroundPinkLight" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/tvFeelsLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintVertical_bias="0.8"
+            motion:layout_constraintStart_toEndOf="@+id/tvMainDegree"
+            motion:layout_constraintTop_toTopOf="@+id/tvMainDegree"
+            motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree"
+            android:layout_marginStart="-20dp">
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/white" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/flNavBtn"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
+            motion:layout_constraintStart_toStartOf="parent">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="@color/backgroundPinkLight" />
+        </Constraint>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/toolbar"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="171dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="-30dp">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="@color/backgroundPink" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/lnrlNavigateButtons"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/imgHeaderBackground"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="0dp">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="@color/backgroundPink" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/clDateDegrees"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/imgHeaderBackground"
+            motion:layout_constraintStart_toStartOf="parent" />
+        <Constraint
+            android:id="@+id/imgMainWeatherIcon"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="59dp"
+            android:layout_height="59dp"
+            android:layout_marginEnd="22dp"
+            motion:layout_constraintTop_toBottomOf="@+id/imgSearchIcon"
+            motion:layout_constraintVertical_chainStyle="packed"
+            android:layout_marginTop="8dp" />
+        <Constraint
+            android:id="@+id/tvCityCountry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="50dp">
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/black" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/imgSearchIcon"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="22dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="50dp">
+            <CustomAttribute
+                motion:attributeName="colorFilter"
+                motion:customColorValue="@color/black" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/tvWeatherMainText"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            motion:layout_constraintTop_toBottomOf="@+id/imgMainWeatherIcon"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:layout_width="wrap_content" />
+        <Constraint
+            android:id="@+id/tvMainDegree"
+            android:layout_width="54dp"
+            android:layout_height="64dp"
+            motion:layout_constraintBottom_toTopOf="@+id/clDateDegrees"
+            motion:layout_constraintTop_toBottomOf="@+id/tvCityCountry"
+            android:layout_marginStart="22dp"
+            motion:layout_constraintStart_toStartOf="parent">
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/black" />
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customFloatValue="57" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/tvFeelsLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintVertical_bias="0.8"
+            motion:layout_constraintStart_toEndOf="@+id/tvMainDegree"
+            motion:layout_constraintTop_toTopOf="@+id/tvMainDegree"
+            motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree">
+            <CustomAttribute
+                motion:attributeName="textColor"
+                motion:customColorValue="@color/black" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/flNavBtn"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
+            motion:layout_constraintStart_toStartOf="parent">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="@color/backgroundPink" />
+        </Constraint>
+    </ConstraintSet>
+</MotionScene>
