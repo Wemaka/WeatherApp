@@ -102,10 +102,16 @@ public class MainActivity extends AppCompatActivity {
 		new TabLayoutMediator(tabLayout, pager, (tab, i) -> {
 //			tab.setText(fragmentList.get(i).getTabTitle());
 //			tab.setText(tabTitleButton[i]);
+
 			LayoutInflater inflater = LayoutInflater.from(this);
 			View customView = inflater.inflate(R.layout.custom_tab, tabLayout, false);
 			TextView tabTitle = customView.findViewById(R.id.tvTabTitle);
 			tabTitle.setText("Tab " + (i + 1));
+
+//			tabLayout.getTabAt(i).setCustomView(R.layout.custom_tab);
+//			TextView tabTitle = tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tvTabTitle);
+//			tabTitle.setText("Tab " + (i + 1));
+
 			tab.setCustomView(customView);
 		}).attach();
 		tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getCustomView().findViewById(R.id.lnrlContainerTitle).setBackground(getResources().getDrawable(R.drawable.block_background_select_tab, null));
@@ -113,13 +119,11 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {
 				tab.getCustomView().findViewById(R.id.lnrlContainerTitle).setBackground(getResources().getDrawable(R.drawable.block_background_select_tab, null));
-				animateTab(tab, true);
 			}
 
 			@Override
 			public void onTabUnselected(TabLayout.Tab tab) {
 				tab.getCustomView().findViewById(R.id.lnrlContainerTitle).setBackground(getResources().getDrawable(R.drawable.block_background_tab, null));
-				animateTab(tab, false);
 			}
 
 			@Override
@@ -162,29 +166,6 @@ public class MainActivity extends AppCompatActivity {
 			v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
 			return insets;
 		});
-	}
-
-	private void animateTab(TabLayout.Tab tab, boolean isSelected) {
-		View customView = tab.getCustomView();
-		if (customView != null) {
-			int colorFrom = isSelected ?
-					getResources().getColor(android.R.color.white) :
-					getResources().getColor(R.color.backgroundButtonPurpleSelect);
-			int colorTo = isSelected ?
-					getResources().getColor(R.color.backgroundButtonPurpleSelect) :
-					getResources().getColor(android.R.color.white);
-
-			ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-			colorAnimation.setDuration(300); // Длительность анимации
-			colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-				@Override
-				public void onAnimationUpdate(@NonNull ValueAnimator animator) {
-//					customView.setBackgroundColor((int) animator.getAnimatedValue());
-					customView.setBackground((Drawable) animator.getAnimatedValue());
-				}
-			});
-			colorAnimation.start();
-		}
 	}
 
 	@Override

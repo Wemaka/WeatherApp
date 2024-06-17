@@ -115,18 +115,6 @@
 
     <ConstraintSet android:id="@+id/start">
         <Constraint
-            android:id="@+id/lnrlNavigateButtons"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
-            motion:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="0dp">
-            <CustomAttribute
-                motion:attributeName="backgroundColor"
-                motion:customColorValue="@color/backgroundPinkLight" />
-        </Constraint>
-        <Constraint
             android:id="@+id/imgMainWeatherIcon"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
@@ -231,18 +219,6 @@
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="-30dp">
-            <CustomAttribute
-                motion:attributeName="backgroundColor"
-                motion:customColorValue="@color/backgroundPink" />
-        </Constraint>
-        <Constraint
-            android:id="@+id/lnrlNavigateButtons"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toBottomOf="@+id/imgHeaderBackground"
-            motion:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="0dp">
             <CustomAttribute
                 motion:attributeName="backgroundColor"
                 motion:customColorValue="@color/backgroundPink" />

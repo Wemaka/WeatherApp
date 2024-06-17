@@ -235,9 +235,10 @@
                     app:tabIndicatorColor="@android:color/transparent"
                     app:tabIndicatorFullWidth="true"
                     app:tabIndicatorGravity="stretch"
-                    app:tabPaddingBottom="10dp"
-                    app:tabPaddingTop="10dp"
-                    app:tabTextAppearance="@style/TabLayoutTextStyle">
+
+                    app:tabRippleColor="@android:color/transparent"
+                    app:tabTextAppearance="@style/TabLayoutTextStyle"
+                    app:tabUnboundedRipple="false">
 
                     <com.google.android.material.tabs.TabItem
                         android:layout_width="wrap_content"
