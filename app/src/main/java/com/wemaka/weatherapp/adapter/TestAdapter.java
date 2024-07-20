@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.wemaka.weatherapp.DayForecastResponse;
+import com.wemaka.weatherapp.DaysForecastResponse;
 import com.wemaka.weatherapp.R;
 
-public class TestAdapter extends ListAdapter<DayForecastResponse, TestAdapter.ViewHolder> {
+public class TestAdapter extends ListAdapter<DaysForecastResponse, TestAdapter.ViewHolder> {
 //	private final LayoutInflater inflater;
 
 	public TestAdapter() {
@@ -48,21 +48,21 @@ public class TestAdapter extends ListAdapter<DayForecastResponse, TestAdapter.Vi
 			degreeView = itemView.findViewById(R.id.textView_degree);
 		}
 
-		public void bindTo(DayForecastResponse item) {
+		public void bindTo(DaysForecastResponse item) {
 			timeView.setText(item.getDate());
 			degreeView.setText(item.getCurrentTemp());
 		}
 	}
 
-	public static class Comparator extends DiffUtil.ItemCallback<DayForecastResponse> {
+	public static class Comparator extends DiffUtil.ItemCallback<DaysForecastResponse> {
 		@Override
-		public boolean areItemsTheSame(@NonNull DayForecastResponse oldItem, @NonNull DayForecastResponse newItem) {
+		public boolean areItemsTheSame(@NonNull DaysForecastResponse oldItem, @NonNull DaysForecastResponse newItem) {
 			return oldItem == newItem;
 		}
 
 		@SuppressLint("DiffUtilEquals")
 		@Override
-		public boolean areContentsTheSame(@NonNull DayForecastResponse oldItem, @NonNull DayForecastResponse newItem) {
+		public boolean areContentsTheSame(@NonNull DaysForecastResponse oldItem, @NonNull DaysForecastResponse newItem) {
 			return oldItem == newItem;
 		}
 	}

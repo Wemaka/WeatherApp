@@ -10,18 +10,18 @@ import java.util.List;
 public class MainViewModel extends ViewModel {
 	private final MutableLiveData<Location> currentLocation = new MutableLiveData<>();
 
-	private final MutableLiveData<DayForecastResponse> liveData = new MutableLiveData<>();
-	private final MutableLiveData<List<DayForecastResponse>> liveDataList = new MutableLiveData<>();
+	private final MutableLiveData<DaysForecastResponse> liveData = new MutableLiveData<>();
+	private final MutableLiveData<List<DaysForecastResponse>> liveDataList = new MutableLiveData<>();
 
 	public MutableLiveData<Location> getCurrentLocation() {
 		return currentLocation;
 	}
 
-	public MutableLiveData<DayForecastResponse> getLiveData() {
+	public MutableLiveData<DaysForecastResponse> getLiveData() {
 		return liveData;
 	}
 
-	public void setLiveData(DayForecastResponse dayForecast) {
+	public void setLiveData(DaysForecastResponse dayForecast) {
 		liveData.setValue(dayForecast);
 	}
 }

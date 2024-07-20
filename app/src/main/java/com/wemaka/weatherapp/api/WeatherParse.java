@@ -5,15 +5,13 @@ import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.openmeteo.sdk.Variable;
 import com.openmeteo.sdk.VariablesSearch;
 import com.openmeteo.sdk.VariablesWithTime;
 import com.openmeteo.sdk.WeatherApiResponse;
-import com.wemaka.weatherapp.DayForecastResponse;
-import com.wemaka.weatherapp.MainViewModel;
+import com.wemaka.weatherapp.DaysForecastResponse;
+import com.wemaka.weatherapp.DayForecast;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -96,7 +94,7 @@ public class WeatherParse {
 		return null;
 	}
 
-	public DayForecastResponse parseWeatherData(WeatherApiResponse response) {
+	public DaysForecastResponse parseWeatherData(WeatherApiResponse response) {
 		VariablesWithTime minutely15 = response.minutely15();
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();
@@ -105,16 +103,19 @@ public class WeatherParse {
 		Locale currentLocale = Locale.getDefault();
 
 		Date currentDate = new Date();
-		int currentIndexMinutely15 = getCurrentIndexMinutely15(minutely15, currentDate);
-		int currentIndexHourly = getCurrentIndexHourly(hourly, currentDate);
-		int currentIndexDay = getCurrentIndexDaily(daily, currentDate);
+		Date tomorrowDate = new Date(currentDate.getTime() * 24*60*60*1000L);
+		int currentIndexMinutely15 = getIndexMinutely15(minutely15, currentDate);
+		int currentIndexHourly = getIndexHourly(hourly, currentDate);
+		int currentIndexDay = getIndexDaily(daily, currentDate);
+		int tomorrowIndexMinutely15 = getIndexMinutely15(minutely15, tomorrowDate);
+		int tomorrowIndexHourly = getIndexHourly(hourly, tomorrowDate);
+		int tomorrowIndexDay = getIndexDaily(daily, tomorrowDate);
 		DateFormat timeFormat = new SimpleDateFormat("HH:mm", currentLocale);
 
 //		String month = Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale);
 //		String time = timeFormat.format(currentDate);
 
-		List<DayForecastResponse> hourlyForecastList = getHourlyForecast(hourly, currentIndexHourly);
-		DayForecastResponse dayForecastResponse = new DayForecastResponse(
+		DaysForecastResponse daysForecastResponse = new DaysForecastResponse(
 				locationResponse.getToponymName(),
 				getTemp(minutely15, currentIndexMinutely15),
 				getApparentTemp(minutely15, currentIndexMinutely15),
@@ -123,31 +124,41 @@ public class WeatherParse {
 				Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale) +
 						" " + new SimpleDateFormat("dd", Locale.getDefault()).format(currentDate) +
 						", " + timeFormat.format(currentDate),
-				getWindSpeed(minutely15, currentIndexMinutely15),
-				"",
-				getPrecipitationChance(hourly, currentIndexHourly),
-				getPressure(hourly, currentIndexHourly),
-				getUvIndex(hourly, currentIndexHourly),
-				hourlyForecastList,
-				"",
-				"",
 				timeFormat.format(new Date(getSunrise(daily, currentIndexDay))),
-				timeFormat.format(new Date(getSunset(daily, currentIndexDay)))
+				timeFormat.format(new Date(getSunset(daily, currentIndexDay))),
+				// TODO всё остальное сверху нужно убрать т.к. эти данные будут парситься из
+				//  фрагментов. "мб кроме тех что нужны для хедера(в main.java observ())."
+				new DayForecast(
+						getWindSpeed(minutely15, currentIndexMinutely15),
+						"",
+						getPrecipitationChance(hourly, currentIndexHourly),
+						getPressure(hourly, currentIndexHourly),
+						getUvIndex(hourly, currentIndexHourly),
+						getHourlyForecast(hourly, currentIndexHourly)
+				),
+				new DayForecast(
+						getWindSpeed(minutely15, tomorrowIndexMinutely15),
+						"",
+						getPrecipitationChance(hourly, tomorrowIndexHourly),
+						getPressure(hourly, tomorrowIndexHourly),
+						getUvIndex(hourly, tomorrowIndexHourly),
+						getHourlyForecast(hourly, tomorrowIndexHourly)
+				)
 		);
 
-		Log.i(TAG, "RESPONSE dayForecastResponse: " + dayForecastResponse);
+		Log.i(TAG, "RESPONSE dayForecastResponse: " + daysForecastResponse);
 
-		return dayForecastResponse;
+		return daysForecastResponse;
 	}
 
-	private int getCurrentIndexMinutely15(VariablesWithTime minutely15, Date curDate) {
+	public static int getIndexMinutely15(@NonNull VariablesWithTime minutely15, @NonNull Date date) {
 		int inx = 0;
 //			Date curDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time);
 		for (long i = minutely15.time(); i <= minutely15.timeEnd(); i += minutely15.interval(), inx++) {
-			Date date = new Date(i * 1000L);
+			Date dateMin = new Date(i * 1000L);
 
-			if (date.getDay() == curDate.getDay() && date.getHours() == curDate.getHours()) {
-				if (curDate.getMinutes() - date.getMinutes() > 15 / 2 && inx + 1 < minutely15.variablesLength()) {
+			if (dateMin.getDay() == date.getDay() && dateMin.getHours() == date.getHours()) {
+				if (date.getMinutes() - dateMin.getMinutes() > 15 / 2 && inx + 1 < minutely15.variablesLength()) {
 					inx++;
 				}
 				break;
@@ -209,12 +220,12 @@ public class WeatherParse {
 		return String.valueOf(Math.round(getValueMinutely15(Variable.uv_index, minutely15, index)));
 	}
 
-	private int getCurrentIndexDaily(VariablesWithTime daily, Date curDate) {
+	private int getIndexDaily(VariablesWithTime daily, Date date) {
 		int inx = 0;
 		for (long i = daily.time(); i <= daily.timeEnd(); i += daily.interval(), inx++) {
-			Date date = new Date(i * 1000L);
+			Date dateDay = new Date(i * 1000L);
 
-			if (date.getDay() == curDate.getDay()) {
+			if (dateDay.getDay() == date.getDay()) {
 				break;
 			}
 		}
@@ -236,12 +247,12 @@ public class WeatherParse {
 				.valuesInt64(index) * 1000;
 	}
 
-	private int getCurrentIndexHourly(VariablesWithTime hourly, Date curDate) {
+	private int getIndexHourly(@NonNull VariablesWithTime hourly, @NonNull Date date) {
 		int inx = 0;
 		for (long i = hourly.time(); i <= hourly.timeEnd(); i += hourly.interval(), inx++) {
-			Date date = new Date(i * 1000L);
+			Date dateHour = new Date(i * 1000L);
 
-			if (date.getDate() == curDate.getDate() && date.getHours() == curDate.getHours()) {
+			if (dateHour.getDate() == date.getDate() && dateHour.getHours() == date.getHours()) {
 				break;
 			}
 		}
@@ -249,12 +260,12 @@ public class WeatherParse {
 		return inx;
 	}
 
-	private List<DayForecastResponse> getHourlyForecast(VariablesWithTime hourly, int curIndex) {
-		List<DayForecastResponse> hourlyForecastList = new ArrayList<>();
+	private List<DaysForecastResponse> getHourlyForecast(VariablesWithTime hourly, int curIndex) {
+		List<DaysForecastResponse> hourlyForecastList = new ArrayList<>();
 		String nowDate = "Now";
 
 		for (int i = curIndex; i < curIndex + 24; i++) {
-			DayForecastResponse oneHourForecast = new DayForecastResponse(
+			DaysForecastResponse oneHourForecast = new DaysForecastResponse(
 					"",
 					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)) + "°",
 					"",
@@ -263,14 +274,8 @@ public class WeatherParse {
 					nowDate,
 					"",
 					"",
-					"",
-					"",
-					"",
 					null,
-					"",
-					"",
-					"",
-					""
+					null
 			);
 
 			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())

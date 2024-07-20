@@ -93,6 +93,24 @@ public class LocationService {
 						locationRequest();
 					} else {
 						Log.i(TAG, "Location = null");
+
+						WeatherParse weatherParse = new WeatherParse();
+
+						weatherParse.request(
+								55.6069,
+								37.5199,
+								new RequestCallback() {
+									@Override
+									public void onSuccess(WeatherApiResponse response) {
+										mainViewModel.getLiveData().postValue(weatherParse.parseWeatherData(response));
+									}
+
+									@Override
+									public void onFailure(String error) {
+										Log.e(TAG, "ERROR REQUEST: api.open-meteo " + error);
+									}
+								}
+						);
 					}
 				});
 	}

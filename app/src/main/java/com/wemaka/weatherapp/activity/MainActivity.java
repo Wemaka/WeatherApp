@@ -1,15 +1,11 @@
 package com.wemaka.weatherapp.activity;
 
 import android.Manifest;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
-import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -19,17 +15,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -38,10 +30,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -55,50 +44,81 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.openmeteo.sdk.WeatherApiResponse;
-import com.wemaka.weatherapp.DayForecastResponse;
 import com.wemaka.weatherapp.LocationService;
 import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.adapter.TestAdapter;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
-import com.wemaka.weatherapp.adapter.decoration.ListPaddingDecoration;
-import com.wemaka.weatherapp.api.RequestCallback;
-import com.wemaka.weatherapp.api.WeatherParse;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
-import com.wemaka.weatherapp.domain.HourlyForecast;
 import com.wemaka.weatherapp.domain.HourlyForecastRain;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 import com.wemaka.weatherapp.fragment.TomorrowWeatherFragment;
 import com.wemaka.weatherapp.math.UnitConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 	public static final String TAG = "MainActivity";
-	private ActivityMainBinding mainBinding;
+	private ActivityMainBinding binding;
 	public LocationService mLocationService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		EdgeToEdge.enable(this);
-		mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
-		setContentView(mainBinding.getRoot());
+		binding = ActivityMainBinding.inflate(getLayoutInflater());
+		setContentView(binding.getRoot());
 
 //		createDayForecast();
 //		scrollViewHourlyForecastRain();
+		createCustomTabLayout();
 
+		MainViewModel model = new ViewModelProvider(this).get(MainViewModel.class);
+		mLocationService = new LocationService(this, model);
+		checkLocationPermission();
+//		checkLocationProvider();
+//		mLocationService.getLocation();
+
+		binding.main.setOnRefreshListener(() -> {
+					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+
+					myUpdateOperation();
+				}
+		);
+
+		model.getLiveData().observe(this, item -> {
+			binding.tvCityCountry.setText(item.getLocationName());
+			binding.tvMainDegree.setText(item.getCurrentTemp());
+			binding.tvFeelsLike.setText("Feels like " + item.getApparentTemp());
+			binding.imgMainWeatherIcon.setImageResource(R.drawable.ic_cloud_and_sun);
+			binding.tvWeatherMainText.setText(item.getWeatherCode());
+			binding.tvDegreesTime.setText("Last update\n" + item.getDate());
+		});
+
+		ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
+			Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+			v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+			return insets;
+		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+//		checkLocationProvider();
+	}
+
+	private void createCustomTabLayout() {
 		String[] tabTitleButton = new String[]{"Today", "Tomorrow", "10 days"};
 		List<Fragment> fragmentList = new ArrayList<>();
 		fragmentList.add(TodayWeatherFragment.newInstance());
 		fragmentList.add(TomorrowWeatherFragment.newInstance());
-		ViewPager2 pager = mainBinding.vpContainer;
+
+		ViewPager2 pager = binding.vpContainer;
 		FragmentStateAdapter pageAdapter = new ViewPagerAdapter(this, fragmentList);
 		pager.setAdapter(pageAdapter);
-		TabLayout tabLayout = mainBinding.tbNavBtn;
+
+		TabLayout tabLayout = binding.tbNavBtn;
 		new TabLayoutMediator(tabLayout, pager, (tab, i) -> {
 //			tab.setText(fragmentList.get(i).getTabTitle());
 //			tab.setText(tabTitleButton[i]);
@@ -106,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 			LayoutInflater inflater = LayoutInflater.from(this);
 			View customView = inflater.inflate(R.layout.custom_tab, tabLayout, false);
 			TextView tabTitle = customView.findViewById(R.id.tvTabTitle);
-			tabTitle.setText("Tab " + (i + 1));
+			tabTitle.setText(tabTitleButton[i]);
 
 //			tabLayout.getTabAt(i).setCustomView(R.layout.custom_tab);
 //			TextView tabTitle = tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tvTabTitle);
@@ -131,47 +151,6 @@ public class MainActivity extends AppCompatActivity {
 
 			}
 		});
-
-
-		MainViewModel model = new ViewModelProvider(this).get(MainViewModel.class);
-		checkLocationPermission();
-//		checkLocationProvider();
-		mLocationService = new LocationService(this, model);
-//		mLocationService.getLocation();
-
-		mainBinding.main.setOnRefreshListener(() -> {
-					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
-
-					myUpdateOperation();
-				}
-		);
-
-		model.getLiveData().observe(this, item -> {
-			mainBinding.tvCityCountry.setText(item.getLocationName());
-			mainBinding.tvMainDegree.setText(item.getCurrentTemp());
-			mainBinding.tvFeelsLike.setText("Feels like " + item.getApparentTemp());
-			mainBinding.imgMainWeatherIcon.setImageResource(R.drawable.ic_cloud_and_sun);
-			mainBinding.tvWeatherMainText.setText(item.getWeatherCode());
-			mainBinding.tvDegreesTime.setText("Last update\n" + item.getDate());
-			mainBinding.tvWindSpeed.setText(item.getWindSpeed());
-			mainBinding.tvRainPercent.setText(item.getPrecipitationChance());
-			mainBinding.tvPressureHpa.setText(item.getPressure());
-			mainBinding.tvUv.setText(item.getUvIndex());
-
-			recyclerViewHourlyForecast(item.getHourlyForecast());
-		});
-
-		ViewCompat.setOnApplyWindowInsetsListener(mainBinding.main, (v, insets) -> {
-			Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-			v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
-			return insets;
-		});
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-//		checkLocationProvider();
 	}
 
 	private void checkLocationPermission() {
@@ -221,32 +200,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 
-	private void recyclerViewHourlyForecast(List<DayForecastResponse> hourlyForecastList) {
-//		ArrayList<HourlyForecast> hourlyForecasts = new ArrayList<>();
-//		hourlyForecasts.add(new HourlyForecast("Now", R.drawable.ic_cloudy_icon, "10°"));
-//		hourlyForecasts.add(new HourlyForecast("10AM", R.drawable.ic_overcast_icon, "8°"));
-//		hourlyForecasts.add(new HourlyForecast("11AM", R.drawable.ic_overcast_icon, "5°"));
-//		hourlyForecasts.add(new HourlyForecast("12PM", R.drawable.ic_cloudy_icon, "12°"));
-//		hourlyForecasts.add(new HourlyForecast("1PM", R.drawable.ic_cloudy_icon, "9°"));
-//		hourlyForecasts.add(new HourlyForecast("2PM", R.drawable.ic_overcast_icon, "12°"));
-
-		RecyclerView recyclerViewHourlyForecast = mainBinding.rvHourlyForecast;
-//		RecyclerView.Adapter hourlyForecastAdapter = new HourlyForecastAdapter(this, hourlyForecasts);
-//		recyclerViewHourlyForecast.setAdapter(hourlyForecastAdapter);
-//		recyclerViewHourlyForecast.addItemDecoration(new ListPaddingDecoration(recyclerViewHourlyForecast.getContext(), 25, ListPaddingDecoration.Orientation.HORIZONTAL));
-
-		TestAdapter testAdapter = new TestAdapter();
-//		List<DayForecastResponse> lst = new ArrayList<>();
-//		lst.add(new DayForecastResponse("", "", "", "12C", "", "01:00", "", "", "", "", "", null,
-//				"", "", "", ""));
-		recyclerViewHourlyForecast.setAdapter(testAdapter);
-		recyclerViewHourlyForecast.addItemDecoration(new ListPaddingDecoration(recyclerViewHourlyForecast.getContext(), 25, ListPaddingDecoration.Orientation.HORIZONTAL));
-		Log.i(TAG, "mHourlyForecast: " + hourlyForecastList.toString());
-		testAdapter.submitList(hourlyForecastList);
-	}
-
 	private void createDayForecast() {
-		LineChartActivity l = new LineChartActivity(mainBinding.chDayForecast);
+		LineChartActivity l = new LineChartActivity(binding.chDayForecast);
 		l.getChart().setDragEnabled(false);
 		l.getChart().setScaleEnabled(false);
 		l.getChart().setDrawBorders(false);
@@ -290,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
 		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
 		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
 
-		TableLayout tableLayout = mainBinding.tlChanceOfRain;
+		TableLayout tableLayout = binding.tlChanceOfRain;
 
 //		for (HourlyForecastRain forecastRain : hourlyForecastRains) {
 //			TableRow tableRow = new TableRow(this);
