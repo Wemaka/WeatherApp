@@ -6,7 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.openmeteo.sdk.Aggregation;
 import com.openmeteo.sdk.Variable;
+import com.openmeteo.sdk.VariableWithValues;
 import com.openmeteo.sdk.VariablesSearch;
 import com.openmeteo.sdk.VariablesWithTime;
 import com.openmeteo.sdk.WeatherApiResponse;
@@ -44,8 +46,8 @@ public class WeatherParse {
 				.addQueryParameter("temperature_unit", "celsius")
 				.addQueryParameter("wind_speed_unit", "kmh")
 				.addQueryParameter("timeformat", "unixtime")
-				.addQueryParameter("past_days", "1")
-				.addQueryParameter("forecast_days", "2")
+				.addQueryParameter("past_days", "6")
+				.addQueryParameter("forecast_days", "10")
 				.addQueryParameter("format", "flatbuffers")
 				.addQueryParameter("minutely_15", "weather_code,temperature_2m,apparent_temperature,wind_speed_10m")
 				.addQueryParameter("hourly", "weather_code,temperature_2m,precipitation_probability,uv_index,pressure_msl")
@@ -59,14 +61,10 @@ public class WeatherParse {
 				.build();
 
 		OkHttpClient client = new OkHttpClient();
-//		WeatherApiResponse weatherApiResponse = null;
-
 
 		client.newCall(request).enqueue(new Callback() {
 			@Override
 			public void onFailure(@NonNull Call call, @NonNull IOException e) {
-//				Log.e(TAG, "ERROR REQUEST: api.open-meteo " + e.getMessage());
-//				e.printStackTrace();
 				callback.onFailure(e.getMessage());
 			}
 
@@ -84,7 +82,6 @@ public class WeatherParse {
 					buffer.clear();
 
 					callback.onSuccess(weatherApiResponse);
-//					parseWeatherData(weatherApiResponse);
 
 					Log.i(TAG, responseBody.toString());
 				}
@@ -98,37 +95,35 @@ public class WeatherParse {
 		VariablesWithTime minutely15 = response.minutely15();
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();
+
 		LocationResponse locationResponse = LocationParse.getLocationInfo(response.latitude(), response.longitude());
 //		Locale currentLocale = new Locale(locationResponse.getLang(), locationResponse.getCountryCode());
 		Locale currentLocale = Locale.getDefault();
 
 		Date currentDate = new Date();
-		Date tomorrowDate = new Date(currentDate.getTime() * 24*60*60*1000L);
 		int currentIndexMinutely15 = getIndexMinutely15(minutely15, currentDate);
 		int currentIndexHourly = getIndexHourly(hourly, currentDate);
 		int currentIndexDay = getIndexDaily(daily, currentDate);
-		int tomorrowIndexMinutely15 = getIndexMinutely15(minutely15, tomorrowDate);
-		int tomorrowIndexHourly = getIndexHourly(hourly, tomorrowDate);
-		int tomorrowIndexDay = getIndexDaily(daily, tomorrowDate);
 		DateFormat timeFormat = new SimpleDateFormat("HH:mm", currentLocale);
 
-//		String month = Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale);
-//		String time = timeFormat.format(currentDate);
+//		for (long i = daily.time(); i <= daily.timeEnd(); i += daily.interval()) {
+//			Date dateDay = new Date(i * 1000L);
+//
+//			Log.i(TAG, dateDay.toString());
+//		}
 
 		DaysForecastResponse daysForecastResponse = new DaysForecastResponse(
-				locationResponse.getToponymName(),
-				getTemp(minutely15, currentIndexMinutely15),
-				getApparentTemp(minutely15, currentIndexMinutely15),
-				"",
-				getWeatherCode(minutely15, currentIndexMinutely15),
-				Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale) +
-						" " + new SimpleDateFormat("dd", Locale.getDefault()).format(currentDate) +
-						", " + timeFormat.format(currentDate),
-				timeFormat.format(new Date(getSunrise(daily, currentIndexDay))),
-				timeFormat.format(new Date(getSunset(daily, currentIndexDay))),
-				// TODO всё остальное сверху нужно убрать т.к. эти данные будут парситься из
-				//  фрагментов. "мб кроме тех что нужны для хедера(в main.java observ())."
 				new DayForecast(
+						locationResponse.getToponymName(),
+						getTemp(minutely15, currentIndexMinutely15),
+						getApparentTemp(minutely15, currentIndexMinutely15),
+						"",
+						getWeatherCode(minutely15, currentIndexMinutely15),
+						Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale) +
+								" " + new SimpleDateFormat("dd", Locale.getDefault()).format(currentDate) +
+								", " + timeFormat.format(currentDate),
+						timeFormat.format(new Date(getSunrise(daily, currentIndexDay))),
+						timeFormat.format(new Date(getSunset(daily, currentIndexDay))),
 						getWindSpeed(minutely15, currentIndexMinutely15),
 						"",
 						getPrecipitationChance(hourly, currentIndexHourly),
@@ -136,14 +131,7 @@ public class WeatherParse {
 						getUvIndex(hourly, currentIndexHourly),
 						getHourlyForecast(hourly, currentIndexHourly)
 				),
-				new DayForecast(
-						getWindSpeed(minutely15, tomorrowIndexMinutely15),
-						"",
-						getPrecipitationChance(hourly, tomorrowIndexHourly),
-						getPressure(hourly, tomorrowIndexHourly),
-						getUvIndex(hourly, tomorrowIndexHourly),
-						getHourlyForecast(hourly, tomorrowIndexHourly)
-				)
+				getWeekTempForecast(hourly, currentDate, currentIndexHourly)
 		);
 
 		Log.i(TAG, "RESPONSE dayForecastResponse: " + daysForecastResponse);
@@ -260,12 +248,12 @@ public class WeatherParse {
 		return inx;
 	}
 
-	private List<DaysForecastResponse> getHourlyForecast(VariablesWithTime hourly, int curIndex) {
-		List<DaysForecastResponse> hourlyForecastList = new ArrayList<>();
+	private List<DayForecast> getHourlyForecast(VariablesWithTime hourly, int hourlyIndex) {
+		List<DayForecast> hourlyForecastList = new ArrayList<>();
 		String nowDate = "Now";
 
-		for (int i = curIndex; i < curIndex + 24; i++) {
-			DaysForecastResponse oneHourForecast = new DaysForecastResponse(
+		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
+			DayForecast oneHourForecast = new DayForecast(
 					"",
 					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)) + "°",
 					"",
@@ -274,7 +262,11 @@ public class WeatherParse {
 					nowDate,
 					"",
 					"",
-					null,
+					"",
+					"",
+					"",
+					"",
+					"",
 					null
 			);
 
@@ -287,25 +279,18 @@ public class WeatherParse {
 		return hourlyForecastList;
 	}
 
+	private List<Float> getWeekTempForecast(VariablesWithTime hourly, Date date, int index) {
+		List<Float> weekTempForecast = new ArrayList<>();
+		VariableWithValues hourlyTemp = Objects.requireNonNull(new VariablesSearch(hourly)
+				.variable(Variable.temperature)
+				.first());
 
-//	byte[] responseIN = new byte[0];
-//		try {
-//		responseIN = response.body().bytes();
-//	} catch (IOException e) {
-//		throw new RuntimeException(e);
-//	}
-//	ByteBuffer buffer = ByteBuffer.wrap(responseIN).order(ByteOrder.LITTLE_ENDIAN);
-//	WeatherApiResponse mApiResponse = WeatherApiResponse.getRootAsWeatherApiResponse((ByteBuffer) buffer.position(4));
-//
-//	VariablesWithTime minutely15 = mApiResponse.minutely15();
-//	VariablesWithTime hourly = mApiResponse.hourly();
-//	VariablesWithTime daily = mApiResponse.daily();
-//
-//	VariableWithValues maxTm = new VariablesSearch(daily).variable(Variable.temperature).first();
-//
-//		for (int i = 0; i < maxTm.valuesLength(); i++) {
-//		System.out.println(maxTm.values(i));
-//	}
-//
-//		buffer.clear();
+		int weekDay = date.getDay() - 1;
+		weekDay = (weekDay < 0 ? 6 : weekDay) * 24 + date.getHours();
+
+		for (int i = index - weekDay; i < index + 7 * 24 - weekDay; i++) {
+			weekTempForecast.add((float) (Math.round(hourlyTemp.values(i) * 10) / 10));
+		}
+		return weekTempForecast;
+	}
 }

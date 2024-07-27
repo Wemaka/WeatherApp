@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -24,7 +22,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -35,15 +32,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 
-import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.LineDataSet;
-
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.wemaka.weatherapp.DayForecast;
 import com.wemaka.weatherapp.LocationService;
 import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
@@ -51,7 +45,6 @@ import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
 import com.wemaka.weatherapp.domain.HourlyForecastRain;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
-import com.wemaka.weatherapp.fragment.TomorrowWeatherFragment;
 import com.wemaka.weatherapp.math.UnitConverter;
 
 import java.util.ArrayList;
@@ -87,12 +80,14 @@ public class MainActivity extends AppCompatActivity {
 		);
 
 		model.getLiveData().observe(this, item -> {
-			binding.tvCityCountry.setText(item.getLocationName());
-			binding.tvMainDegree.setText(item.getCurrentTemp());
-			binding.tvFeelsLike.setText("Feels like " + item.getApparentTemp());
+			DayForecast tf = item.getTodayForecast();
+
+			binding.tvCityCountry.setText(tf.getLocationName());
+			binding.tvMainDegree.setText(tf.getTemperature());
+			binding.tvFeelsLike.setText("Feels like " + tf.getApparentTemp());
 			binding.imgMainWeatherIcon.setImageResource(R.drawable.ic_cloud_and_sun);
-			binding.tvWeatherMainText.setText(item.getWeatherCode());
-			binding.tvDegreesTime.setText("Last update\n" + item.getDate());
+			binding.tvWeatherMainText.setText(tf.getWeatherCode());
+			binding.tvDegreesTime.setText("Last update\n" + tf.getDate());
 		});
 
 		ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
@@ -109,10 +104,9 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void createCustomTabLayout() {
-		String[] tabTitleButton = new String[]{"Today", "Tomorrow", "10 days"};
+		String[] tabTitleButton = new String[]{"Today", "10 days"};
 		List<Fragment> fragmentList = new ArrayList<>();
 		fragmentList.add(TodayWeatherFragment.newInstance());
-		fragmentList.add(TomorrowWeatherFragment.newInstance());
 
 		ViewPager2 pager = binding.vpContainer;
 		FragmentStateAdapter pageAdapter = new ViewPagerAdapter(this, fragmentList);
@@ -198,38 +192,6 @@ public class MainActivity extends AppCompatActivity {
 					.setMaxInlineActionWidth(1)
 					.show();
 		}
-	}
-
-	private void createDayForecast() {
-		LineChartActivity l = new LineChartActivity(binding.chDayForecast);
-		l.getChart().setDragEnabled(false);
-		l.getChart().setScaleEnabled(false);
-		l.getChart().setDrawBorders(false);
-		l.getChart().setOnChartValueSelectedListener(l);
-		l.getChart().getLegend().setEnabled(false);
-		l.getChart().setDrawGridBackground(false);
-		l.getChart().setMaxHighlightDistance(500);
-		l.getChart().getDescription().setEnabled(false);
-		l.getChart().getAxisRight().setEnabled(false);
-		l.setPosition(XAxis.XAxisPosition.BOTTOM);
-		l.setAxisYMax(l.getAxisYMax() * 2);
-		l.setAxisYMin(l.getAxisYMin() * 2);
-
-		l.getDataSet().setMode(LineDataSet.Mode.CUBIC_BEZIER);
-		l.getDataSet().setColor(Color.BLACK);
-		l.getDataSet().setLineWidth(2f);
-		l.getDataSet().setDrawCircles(false);
-		l.getDataSet().setDrawValues(false);
-		l.getDataSet().setDrawFilled(true);
-		l.getDataSet().setFillDrawable(ContextCompat.getDrawable(this, R.drawable.gradient_dark_purple));
-		l.getDataSet().setDrawHorizontalHighlightIndicator(false);
-		l.getDataSet().setHighlightLineWidth(2f);
-		l.getDataSet().setHighLightColor(getResources().getColor(R.color.darkPurple, null));
-		l.getDataSet().setFormLineDashEffect(new DashPathEffect(new float[]{2f, 2f}, 10f));
-
-		l.getChart().setMarker(new LineChartActivity.CustomMarkerView(this, R.layout.marker_layout));
-
-		l.getChart().animateY(1000, Easing.EaseInOutQuad);
 	}
 
 	private void scrollViewHourlyForecastRain() {

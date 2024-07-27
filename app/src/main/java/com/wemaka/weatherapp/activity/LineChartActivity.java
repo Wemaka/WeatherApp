@@ -3,24 +3,21 @@ package com.wemaka.weatherapp.activity;
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.IMarker;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.highlight.ChartHighlighter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider;
-import com.github.mikephil.charting.interfaces.datasets.ILineScatterCandleRadarDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -28,13 +25,13 @@ import com.github.mikephil.charting.utils.MPPointF;
 import com.wemaka.weatherapp.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class LineChartActivity implements OnChartGestureListener, OnChartValueSelectedListener {
 	private LineChart chart;
-	private List<Entry> coordinatesXY = new ArrayList<>();
+	private List<Entry> points = new ArrayList<>();
 	private LineDataSet dataSet;
-	private LineData lineData;
 
 	public LineChartActivity(LineChart chart) {
 		this.chart = chart;
@@ -42,55 +39,18 @@ public class LineChartActivity implements OnChartGestureListener, OnChartValueSe
 	}
 
 	public void onCreate() {
-		coordinatesXY.add(new Entry(0.5f, -5f));
+		setPosition(XAxis.XAxisPosition.BOTTOM);
 
-		coordinatesXY.add(new Entry(0.75f, -4f));
-		coordinatesXY.add(new Entry(1, -2.5f)); // mon
-		coordinatesXY.add(new Entry(1.25f, -2f));
-
-		coordinatesXY.add(new Entry(1.5f, -1f));
-
-		coordinatesXY.add(new Entry(1.75f, -2f));
-		coordinatesXY.add(new Entry(2, -2.25f)); // tue
-		coordinatesXY.add(new Entry(2.25f, -1f));
-
-		coordinatesXY.add(new Entry(2.5f, -1.25f));
-
-		coordinatesXY.add(new Entry(2.75f, -2.4f));
-		coordinatesXY.add(new Entry(3, -2.5f)); // wen
-		coordinatesXY.add(new Entry(3.25f, -1.5f));
-
-		coordinatesXY.add(new Entry(3.5f, -1.2f));
-
-		coordinatesXY.add(new Entry(3.75f, 0f));
-		coordinatesXY.add(new Entry(4, 2.3f)); // thu
-		coordinatesXY.add(new Entry(4.25f, 2.5f));
-
-		coordinatesXY.add(new Entry(4.5f, 2.7f));
-
-		coordinatesXY.add(new Entry(4.75f, 2.5f));
-		coordinatesXY.add(new Entry(5, 1.75f)); // fri
-		coordinatesXY.add(new Entry(5.25f, 0f));
-
-		coordinatesXY.add(new Entry(5.5f, -1f));
-
-		coordinatesXY.add(new Entry(5.75f, -1.75f));
-		coordinatesXY.add(new Entry(6, -2f)); // sat
-		coordinatesXY.add(new Entry(6.25f, -2.5f));
-
-		coordinatesXY.add(new Entry(6.5f, -4f));
-
-		coordinatesXY.add(new Entry(6.75f, -3.5f));
-		coordinatesXY.add(new Entry(7, -2.5f)); // sun
-		coordinatesXY.add(new Entry(7.25f, -1.5f));
-
-		coordinatesXY.add(new Entry(7.5f, -1f));
-
-		this.changeAxisY(new String[]{"", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun"});
-
-		dataSet = new LineDataSet(coordinatesXY, "");
-		lineData = new LineData(dataSet);
-		chart.setData(lineData);
+		chart.setDragEnabled(false);
+		chart.setScaleEnabled(false);
+		chart.setDrawBorders(false);
+		chart.setOnChartValueSelectedListener(this);
+		chart.getLegend().setEnabled(false);
+		chart.setDrawGridBackground(false);
+		chart.setMaxHighlightDistance(500);
+		chart.getDescription().setEnabled(false);
+		chart.getAxisRight().setEnabled(false);
+		chart.animateY(1000, Easing.EaseInOutQuad);
 	}
 
 	public LineChart getChart() {
@@ -101,12 +61,30 @@ public class LineChartActivity implements OnChartGestureListener, OnChartValueSe
 		return dataSet;
 	}
 
-	public LineData getLineData() {
-		return lineData;
+	public void setData(LineDataSet dataSet) {
+		this.dataSet = dataSet;
+
+		dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+		dataSet.setColor(Color.BLACK);
+		dataSet.setLineWidth(2f);
+		dataSet.setDrawCircles(false);
+		dataSet.setDrawValues(false);
+		dataSet.setDrawFilled(true);
+
+		dataSet.setDrawHorizontalHighlightIndicator(false);
+		dataSet.setHighlightLineWidth(2f);
+
+		dataSet.setFormLineDashEffect(new DashPathEffect(new float[]{2f, 2f}, 10f));
+
+		chart.setData(new LineData(this.dataSet));
 	}
 
 	public void changeAxisY(String[] arr) {
 		chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(arr));
+	}
+
+	public void changeAxisY(Collection<String> lst) {
+		chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(lst));
 	}
 
 	public void setPosition(XAxis.XAxisPosition pos) {
@@ -122,11 +100,11 @@ public class LineChartActivity implements OnChartGestureListener, OnChartValueSe
 	}
 
 	public int getAxisYMax() {
-		return (int) Math.ceil(coordinatesXY.stream().max((e1, e2) -> (int) (e1.getY() - e2.getY())).get().getY());
+		return (int) Math.ceil(dataSet.getValues().stream().max((e1, e2) -> (int) (e1.getY() - e2.getY())).get().getY());
 	}
 
 	public int getAxisYMin() {
-		return (int) Math.ceil(coordinatesXY.stream().min((e1, e2) -> (int) (e1.getY() - e2.getY())).get().getY());
+		return (int) Math.ceil(dataSet.getValues().stream().min((e1, e2) -> (int) (e1.getY() - e2.getY())).get().getY());
 	}
 
 	public void refresh() {
@@ -159,12 +137,10 @@ public class LineChartActivity implements OnChartGestureListener, OnChartValueSe
 
 	@Override
 	public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
 	}
 
 	@Override
 	public void onChartTranslate(MotionEvent me, float dX, float dY) {
-
 	}
 
 	@Override
@@ -198,9 +174,9 @@ public class LineChartActivity implements OnChartGestureListener, OnChartValueSe
 
 		@Override
 		public MPPointF getOffset() {
-			if(mOffset == null) {
+			if (mOffset == null) {
 				// center the marker horizontally and vertically
-				mOffset = new MPPointF(-(getWidth() / 2), -getHeight()-10);
+				mOffset = new MPPointF(-(getWidth() / 2), -getHeight() - 10);
 			}
 			return mOffset;
 		}

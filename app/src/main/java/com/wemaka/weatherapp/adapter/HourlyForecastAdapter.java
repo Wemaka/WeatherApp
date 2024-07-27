@@ -1,10 +1,6 @@
 package com.wemaka.weatherapp.adapter;
 
-import android.content.Context;
-import android.graphics.Rect;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,41 +8,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.wemaka.weatherapp.DayForecast;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.domain.HourlyForecast;
 
-import java.util.List;
+public class HourlyForecastAdapter extends ListAdapter<DayForecast, HourlyForecastAdapter.ViewHolder> {
+//	private final LayoutInflater inflater;
 
-public class HourlyForecastAdapter extends RecyclerView.Adapter<HourlyForecastAdapter.ViewHolder> {
-	public static RecyclerView.ItemDecoration itemDecoration;
-	private final LayoutInflater inflater;
-	private final List<HourlyForecast> hourlyForecasts;
-
-	public HourlyForecastAdapter(@NonNull Context context, @NonNull List<HourlyForecast> objects) {
-		this.inflater = LayoutInflater.from(context);
-		this.hourlyForecasts = objects;
+	public HourlyForecastAdapter() {
+		super(new Comparator());
+//		this.inflater = LayoutInflater.from(context);
 	}
 
 	@NonNull
 	@Override
 	public HourlyForecastAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-		View view = inflater.inflate(R.layout.viewholder_hourly_forecast, parent, false);
+//		View view = inflater.inflate(R.layout.viewholder_hourly_forecast, parent, false);
+		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_hourly_forecast, parent, false);
 		return new ViewHolder(view);
 	}
 
 	@Override
-	public void onBindViewHolder(HourlyForecastAdapter.ViewHolder holder, int position) {
-		HourlyForecast hourlyForecast = hourlyForecasts.get(position);
-		holder.timeView.setText(hourlyForecast.getTime());
-		holder.iconView.setImageResource(hourlyForecast.getIconResource());
-		holder.degreeView.setText(hourlyForecast.getDegree());
-	}
-
-	@Override
-	public int getItemCount() {
-		return hourlyForecasts.size();
+	public void onBindViewHolder(@NonNull HourlyForecastAdapter.ViewHolder holder, int position) {
+		holder.bindTo(getItem(position));
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -59,6 +46,24 @@ public class HourlyForecastAdapter extends RecyclerView.Adapter<HourlyForecastAd
 			timeView = itemView.findViewById(R.id.textView_time);
 			iconView = itemView.findViewById(R.id.imageView_weather_icon);
 			degreeView = itemView.findViewById(R.id.textView_degree);
+		}
+
+		public void bindTo(DayForecast item) {
+			timeView.setText(item.getDate());
+			degreeView.setText(item.getTemperature());
+		}
+	}
+
+	public static class Comparator extends DiffUtil.ItemCallback<DayForecast> {
+		@Override
+		public boolean areItemsTheSame(@NonNull DayForecast oldItem, @NonNull DayForecast newItem) {
+			return oldItem == newItem;
+		}
+
+		@SuppressLint("DiffUtilEquals")
+		@Override
+		public boolean areContentsTheSame(@NonNull DayForecast oldItem, @NonNull DayForecast newItem) {
+			return oldItem == newItem;
 		}
 	}
 }
