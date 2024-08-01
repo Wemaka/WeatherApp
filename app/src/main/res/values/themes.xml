@@ -3,6 +3,7 @@
     <style name="Base.Theme.WeatherApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:textViewStyle">@style/CustomTextViewStyle</item>
     </style>
 
     <style name="Theme.WeatherApp" parent="Base.Theme.WeatherApp" />

@@ -13,8 +13,8 @@
 
     <TextView
         android:id="@+id/tvTabTitle"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/productsans"
         android:gravity="center|center_vertical"
         android:text="TextView"

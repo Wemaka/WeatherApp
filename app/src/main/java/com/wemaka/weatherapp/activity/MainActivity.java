@@ -37,13 +37,13 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.wemaka.weatherapp.DayForecast;
+import com.wemaka.weatherapp.data.DayForecast;
 import com.wemaka.weatherapp.LocationService;
 import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
-import com.wemaka.weatherapp.domain.HourlyForecastRain;
+import com.wemaka.weatherapp.data.PrecipitationChance;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 import com.wemaka.weatherapp.math.UnitConverter;
 
@@ -114,17 +114,10 @@ public class MainActivity extends AppCompatActivity {
 
 		TabLayout tabLayout = binding.tbNavBtn;
 		new TabLayoutMediator(tabLayout, pager, (tab, i) -> {
-//			tab.setText(fragmentList.get(i).getTabTitle());
-//			tab.setText(tabTitleButton[i]);
-
 			LayoutInflater inflater = LayoutInflater.from(this);
 			View customView = inflater.inflate(R.layout.custom_tab, tabLayout, false);
 			TextView tabTitle = customView.findViewById(R.id.tvTabTitle);
 			tabTitle.setText(tabTitleButton[i]);
-
-//			tabLayout.getTabAt(i).setCustomView(R.layout.custom_tab);
-//			TextView tabTitle = tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tvTabTitle);
-//			tabTitle.setText("Tab " + (i + 1));
 
 			tab.setCustomView(customView);
 		}).attach();
@@ -191,88 +184,6 @@ public class MainActivity extends AppCompatActivity {
 					})
 					.setMaxInlineActionWidth(1)
 					.show();
-		}
-	}
-
-	private void scrollViewHourlyForecastRain() {
-		ArrayList<HourlyForecastRain> hourlyForecastRains = new ArrayList<>();
-		hourlyForecastRains.add(new HourlyForecastRain("7 PM", 27, "27%"));
-		hourlyForecastRains.add(new HourlyForecastRain("8 PM", 44, "44%"));
-		hourlyForecastRains.add(new HourlyForecastRain("9 PM", 56, "56%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-		hourlyForecastRains.add(new HourlyForecastRain("10 PM", 88, "88%"));
-
-		TableLayout tableLayout = binding.tlChanceOfRain;
-
-//		for (HourlyForecastRain forecastRain : hourlyForecastRains) {
-//			TableRow tableRow = new TableRow(this);
-//
-//			View view = LayoutInflater.from(this).inflate(R.layout.viewholder_hourly_forecast_rain, tableRow, false);
-//			TextView timeView = view.findViewById(R.id.textView_time_chance_rain);
-//			LinearProgressIndicator progressBarView = view.findViewById(R.id.linearProgressIndicator_chance_rain);
-//			TextView percentView = view.findViewById(R.id.textView_percent_chance_rain);
-//
-//			timeView.setText(forecastRain.getTime());
-//			progressBarView.setProgress(forecastRain.getProgress());
-//			percentView.setText(forecastRain.getPercent());
-//
-//			TableRow.LayoutParams trParams = new TableRow.LayoutParams(200, LayoutParams.WRAP_CONTENT);
-//			trParams.span = 0;
-//			tableRow.setLayoutParams(trParams);
-//			tableRow.addView(view);
-//			tableLayout.addView(tableRow);
-//		}
-
-
-		for (int i = 0; i < hourlyForecastRains.size(); i++) {
-			HourlyForecastRain forecastRain = hourlyForecastRains.get(i);
-
-			TableRow tableRow = new TableRow(this);
-			tableRow.setLayoutParams(new TableRow.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
-			TextView timeView = new TextView(this);
-			LinearProgressIndicator progressBarView = new LinearProgressIndicator(this);
-			TextView percentView = new TextView(this);
-
-			timeView.setText(forecastRain.getTime());
-			percentView.setLayoutParams(new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			timeView.setTypeface(ResourcesCompat.getFont(this, R.font.productsans));
-			timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
-			timeView.setTextColor(getResources().getColor(R.color.black, null));
-			timeView.setGravity(Gravity.END);
-
-			progressBarView.setMax(100);
-			progressBarView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			progressBarView.setProgress(forecastRain.getProgress());
-			progressBarView.setTrackThickness(UnitConverter.dpToPx(this, 24));
-			progressBarView.setIndicatorColor(getResources().getColor(R.color.backgroundPurpleSecond, null));
-			progressBarView.setTrackColor(getResources().getColor(R.color.white, null));
-			progressBarView.setTrackCornerRadius(UnitConverter.dpToPx(this, 100));
-			TableRow.LayoutParams params = new TableRow.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1);
-			params.setMargins(UnitConverter.dpToPx(this, 33), 0, UnitConverter.dpToPx(this, 22), UnitConverter.dpToPx(this, 10));
-			if (i == hourlyForecastRains.size() - 1) {
-				params.setMargins(UnitConverter.dpToPx(this, 33), 0, UnitConverter.dpToPx(this, 22), 0);
-			}
-			progressBarView.setLayoutParams(params);
-
-			percentView.setText(forecastRain.getPercent());
-			percentView.setLayoutParams(new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			percentView.setTypeface(ResourcesCompat.getFont(this, R.font.productsans));
-			percentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
-			percentView.setTextColor(getResources().getColor(R.color.black, null));
-			percentView.setGravity(Gravity.END);
-
-
-			tableRow.addView(timeView, 0);
-			tableRow.addView(progressBarView, 1);
-			tableRow.addView(percentView, 2);
-
-			tableLayout.addView(tableRow, -1);
 		}
 	}
 

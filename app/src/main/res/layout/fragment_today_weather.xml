@@ -465,7 +465,7 @@
                         <TableLayout
                             android:id="@+id/tlChanceOfRain"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="wrap_content"></TableLayout>
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
 

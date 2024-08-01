@@ -12,27 +12,23 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.wemaka.weatherapp.DayForecast;
 import com.wemaka.weatherapp.R;
+import com.wemaka.weatherapp.data.Temperature;
 
-public class HourlyForecastAdapter extends ListAdapter<DayForecast, HourlyForecastAdapter.ViewHolder> {
-//	private final LayoutInflater inflater;
-
-	public HourlyForecastAdapter() {
+public class HourlyTempForecastAdapter extends ListAdapter<Temperature, HourlyTempForecastAdapter.ViewHolder> {
+	public HourlyTempForecastAdapter() {
 		super(new Comparator());
-//		this.inflater = LayoutInflater.from(context);
 	}
 
 	@NonNull
 	@Override
-	public HourlyForecastAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//		View view = inflater.inflate(R.layout.viewholder_hourly_forecast, parent, false);
+	public HourlyTempForecastAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_hourly_forecast, parent, false);
 		return new ViewHolder(view);
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull HourlyForecastAdapter.ViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull HourlyTempForecastAdapter.ViewHolder holder, int position) {
 		holder.bindTo(getItem(position));
 	}
 
@@ -48,21 +44,21 @@ public class HourlyForecastAdapter extends ListAdapter<DayForecast, HourlyForeca
 			degreeView = itemView.findViewById(R.id.textView_degree);
 		}
 
-		public void bindTo(DayForecast item) {
-			timeView.setText(item.getDate());
+		public void bindTo(Temperature item) {
+			timeView.setText(item.getTime());
 			degreeView.setText(item.getTemperature());
 		}
 	}
 
-	public static class Comparator extends DiffUtil.ItemCallback<DayForecast> {
+	public static class Comparator extends DiffUtil.ItemCallback<Temperature> {
 		@Override
-		public boolean areItemsTheSame(@NonNull DayForecast oldItem, @NonNull DayForecast newItem) {
+		public boolean areItemsTheSame(@NonNull Temperature oldItem, @NonNull Temperature newItem) {
 			return oldItem == newItem;
 		}
 
 		@SuppressLint("DiffUtilEquals")
 		@Override
-		public boolean areContentsTheSame(@NonNull DayForecast oldItem, @NonNull DayForecast newItem) {
+		public boolean areContentsTheSame(@NonNull Temperature oldItem, @NonNull Temperature newItem) {
 			return oldItem == newItem;
 		}
 	}

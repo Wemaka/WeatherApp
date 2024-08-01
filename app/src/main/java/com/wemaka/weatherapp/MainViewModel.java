@@ -5,6 +5,8 @@ import android.location.Location;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.wemaka.weatherapp.data.DaysForecastResponse;
+
 import java.util.List;
 
 public class MainViewModel extends ViewModel {

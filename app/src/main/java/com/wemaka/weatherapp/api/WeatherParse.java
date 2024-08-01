@@ -6,14 +6,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.openmeteo.sdk.Aggregation;
 import com.openmeteo.sdk.Variable;
 import com.openmeteo.sdk.VariableWithValues;
 import com.openmeteo.sdk.VariablesSearch;
 import com.openmeteo.sdk.VariablesWithTime;
 import com.openmeteo.sdk.WeatherApiResponse;
-import com.wemaka.weatherapp.DaysForecastResponse;
-import com.wemaka.weatherapp.DayForecast;
+import com.wemaka.weatherapp.data.DaysForecastResponse;
+import com.wemaka.weatherapp.data.DayForecast;
+import com.wemaka.weatherapp.data.PrecipitationChance;
+import com.wemaka.weatherapp.data.Temperature;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -106,12 +107,6 @@ public class WeatherParse {
 		int currentIndexDay = getIndexDaily(daily, currentDate);
 		DateFormat timeFormat = new SimpleDateFormat("HH:mm", currentLocale);
 
-//		for (long i = daily.time(); i <= daily.timeEnd(); i += daily.interval()) {
-//			Date dateDay = new Date(i * 1000L);
-//
-//			Log.i(TAG, dateDay.toString());
-//		}
-
 		DaysForecastResponse daysForecastResponse = new DaysForecastResponse(
 				new DayForecast(
 						locationResponse.getToponymName(),
@@ -129,7 +124,8 @@ public class WeatherParse {
 						getPrecipitationChance(hourly, currentIndexHourly),
 						getPressure(hourly, currentIndexHourly),
 						getUvIndex(hourly, currentIndexHourly),
-						getHourlyForecast(hourly, currentIndexHourly)
+						getHourlyTempForecast(hourly, currentIndexHourly),
+						getPrecipitationChanceForecast(hourly, currentIndexHourly)
 				),
 				getWeekTempForecast(hourly, currentDate, currentIndexHourly)
 		);
@@ -248,26 +244,17 @@ public class WeatherParse {
 		return inx;
 	}
 
-	private List<DayForecast> getHourlyForecast(VariablesWithTime hourly, int hourlyIndex) {
-		List<DayForecast> hourlyForecastList = new ArrayList<>();
+	private List<Temperature> getHourlyTempForecast(VariablesWithTime hourly, int hourlyIndex) {
+		List<Temperature> hourlyForecastList = new ArrayList<>();
 		String nowDate = "Now";
 
+		Log.i(TAG, "getHourlyTempForecast" + hourlyIndex);
+
 		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
-			DayForecast oneHourForecast = new DayForecast(
-					"",
-					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)) + "°",
-					"",
-					"",
-					"",
+			Temperature oneHourForecast = new Temperature(
 					nowDate,
-					"",
-					"",
-					"",
-					"",
-					"",
-					"",
-					"",
-					null
+					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)) + "°",
+					""
 			);
 
 			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
@@ -285,12 +272,35 @@ public class WeatherParse {
 				.variable(Variable.temperature)
 				.first());
 
-		int weekDay = date.getDay() - 1;
-		weekDay = (weekDay < 0 ? 6 : weekDay) * 24 + date.getHours();
+		int weekDayIndex = date.getDay() - 1;
+		weekDayIndex = (weekDayIndex < 0 ? 6 : weekDayIndex) * 24 + date.getHours();
 
-		for (int i = index - weekDay; i < index + 7 * 24 - weekDay; i++) {
+		for (int i = index - weekDayIndex; i < index + 7 * 24 - weekDayIndex; i++) {
 			weekTempForecast.add((float) (Math.round(hourlyTemp.values(i) * 10) / 10));
 		}
 		return weekTempForecast;
+	}
+
+	private List<PrecipitationChance> getPrecipitationChanceForecast(VariablesWithTime hourly, int hourlyIndex) {
+		List<PrecipitationChance> precipitationChanceList = new ArrayList<>();
+		String nowDate = "Now";
+		VariableWithValues hourlyPrecipitation = Objects.requireNonNull(new VariablesSearch(hourly)
+				.variable(Variable.precipitation_probability)
+				.first());
+
+		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
+			PrecipitationChance oneHourChance = new PrecipitationChance(
+					nowDate,
+					(int) hourlyPrecipitation.values(i),
+					(int) hourlyPrecipitation.values(i) + "%"
+			);
+
+			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
+					.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L));
+
+			precipitationChanceList.add(oneHourChance);
+		}
+
+		return precipitationChanceList;
 	}
 }

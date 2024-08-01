@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp;
+package com.wemaka.weatherapp.data;
 
 import java.util.List;
 
@@ -16,9 +16,10 @@ public class DayForecast {
 	private final String precipitationChance;
 	private final String pressure;
 	private final String uvIndex;
-	private final List<DayForecast> hourlyForecast;
+	private final List<Temperature> hourlyTempForecast;
+	private final List<PrecipitationChance> precipitationChanceForecast;
 
-	public DayForecast(String locationName, String temperature, String apparentTemp, String imgWeatherCode, String weatherCode, String date, String sunrise, String sunset, String windSpeed, String imgPrecipitationChance, String precipitationChance, String pressure, String uvIndex, List<DayForecast> hourlyForecast) {
+	public DayForecast(String locationName, String temperature, String apparentTemp, String imgWeatherCode, String weatherCode, String date, String sunrise, String sunset, String windSpeed, String imgPrecipitationChance, String precipitationChance, String pressure, String uvIndex, List<Temperature> hourlyTempForecast, List<PrecipitationChance> precipitationChanceForecast) {
 		this.locationName = locationName;
 		this.temperature = temperature;
 		this.apparentTemp = apparentTemp;
@@ -32,7 +33,8 @@ public class DayForecast {
 		this.precipitationChance = precipitationChance;
 		this.pressure = pressure;
 		this.uvIndex = uvIndex;
-		this.hourlyForecast = hourlyForecast;
+		this.hourlyTempForecast = hourlyTempForecast;
+		this.precipitationChanceForecast = precipitationChanceForecast;
 	}
 
 	public String getLocationName() {
@@ -87,7 +89,11 @@ public class DayForecast {
 		return uvIndex;
 	}
 
-	public List<DayForecast> getHourlyForecast() {
-		return hourlyForecast;
+	public List<Temperature> getHourlyTempForecast() {
+		return hourlyTempForecast;
+	}
+
+	public List<PrecipitationChance> getPrecipitationChanceForecast() {
+		return precipitationChanceForecast;
 	}
 }

@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp;
+package com.wemaka.weatherapp.data;
 
 import java.util.List;
 
