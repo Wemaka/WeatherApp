@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -37,6 +38,8 @@ import com.wemaka.weatherapp.data.Temperature;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
 import com.wemaka.weatherapp.data.PrecipitationChance;
 import com.wemaka.weatherapp.math.UnitConverter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,10 +84,6 @@ public class TodayWeatherFragment extends Fragment {
 	}
 
 	private void recyclerViewHourlyTempForecast(List<Temperature> hourlyForecastList) {
-//		ArrayList<HourlyForecast> hourlyForecasts = new ArrayList<>();
-//		hourlyForecasts.add(new HourlyForecast("Now", R.drawable.ic_cloudy_icon, "10°"));
-//		hourlyForecasts.add(new HourlyForecast("10AM", R.drawable.ic_overcast_icon, "8°"));
-
 		RecyclerView recyclerViewHourlyForecast = binding.rvHourlyForecast;
 		recyclerViewHourlyForecast.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 			@Override

@@ -108,7 +108,7 @@
 
         <OnSwipe
             motion:dragDirection="dragUp"
-            motion:touchAnchorId="@id/sMain"
+            motion:touchAnchorId="@id/vpContainer"
             motion:touchAnchorSide="top"
             motion:maxAcceleration="15" />
     </Transition>

@@ -21,6 +21,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
@@ -72,12 +73,34 @@ public class MainActivity extends AppCompatActivity {
 //		checkLocationProvider();
 //		mLocationService.getLocation();
 
-		binding.main.setOnRefreshListener(() -> {
-					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+//		binding.main.setOnRefreshListener(() -> {
+//					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+//
+//					myUpdateOperation();
+//				}
+//		);
 
-					myUpdateOperation();
+		binding.motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
+			@Override
+			public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {
+				binding.swipeRefresh.setEnabled(false);
+			}
+
+			@Override
+			public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {
+			}
+
+			@Override
+			public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
+				if (currentId == R.id.start) {
+					binding.swipeRefresh.setEnabled(true);
 				}
-		);
+			}
+
+			@Override
+			public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {
+			}
+		});
 
 		model.getLiveData().observe(this, item -> {
 			DayForecast tf = item.getTodayForecast();
@@ -176,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
 		if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mLocationService.getLocation();
 		} else {
-			Snackbar.make(findViewById(R.id.sMain), "Enables the location service " +
+			Snackbar.make(findViewById(R.id.motionLayout), "Enables the location service " +
 									"to retrieve weather data for the current location.",
 							Snackbar.LENGTH_LONG)
 					.setAction("Settings", click -> {
