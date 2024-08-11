@@ -69,13 +69,19 @@ public class TodayWeatherFragment extends Fragment {
 		model.getLiveData().observe(getViewLifecycleOwner(), item -> {
 			DayForecast tf = item.getTodayForecast();
 
-			binding.tvWindSpeed.setText(tf.getWindSpeed());
-			binding.tvRainPercent.setText(tf.getPrecipitationChance());
-			binding.tvPressureHpa.setText(tf.getPressure());
-			binding.tvUv.setText(tf.getUvIndex());
+			binding.tvWindSpeed.setText(tf.getWindSpeed().getCurrentWindSpeed());
+			binding.tvRainPercent.setText(tf.getPrecipitationChance().getPercent());
+			binding.tvPressureHpa.setText(tf.getPressure().getCurrentPressure());
+			binding.tvUv.setText(tf.getUvIndex().getCurrentUvIndex());
 			recyclerViewHourlyTempForecast(tf.getHourlyTempForecast());
 			createWeekDayForecast(item.getWeekTempForecast());
 			createPrecipitationForecast(tf.getPrecipitationChanceForecast());
+			binding.tvSunriseTime.setText(tf.getSunrise());
+			binding.tvSunsetTime.setText(tf.getSunset());
+			binding.tvWindDiff.setText(tf.getWindSpeed().getWindSpeedDiff());
+			binding.tvRainDiff.setText(tf.getPrecipitationChance().getPrecipitationChanceDiff());
+			binding.tvPressureDiff.setText(tf.getPressure().getPressureDiff());
+			binding.tvUvDiff.setText(tf.getUvIndex().getUvIndexDiff());
 		});
 	}
 
@@ -168,7 +174,7 @@ public class TodayWeatherFragment extends Fragment {
 			timeView.setTextColor(getResources().getColor(R.color.black, null));
 			timeView.setGravity(Gravity.END);
 
-			progressBarView.setProgress(forecastRain.getProgress());
+			progressBarView.setProgress(forecastRain.getCurrentPrecipitationChance());
 			TableRow.LayoutParams params = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
 			if (i == precipitationChances.size() - 1) {
 				params.setMargins(UnitConverter.dpToPx(getActivity(), 33), 0, UnitConverter.dpToPx(getActivity(), 22), 0);

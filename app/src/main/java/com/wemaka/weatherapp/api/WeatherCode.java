@@ -1,44 +1,54 @@
 package com.wemaka.weatherapp.api;
 
+import com.wemaka.weatherapp.R;
+
 import java.util.Optional;
 
 public enum WeatherCode {
-	CLEAR_SKY("Clear sky", 0),
-	MAINLY_CLEAR("Mainly clear", 1),
-	PARTLY_CLOUDY("Partly cloudy", 2),
-	Overcast("Overcast", 3),
-	Fog("Fog", 45),
-	DEPOSITING_RIME_FOG("Depositing rime fog", 48),
-	DRIZZLE_LIGHT("Drizzle light", 51),
-	DRIZZLE_MODERATE("Drizzle moderate", 53),
-	DRIZZLE_DENSE_INTENSITY("Drizzle dense intensity", 55),
-	FREEZING_DRIZZLE_LIGHT("Freezing drizzle light ", 56),
-	FREEZING_DRIZZLE_DENSE_INTENSITY("Freezing drizzle dense intensity", 57),
-	RAIN_SLIGHT("Rain slight", 61),
-	RAIN_MODERATE("Rain moderate", 63),
-	RAIN_HEAVY_INTENSITY("Rain heavy intensity", 65),
-	FREEZING_RAIN_LIGHT("Freezing Rain light", 66),
-	FREEZING_RAIN_HEAVY_INTENSITY("Freezing Rain heavy intensity", 67),
-	SNOW_FALL_SLIGHT("Snow fall slight", 71),
-	SNOW_FALL_MODERATE("Snow fall moderate", 73),
-	SNOW_FALL_HEAVY_INTENSITY("Snow fall heavy intensity", 75),
-	SNOW_GRAINS("Snow grains", 77),
-	RAIN_SHOWERS_SLIGHT("Rain showers slight", 80),
-	RAIN_SHOWERS_MODERATE("Rain showers moderate", 81),
-	RAIN_SHOWERS_VIOLENT("Rain showers violent", 82),
-	SNOW_SHOWERS_SLIGHT("Snow showers slight", 85),
-	SNOW_SHOWERS_HEAVY("Snow showers heavy", 86),
-	THUNDERSTORM_SLIGHT("Thunderstorm slight", 95),
-	THUNDERSTORM_WITH_HAIL("Thunderstorm with hail", 96),
-	THUNDERSTORM_WITH_HAIL2("Thunderstorm with hail", 99),
+	CLEAR_SKY("Clear Sky", 0, R.drawable.ic_clear_day, R.drawable.ic_clear_night),
+	MAINLY_CLEAR("Mainly Clear", 1, R.drawable.ic_cloudy_2_day, R.drawable.ic_cloudy_2_night),
+	PARTLY_CLOUDY("Partly Cloudy", 2, R.drawable.ic_cloudy_2_day, R.drawable.ic_cloudy_2_night),
+	OVERCAST("Overcast", 3, R.drawable.ic_cloudy, R.drawable.ic_cloudy),
+	FOG("Fog", 45, R.drawable.ic_fog, R.drawable.ic_fog),
+	ICE_FOG("Ice Fog", 48, R.drawable.ic_ice_fog, R.drawable.ic_ice_fog),
+	LIGHT_DRIZZLE("Light Drizzle", 51, R.drawable.ic_drizzle_1_day, R.drawable.ic_drizzle_1_night),
+	DRIZZLE("Drizzle", 53, R.drawable.ic_drizzle_2_day, R.drawable.ic_drizzle_2_night),
+	HEAVY_DRIZZLE("Heavy Drizzle", 55, R.drawable.ic_drizzle_3_day, R.drawable.ic_drizzle_3_night),
+	LIGHT_FREEZING_DRIZZLE("Light Freezing Drizzle", 56, R.drawable.ic_drizzle_and_snow_1_day,
+			R.drawable.ic_drizzle_and_snow_1_night),
+	FREEZING_DRIZZLE("Freezing Drizzle", 57, R.drawable.ic_drizzle_and_snow_3_day,
+			R.drawable.ic_drizzle_and_snow_3_night),
+	LIGHT_RAIN("Light Rain", 61, R.drawable.ic_rainy_1_day, R.drawable.ic_rainy_1_night),
+	RAIN("Rain", 63, R.drawable.ic_rainy_2_day, R.drawable.ic_rainy_2_night),
+	HEAVY_RAIN("Heavy Rain", 65, R.drawable.ic_rainy_3, R.drawable.ic_rainy_3),
+	LIGHT_FREEZING_RAIN("Light Freezing Rain", 66, R.drawable.ic_rainy_and_snow_1_day,
+			R.drawable.ic_rainy_and_snow_1_night),
+	FREEZING_RAIN("Freezing Rain", 67, R.drawable.ic_rainy_and_snow_3, R.drawable.ic_rainy_and_snow_3),
+	LIGHT_SNOW("Light Snow", 71, R.drawable.ic_snowy_1_day, R.drawable.ic_snowy_1_night),
+	SNOW("Snow", 73, R.drawable.ic_snowy_2_day, R.drawable.ic_snowy_2_night),
+	HEAVY_SNOW("Heavy Snow", 75, R.drawable.ic_snowy_3, R.drawable.ic_snowy_3),
+	SNOW_GRAINS("Snow grains", 77, R.drawable.ic_hail, R.drawable.ic_hail),
+	LIGHT_SHOWERS("Light Showers", 80, R.drawable.ic_showers_1, R.drawable.ic_showers_1),
+	SHOWERS("Showers", 81, R.drawable.ic_showers_2, R.drawable.ic_showers_2),
+	HEAVY_SHOWERS("Heavy Showers", 82, R.drawable.ic_showers_3, R.drawable.ic_showers_3),
+	LIGHT_SNOW_SHOWERS("Light Snow Showers", 85, R.drawable.ic_showers_and_snow_1, R.drawable.ic_showers_and_snow_1),
+	SNOW_SHOWERS("Snow Showers", 86, R.drawable.ic_showers_and_snow_3,
+			R.drawable.ic_showers_and_snow_3),
+	THUNDERSTORM("Thunderstorm", 95, R.drawable.ic_thunderstorms, R.drawable.ic_thunderstorms),
+	LIGHT_THUNDERSTORM_HAIL("Light T-storm w/ hail", 96, R.drawable.ic_thunderstorms_and_hail, R.drawable.ic_thunderstorms_and_hail),
+	THUNDERSTORM_HAIL("T-storm w/ hail", 99, R.drawable.ic_thunderstorms_and_hail_heavy, R.drawable.ic_thunderstorms_and_hail_heavy),
 	;
 
 	String name;
 	int code;
+	int iconDayId;
+	int iconNightId;
 
-	WeatherCode(String name, int code) {
+	WeatherCode(String name, int code, int iconDayId, int iconNightId) {
 		this.name = name;
 		this.code = code;
+		this.iconDayId = iconDayId;
+		this.iconNightId = iconNightId;
 	}
 
 	public String getName() {
@@ -49,10 +59,31 @@ public enum WeatherCode {
 		return code;
 	}
 
+	public int getIconDayId() {
+		return iconDayId;
+	}
+
+	public int getIconNightId() {
+		return iconNightId;
+	}
+
 	public static Optional<String> getNameByCode(int code) {
 		for (WeatherCode weatherCode : WeatherCode.values()) {
 			if (weatherCode.code == code) {
 				return Optional.of(weatherCode.name);
+			}
+		}
+
+		return Optional.empty();
+	}
+
+	public static Optional<Integer> getIconIdByCode(int code, boolean isDay) {
+		for (WeatherCode weatherCode : WeatherCode.values()) {
+			if (weatherCode.code == code) {
+				if (isDay) {
+					return Optional.of(weatherCode.iconDayId);
+				}
+				return Optional.of(weatherCode.iconNightId);
 			}
 		}
 

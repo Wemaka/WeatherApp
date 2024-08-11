@@ -5,29 +5,31 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView_time"
+        android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/productsans"
         android:text="Now"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/imageView_weather_icon"
+        app:layout_constraintBottom_toTopOf="@+id/imgWeatherIcon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView_weather_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/imgWeatherIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginTop="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView_degree"
-        app:layout_constraintEnd_toEndOf="@+id/textView_time"
-        app:layout_constraintStart_toStartOf="@+id/textView_time"
-        app:layout_constraintTop_toBottomOf="@+id/textView_time" />
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/tvDegree"
+        app:layout_constraintEnd_toEndOf="@+id/tvTime"
+        app:layout_constraintStart_toStartOf="@+id/tvTime"
+        app:layout_constraintTop_toBottomOf="@+id/tvTime"
+        app:srcCompat="@drawable/ic_clear_day" />
 
     <TextView
-        android:id="@+id/textView_degree"
+        android:id="@+id/tvDegree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -35,8 +37,8 @@
         android:text="10°"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/textView_time"
-        app:layout_constraintStart_toStartOf="@+id/textView_time"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_weather_icon" />
+        app:layout_constraintEnd_toEndOf="@+id/tvTime"
+        app:layout_constraintStart_toStartOf="@+id/tvTime"
+        app:layout_constraintTop_toBottomOf="@+id/imgWeatherIcon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

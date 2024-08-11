@@ -8,13 +8,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,7 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -32,8 +26,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -44,9 +36,7 @@ import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
-import com.wemaka.weatherapp.data.PrecipitationChance;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
-import com.wemaka.weatherapp.math.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
 			binding.tvCityCountry.setText(tf.getLocationName());
 			binding.tvMainDegree.setText(tf.getTemperature());
 			binding.tvFeelsLike.setText("Feels like " + tf.getApparentTemp());
-			binding.imgMainWeatherIcon.setImageResource(R.drawable.ic_cloud_and_sun);
+			binding.imgMainWeatherIcon.setImageResource(Integer.parseInt(tf.getImgWeatherCode()));
 			binding.tvWeatherMainText.setText(tf.getWeatherCode());
+
 			binding.tvDegreesTime.setText("Last update\n" + tf.getDate());
 		});
 

@@ -1,21 +1,21 @@
 [versions]
-agp = "8.5.0"
+agp = "8.5.2"
 junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.9.0"
+activity = "1.9.1"
 constraintlayout = "2.1.4"
 gridlayout = "1.0.0"
 mpandroidChart = "v3.1.0"
 roundCornerprogressbar = "2.2.1"
 legacySupportV4 = "1.0.0"
 okhttp = "4.12.0"
-openMeteo = "1.10.0"
+openMeteo = "1.14.1"
 playServicesLocation = "21.3.0"
 swiperefreshlayout = "1.1.0"
-fragment = "1.8.0"
+fragment = "1.8.2"
 
 
 [libraries]

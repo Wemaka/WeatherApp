@@ -11,15 +11,15 @@ public class DayForecast {
 	private final String date;
 	private final String sunrise;
 	private final String sunset;
-	private final String windSpeed;
+	private final WindSpeed windSpeed;
 	private final String imgPrecipitationChance;
-	private final String precipitationChance;
-	private final String pressure;
-	private final String uvIndex;
+	private final PrecipitationChance precipitationChance;
+	private final Pressure pressure;
+	private final UvIndex uvIndex;
 	private final List<Temperature> hourlyTempForecast;
 	private final List<PrecipitationChance> precipitationChanceForecast;
 
-	public DayForecast(String locationName, String temperature, String apparentTemp, String imgWeatherCode, String weatherCode, String date, String sunrise, String sunset, String windSpeed, String imgPrecipitationChance, String precipitationChance, String pressure, String uvIndex, List<Temperature> hourlyTempForecast, List<PrecipitationChance> precipitationChanceForecast) {
+	public DayForecast(String locationName, String temperature, String apparentTemp, String imgWeatherCode, String weatherCode, String date, String sunrise, String sunset, WindSpeed windSpeed, String imgPrecipitationChance, PrecipitationChance precipitationChance, Pressure pressure, UvIndex uvIndex, List<Temperature> hourlyTempForecast, List<PrecipitationChance> precipitationChanceForecast) {
 		this.locationName = locationName;
 		this.temperature = temperature;
 		this.apparentTemp = apparentTemp;
@@ -69,7 +69,7 @@ public class DayForecast {
 		return sunset;
 	}
 
-	public String getWindSpeed() {
+	public WindSpeed getWindSpeed() {
 		return windSpeed;
 	}
 
@@ -77,15 +77,15 @@ public class DayForecast {
 		return imgPrecipitationChance;
 	}
 
-	public String getPrecipitationChance() {
+	public PrecipitationChance getPrecipitationChance() {
 		return precipitationChance;
 	}
 
-	public String getPressure() {
+	public Pressure getPressure() {
 		return pressure;
 	}
 
-	public String getUvIndex() {
+	public UvIndex getUvIndex() {
 		return uvIndex;
 	}
 
