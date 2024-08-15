@@ -82,6 +82,10 @@ public class TodayWeatherFragment extends Fragment {
 			binding.tvRainDiff.setText(tf.getPrecipitationChance().getPrecipitationChanceDiff());
 			binding.tvPressureDiff.setText(tf.getPressure().getPressureDiff());
 			binding.tvUvDiff.setText(tf.getUvIndex().getUvIndexDiff());
+			binding.imgWindSpeedIndicator.setImageResource(tf.getWindSpeed().getImgIdChangeWindSpeed());
+			binding.imgRainChanceIndicator.setImageResource(tf.getPrecipitationChance().getImgIdPrecipitationChance());
+			binding.imgPressureIndicator.setImageResource(tf.getPressure().getImgIdChangePressure());
+			binding.imgUvIndexIndicator.setImageResource(tf.getUvIndex().getImgIdChangeUvIndex());
 		});
 	}
 

@@ -76,7 +76,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvWindSpeedTitle" />
 
                     <ImageView
-                        android:id="@+id/imgDowngradeIcon"
+                        android:id="@+id/imgWindSpeedIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="@+id/tvWindDiff"
@@ -97,7 +97,7 @@
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imgDowngradeIcon" />
+                        app:layout_constraintStart_toEndOf="@+id/imgWindSpeedIndicator" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -121,10 +121,10 @@
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imgUpgradeIcon" />
+                        app:layout_constraintStart_toEndOf="@+id/imgRainChanceIndicator" />
 
                     <ImageView
-                        android:id="@+id/imgUpgradeIcon"
+                        android:id="@+id/imgRainChanceIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="@+id/tvRainDiff"
@@ -133,7 +133,7 @@
                         app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintStart_toEndOf="@+id/tvRainChanceTitle"
                         app:layout_constraintTop_toTopOf="@+id/tvRainDiff"
-                        app:srcCompat="@drawable/ic_arrow_upgrade" />
+                        app:srcCompat="@drawable/ic_arrow_unchanged" />
 
                     <ImageView
                         android:id="@+id/imgRainIcon"
@@ -223,7 +223,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvPressureTitle" />
 
                     <ImageView
-                        android:id="@+id/imgUpgradeIcon2"
+                        android:id="@+id/imgPressureIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="@+id/tvPressureDiff"
@@ -244,7 +244,7 @@
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imgUpgradeIcon2" />
+                        app:layout_constraintStart_toEndOf="@+id/imgPressureIndicator" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -270,10 +270,10 @@
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imgDowgradeIcon2" />
+                        app:layout_constraintStart_toEndOf="@+id/imgUvIndexIndicator" />
 
                     <ImageView
-                        android:id="@+id/imgDowgradeIcon2"
+                        android:id="@+id/imgUvIndexIndicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="@+id/tvUvDiff"
@@ -282,7 +282,7 @@
                         app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintStart_toEndOf="@+id/tvUv"
                         app:layout_constraintTop_toTopOf="@+id/tvUvDiff"
-                        app:srcCompat="@drawable/ic_arrow_downgrade" />
+                        app:srcCompat="@drawable/ic_arrow_unchanged" />
 
                     <ImageView
                         android:id="@+id/imgSunIcon"

@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.api.SizeWeatherIcon;
-import com.wemaka.weatherapp.api.WeatherCode;
 import com.wemaka.weatherapp.data.Temperature;
 
 public class HourlyTempForecastAdapter extends ListAdapter<Temperature, HourlyTempForecastAdapter.ViewHolder> {
@@ -50,7 +48,7 @@ public class HourlyTempForecastAdapter extends ListAdapter<Temperature, HourlyTe
 		public void bindTo(Temperature item) {
 			timeView.setText(item.getTime());
 			degreeView.setText(item.getTemperature());
-			iconView.setImageResource(R.drawable.ic_clear_day);
+			iconView.setImageResource(item.getImgIdWeatherCode());
 		}
 	}
 

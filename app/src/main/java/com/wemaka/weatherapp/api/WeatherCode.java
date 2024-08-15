@@ -4,6 +4,11 @@ import com.wemaka.weatherapp.R;
 
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum WeatherCode {
 	CLEAR_SKY("Clear Sky", 0, R.drawable.ic_clear_day, R.drawable.ic_clear_night),
 	MAINLY_CLEAR("Mainly Clear", 1, R.drawable.ic_cloudy_2_day, R.drawable.ic_cloudy_2_night),
@@ -43,29 +48,6 @@ public enum WeatherCode {
 	int code;
 	int iconDayId;
 	int iconNightId;
-
-	WeatherCode(String name, int code, int iconDayId, int iconNightId) {
-		this.name = name;
-		this.code = code;
-		this.iconDayId = iconDayId;
-		this.iconNightId = iconNightId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public int getCode() {
-		return code;
-	}
-
-	public int getIconDayId() {
-		return iconDayId;
-	}
-
-	public int getIconNightId() {
-		return iconNightId;
-	}
 
 	public static Optional<String> getNameByCode(int code) {
 		for (WeatherCode weatherCode : WeatherCode.values()) {

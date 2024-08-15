@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 			binding.tvCityCountry.setText(tf.getLocationName());
 			binding.tvMainDegree.setText(tf.getTemperature());
 			binding.tvFeelsLike.setText("Feels like " + tf.getApparentTemp());
-			binding.imgMainWeatherIcon.setImageResource(Integer.parseInt(tf.getImgWeatherCode()));
+			binding.imgMainWeatherIcon.setImageResource(tf.getImgIdWeatherCode());
 			binding.tvWeatherMainText.setText(tf.getWeatherCode());
 
 			binding.tvDegreesTime.setText("Last update\n" + tf.getDate());

@@ -4,6 +4,8 @@ import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
 import android.util.Log;
 
+import com.wemaka.weatherapp.data.LocationResponse;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

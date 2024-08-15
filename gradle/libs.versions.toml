@@ -16,6 +16,7 @@ openMeteo = "1.14.1"
 playServicesLocation = "21.3.0"
 swiperefreshlayout = "1.1.0"
 fragment = "1.8.2"
+lombok = "1.18.30"
 
 
 [libraries]
@@ -35,6 +36,7 @@ open-meteo = { group = "com.open-meteo", name = "sdk", version.ref = "openMeteo"
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
 
 [plugins]

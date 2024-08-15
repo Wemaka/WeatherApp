@@ -6,14 +6,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.openmeteo.sdk.Model;
 import com.openmeteo.sdk.Variable;
 import com.openmeteo.sdk.VariableWithValues;
 import com.openmeteo.sdk.VariablesSearch;
 import com.openmeteo.sdk.VariablesWithTime;
 import com.openmeteo.sdk.WeatherApiResponse;
+import com.wemaka.weatherapp.data.ChangeIndicator;
 import com.wemaka.weatherapp.data.DaysForecastResponse;
 import com.wemaka.weatherapp.data.DayForecast;
+import com.wemaka.weatherapp.data.LocationResponse;
 import com.wemaka.weatherapp.data.PrecipitationChance;
 import com.wemaka.weatherapp.data.Pressure;
 import com.wemaka.weatherapp.data.Temperature;
@@ -124,7 +125,6 @@ public class WeatherParse {
 						timeFormat.format(new Date(getSunrise(daily, currentIndexDay))),
 						timeFormat.format(new Date(getSunset(daily, currentIndexDay))),
 						getWindSpeed(minutely15, currentIndexMinutely15),
-						"",
 						getPrecipitationChance(hourly, currentIndexHourly),
 						getPressure(hourly, currentIndexHourly),
 						getUvIndex(hourly, currentIndexHourly),
@@ -186,9 +186,9 @@ public class WeatherParse {
 				index)) + "°";
 	}
 
-	private String getImgWeatherCode(VariablesWithTime minutely15, int index) {
+	private int getImgWeatherCode(VariablesWithTime minutely15, int index) {
 		return WeatherCode.getIconIdByCode((int) getValueMinutely15(Variable.weather_code,
-				minutely15, index)).get() + "";
+				minutely15, index), true).get();
 	}
 
 	private String getWeatherCode(VariablesWithTime minutely15, int index) {
@@ -202,7 +202,8 @@ public class WeatherParse {
 				minutely15,
 				index - 1));
 
-		return new WindSpeed(currWindSpeed + "km/h", Math.abs(diffWindSpeed) + "km/h", null);
+		return new WindSpeed(currWindSpeed + "km/h", Math.abs(diffWindSpeed) + "km/h",
+				ChangeIndicator.getIndicatorValue(diffWindSpeed));
 	}
 
 	private PrecipitationChance getPrecipitationChance(VariablesWithTime minutely15, int index) {
@@ -212,7 +213,8 @@ public class WeatherParse {
 				currPrecipitationChance - Math.round(getValueMinutely15(Variable.precipitation_probability, minutely15, index - 1));
 
 		return new PrecipitationChance("", currPrecipitationChance,
-				currPrecipitationChance + "%", Math.abs(diffPrecipitationChance) + "%", "");
+				currPrecipitationChance + "%", Math.abs(diffPrecipitationChance) + "%",
+				ChangeIndicator.getIndicatorValue(diffPrecipitationChance));
 	}
 
 	private Pressure getPressure(VariablesWithTime minutely15, int index) {
@@ -220,7 +222,8 @@ public class WeatherParse {
 		int diffPressure = currPressure - Math.round(getValueMinutely15(Variable.pressure_msl,
 				minutely15, index - 1));
 
-		return new Pressure(currPressure + "hpa", diffPressure + "hpa", "");
+		return new Pressure(currPressure + "hpa", diffPressure + "hpa",
+				ChangeIndicator.getIndicatorValue(diffPressure));
 	}
 
 	private UvIndex getUvIndex(VariablesWithTime minutely15, int index) {
@@ -228,7 +231,8 @@ public class WeatherParse {
 		int diffUvIndex = currUvIndex - Math.round(getValueMinutely15(Variable.uv_index,
 				minutely15, index - 1));
 
-		return new UvIndex(String.valueOf(currUvIndex), String.valueOf(diffUvIndex), "");
+		return new UvIndex(String.valueOf(currUvIndex), String.valueOf(diffUvIndex),
+				ChangeIndicator.getIndicatorValue(diffUvIndex));
 	}
 
 	private int getIndexDaily(VariablesWithTime daily, Date date) {
@@ -278,10 +282,13 @@ public class WeatherParse {
 		Log.i(TAG, "getHourlyTempForecast" + hourlyIndex);
 
 		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
+			int wmoIndex =
+					(int) new VariablesSearch(hourly).variable(Variable.weather_code).first().values(i);
+
 			Temperature oneHourForecast = new Temperature(
 					nowDate,
 					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)) + "°",
-					""
+					WeatherCode.getIconIdByCode(wmoIndex, true).get()
 			);
 
 			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
@@ -321,7 +328,7 @@ public class WeatherParse {
 					(int) hourlyPrecipitation.values(i),
 					(int) hourlyPrecipitation.values(i) + "%",
 					"",
-					""
+					null
 			);
 
 			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
