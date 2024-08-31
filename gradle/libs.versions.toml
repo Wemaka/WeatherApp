@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.2"
+datastorePreferences = "1.1.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -14,12 +15,14 @@ legacySupportV4 = "1.0.0"
 okhttp = "4.12.0"
 openMeteo = "1.14.1"
 playServicesLocation = "21.3.0"
+rxjava = "3.x.y"
 swiperefreshlayout = "1.1.0"
 fragment = "1.8.2"
 lombok = "1.18.30"
 
 
 [libraries]
+datastore-preferences-rxjava3 = { module = "androidx.datastore:datastore-preferences-rxjava3", version.ref = "datastorePreferences" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -34,6 +37,7 @@ legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", ver
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 open-meteo = { group = "com.open-meteo", name = "sdk", version.ref = "openMeteo" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }

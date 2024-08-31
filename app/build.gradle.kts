@@ -19,7 +19,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -49,6 +52,11 @@ dependencies {
     implementation(libs.swiperefreshlayout)
     implementation(libs.fragment)
     implementation(libs.lombok)
+    annotationProcessor(libs.lombok)
+
+    implementation(libs.datastore.preferences.rxjava3)
+    implementation(libs.rxjava)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

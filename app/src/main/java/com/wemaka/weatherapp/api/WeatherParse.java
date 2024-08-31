@@ -43,6 +43,8 @@ import okhttp3.ResponseBody;
 
 public class WeatherParse {
 	private static final String baseUrl = "https://api.open-meteo.com/v1/forecast";
+	private final int pastDays = 6;
+	private final int forecastDays = 10;
 
 	public WeatherApiResponse request(double latitude, double longitude, RequestCallback callback) {
 		HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
@@ -52,8 +54,8 @@ public class WeatherParse {
 				.addQueryParameter("temperature_unit", "celsius")
 				.addQueryParameter("wind_speed_unit", "kmh")
 				.addQueryParameter("timeformat", "unixtime")
-				.addQueryParameter("past_days", "6")
-				.addQueryParameter("forecast_days", "10")
+				.addQueryParameter("past_days", pastDays + "")
+				.addQueryParameter("forecast_days", forecastDays + "")
 				.addQueryParameter("format", "flatbuffers")
 				.addQueryParameter("minutely_15", "weather_code,temperature_2m,apparent_temperature,wind_speed_10m")
 				.addQueryParameter("hourly", "weather_code,temperature_2m,precipitation_probability,uv_index,pressure_msl")
@@ -139,21 +141,11 @@ public class WeatherParse {
 		return daysForecastResponse;
 	}
 
-	public static int getIndexMinutely15(@NonNull VariablesWithTime minutely15, @NonNull Date date) {
-		int inx = 0;
-//			Date curDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(time);
-		for (long i = minutely15.time(); i <= minutely15.timeEnd(); i += minutely15.interval(), inx++) {
-			Date dateMin = new Date(i * 1000L);
+	private int getIndexMinutely15(@NonNull VariablesWithTime minutely15, @NonNull Date date) {
+		Date startDate = new Date(minutely15.time() * 1000L);
 
-			if (dateMin.getDay() == date.getDay() && dateMin.getHours() == date.getHours()) {
-				if (date.getMinutes() - dateMin.getMinutes() > 15 / 2 && inx + 1 < minutely15.variablesLength()) {
-					inx++;
-				}
-				break;
-			}
-		}
-
-		return inx;
+		return pastDays * 24 * 60 / 15 +
+				Math.round((float) ((date.getHours() - startDate.getHours()) * 60 + startDate.getMinutes()) / 15);
 	}
 
 	private float getValueMinutely15(int variable, VariablesWithTime minutely15, int index) {
@@ -164,24 +156,10 @@ public class WeatherParse {
 	}
 
 	private String getTemp(VariablesWithTime minutely15, int index) {
-//		return Math.round(
-//				new VariablesSearch(minutely15)
-//						.variable(Variable.temperature)
-//						.first()
-//						.values(getCurrentIndexMinutely15(minutely15, curDate))
-//		);
-
 		return Math.round(getValueMinutely15(Variable.temperature, minutely15, index)) + "°";
 	}
 
 	private String getApparentTemp(VariablesWithTime minutely15, int index) {
-//		return Math.round(
-//				new VariablesSearch(minutely15)
-//						.variable(Variable.apparent_temperature)
-//						.first()
-//						.values(getCurrentIndexMinutely15(minutely15, curDate))
-//		);
-
 		return Math.round(getValueMinutely15(Variable.apparent_temperature, minutely15,
 				index)) + "°";
 	}
@@ -236,16 +214,7 @@ public class WeatherParse {
 	}
 
 	private int getIndexDaily(VariablesWithTime daily, Date date) {
-		int inx = 0;
-		for (long i = daily.time(); i <= daily.timeEnd(); i += daily.interval(), inx++) {
-			Date dateDay = new Date(i * 1000L);
-
-			if (dateDay.getDay() == date.getDay()) {
-				break;
-			}
-		}
-
-		return inx;
+		return pastDays;
 	}
 
 	private long getSunrise(VariablesWithTime daily, int index) {
@@ -263,23 +232,14 @@ public class WeatherParse {
 	}
 
 	private int getIndexHourly(@NonNull VariablesWithTime hourly, @NonNull Date date) {
-		int inx = 0;
-		for (long i = hourly.time(); i <= hourly.timeEnd(); i += hourly.interval(), inx++) {
-			Date dateHour = new Date(i * 1000L);
+		Date startDate = new Date(hourly.time() * 1000L);
 
-			if (dateHour.getDate() == date.getDate() && dateHour.getHours() == date.getHours()) {
-				break;
-			}
-		}
-
-		return inx;
+		return pastDays * 24 + date.getHours() - startDate.getHours();
 	}
 
 	private List<Temperature> getHourlyTempForecast(VariablesWithTime hourly, int hourlyIndex) {
 		List<Temperature> hourlyForecastList = new ArrayList<>();
 		String nowDate = "Now";
-
-		Log.i(TAG, "getHourlyTempForecast" + hourlyIndex);
 
 		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
 			int wmoIndex =

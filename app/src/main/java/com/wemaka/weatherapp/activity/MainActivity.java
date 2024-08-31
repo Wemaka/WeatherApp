@@ -1,6 +1,7 @@
 package com.wemaka.weatherapp.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -26,15 +28,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.openmeteo.sdk.WeatherApiResponse;
+import com.wemaka.weatherapp.api.RequestCallback;
+import com.wemaka.weatherapp.api.WeatherParse;
 import com.wemaka.weatherapp.data.DayForecast;
 import com.wemaka.weatherapp.LocationService;
 import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
+import com.wemaka.weatherapp.data.preferences.PreferencesManager;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 
@@ -51,24 +56,23 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		EdgeToEdge.enable(this);
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
-		setContentView(binding.getRoot());
-
-//		createDayForecast();
-//		scrollViewHourlyForecastRain();
-		createCustomTabLayout();
-
 		MainViewModel model = new ViewModelProvider(this).get(MainViewModel.class);
 		mLocationService = new LocationService(this, model);
-		checkLocationPermission();
-//		checkLocationProvider();
-//		mLocationService.getLocation();
+		setContentView(binding.getRoot());
 
-//		binding.main.setOnRefreshListener(() -> {
-//					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
-//
-//					myUpdateOperation();
-//				}
-//		);
+
+		checkLocationPermission();
+
+		createCustomTabLayout();
+
+		binding.swipeRefresh.setOnRefreshListener(() -> {
+					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+					checkLocationProvider();
+					mLocationService.getLocation();
+//					binding.swipeRefresh.setRefreshing(false);
+				}
+		);
 
 		binding.motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
 			@Override
@@ -92,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
+		model.getCurrentLocation().observe(this, location -> {
+			PreferencesManager.getInstance(this).saveLocation(location.getLatitude(),
+					location.getLongitude());
+			locationRequest(model);
+		});
+
 		model.getLiveData().observe(this, item -> {
 			DayForecast tf = item.getTodayForecast();
 
@@ -109,12 +119,6 @@ public class MainActivity extends AppCompatActivity {
 			v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
 			return insets;
 		});
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-//		checkLocationProvider();
 	}
 
 	private void createCustomTabLayout() {
@@ -155,12 +159,12 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void checkLocationPermission() {
-		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//			ActivityCompat.requestPermissions(this,
-//					new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-//							Manifest.permission.ACCESS_FINE_LOCATION}, 200);
-
-			ActivityResultLauncher<String[]> locationPermissionRequest = registerForActivityResult(
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+				ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+			checkLocationProvider();
+		} else {
+			//! убрать регистратор отдельно чтобы вызывать checkLocationPermission() при обновлении
+			registerForActivityResult(
 					new ActivityResultContracts.RequestMultiplePermissions(), result -> {
 						Boolean fineLocationGranted = result.getOrDefault(
 								Manifest.permission.ACCESS_FINE_LOCATION, false);
@@ -168,40 +172,58 @@ public class MainActivity extends AppCompatActivity {
 								Manifest.permission.ACCESS_COARSE_LOCATION, false);
 
 						if ((fineLocationGranted != null && fineLocationGranted) || (coarseLocationGranted != null && coarseLocationGranted)) {
-//							mLocationService.getLocation();
 							checkLocationProvider();
 						} else {
 							Log.i(TAG, "No location access granted");
 						}
 					}
-			);
-
-			locationPermissionRequest.launch(new String[]{
+			).launch(new String[]{
 					Manifest.permission.ACCESS_FINE_LOCATION,
 					Manifest.permission.ACCESS_COARSE_LOCATION
 			});
-		} else {
-			checkLocationProvider();
+
+//			locationPermissionRequest.launch(new String[]{
+//					Manifest.permission.ACCESS_FINE_LOCATION,
+//					Manifest.permission.ACCESS_COARSE_LOCATION
+//			});
 		}
+
+		mLocationService.getLocation();
 	}
 
 	private void checkLocationProvider() {
 		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			mLocationService.getLocation();
-		} else {
-			Snackbar.make(findViewById(R.id.motionLayout), "Enables the location service " +
+		if (!(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || lm.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
+			Snackbar.make(binding.motionLayout, "Enables the location service " +
 									"to retrieve weather data for the current location.",
 							Snackbar.LENGTH_LONG)
-					.setAction("Settings", click -> {
-						startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-					})
+					.setAction("Settings", click -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
 					.setMaxInlineActionWidth(1)
 					.show();
 		}
 	}
 
 	public void myUpdateOperation() {
-		mLocationService.getLocation();
+		Log.i(TAG, "myUpdateOperation get Loc");
+	}
+
+	public void locationRequest(MainViewModel model) {
+		WeatherParse weatherParse = new WeatherParse();
+
+		weatherParse.request(
+				model.getCurrentLocation().getValue().getLatitude(),
+				model.getCurrentLocation().getValue().getLongitude(),
+				new RequestCallback() {
+					@Override
+					public void onSuccess(WeatherApiResponse response) {
+						model.getLiveData().postValue(weatherParse.parseWeatherData(response));
+					}
+
+					@Override
+					public void onFailure(String error) {
+						Log.e(TAG, "ERROR REQUEST: api.open-meteo " + error);
+					}
+				}
+		);
 	}
 }
