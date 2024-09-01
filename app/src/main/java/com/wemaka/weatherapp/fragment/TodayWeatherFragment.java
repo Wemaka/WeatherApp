@@ -66,35 +66,11 @@ public class TodayWeatherFragment extends Fragment {
 
 		MainViewModel model = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-		model.getLiveData().observe(getViewLifecycleOwner(), item -> {
-			DayForecast tf = item.getTodayForecast();
-
-			binding.tvWindSpeed.setText(tf.getWindSpeed().getCurrentWindSpeed());
-			binding.tvRainPercent.setText(tf.getPrecipitationChance().getPercent());
-			binding.tvPressureHpa.setText(tf.getPressure().getCurrentPressure());
-			binding.tvUv.setText(tf.getUvIndex().getCurrentUvIndex());
-			recyclerViewHourlyTempForecast(tf.getHourlyTempForecast());
-			createWeekDayForecast(item.getWeekTempForecast());
-			createPrecipitationForecast(tf.getPrecipitationChanceForecast());
-			binding.tvSunriseTime.setText(tf.getSunrise());
-			binding.tvSunsetTime.setText(tf.getSunset());
-			binding.tvWindDiff.setText(tf.getWindSpeed().getWindSpeedDiff());
-			binding.tvRainDiff.setText(tf.getPrecipitationChance().getPrecipitationChanceDiff());
-			binding.tvPressureDiff.setText(tf.getPressure().getPressureDiff());
-			binding.tvUvDiff.setText(tf.getUvIndex().getUvIndexDiff());
-			binding.imgWindSpeedIndicator.setImageResource(tf.getWindSpeed().getImgIdChangeWindSpeed());
-			binding.imgRainChanceIndicator.setImageResource(tf.getPrecipitationChance().getImgIdPrecipitationChance());
-			binding.imgPressureIndicator.setImageResource(tf.getPressure().getImgIdChangePressure());
-			binding.imgUvIndexIndicator.setImageResource(tf.getUvIndex().getImgIdChangeUvIndex());
-		});
-	}
-
-	public String getTabTitle() {
-		return "Today";
-	}
-
-	private void recyclerViewHourlyTempForecast(List<Temperature> hourlyForecastList) {
+		HourlyTempForecastAdapter hourlyTempForecastAdapter = new HourlyTempForecastAdapter();
 		RecyclerView recyclerViewHourlyForecast = binding.rvHourlyForecast;
+
+		recyclerViewHourlyForecast.setAdapter(hourlyTempForecastAdapter);
+		recyclerViewHourlyForecast.addItemDecoration(new ListPaddingDecoration(recyclerViewHourlyForecast.getContext(), 25, ListPaddingDecoration.Orientation.HORIZONTAL));
 		recyclerViewHourlyForecast.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 			@Override
 			public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
@@ -118,10 +94,31 @@ public class TodayWeatherFragment extends Fragment {
 			}
 		});
 
-		HourlyTempForecastAdapter hourlyTempForecastAdapter = new HourlyTempForecastAdapter();
-		recyclerViewHourlyForecast.setAdapter(hourlyTempForecastAdapter);
-		recyclerViewHourlyForecast.addItemDecoration(new ListPaddingDecoration(recyclerViewHourlyForecast.getContext(), 25, ListPaddingDecoration.Orientation.HORIZONTAL));
-		hourlyTempForecastAdapter.submitList(hourlyForecastList);
+		model.getLiveData().observe(getViewLifecycleOwner(), item -> {
+			DayForecast tf = item.getTodayForecast();
+
+			binding.tvSunriseTime.setText(tf.getSunrise());
+			binding.tvSunsetTime.setText(tf.getSunset());
+			binding.tvWindSpeed.setText(tf.getWindSpeed().getCurrentWindSpeed());
+			binding.tvRainPercent.setText(tf.getPrecipitationChance().getPercent());
+			binding.tvPressureHpa.setText(tf.getPressure().getCurrentPressure());
+			binding.tvUv.setText(tf.getUvIndex().getCurrentUvIndex());
+			hourlyTempForecastAdapter.submitList(tf.getHourlyTempForecast());
+			createWeekDayForecast(item.getWeekTempForecast());
+			createPrecipitationForecast(tf.getPrecipitationChanceForecast());
+			binding.tvWindDiff.setText(tf.getWindSpeed().getWindSpeedDiff());
+			binding.tvRainDiff.setText(tf.getPrecipitationChance().getPrecipitationChanceDiff());
+			binding.tvPressureDiff.setText(tf.getPressure().getPressureDiff());
+			binding.tvUvDiff.setText(tf.getUvIndex().getUvIndexDiff());
+			binding.imgWindSpeedIndicator.setImageResource(tf.getWindSpeed().getImgIdChangeWindSpeed());
+			binding.imgRainChanceIndicator.setImageResource(tf.getPrecipitationChance().getImgIdPrecipitationChance());
+			binding.imgPressureIndicator.setImageResource(tf.getPressure().getImgIdChangePressure());
+			binding.imgUvIndexIndicator.setImageResource(tf.getUvIndex().getImgIdChangeUvIndex());
+		});
+	}
+
+	public String getTabTitle() {
+		return "Today";
 	}
 
 	private void createWeekDayForecast(List<Float> tempForecast) {

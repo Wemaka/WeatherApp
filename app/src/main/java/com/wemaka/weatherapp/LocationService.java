@@ -26,14 +26,20 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.openmeteo.sdk.WeatherApiResponse;
 import com.wemaka.weatherapp.api.RequestCallback;
 import com.wemaka.weatherapp.api.WeatherParse;
+import com.wemaka.weatherapp.data.MyLocation;
+import com.wemaka.weatherapp.data.Settings;
 import com.wemaka.weatherapp.data.preferences.PreferencesManager;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 
 public class LocationService {
-	private LocationManager locationManager;
-	private Activity activity;
-	private MainViewModel mainViewModel;
-	private FusedLocationProviderClient fusedLocationClient;
+	private final LocationManager locationManager;
+	private final Activity activity;
+	private final MainViewModel mainViewModel;
+	private final FusedLocationProviderClient fusedLocationClient;
+	private static final PreferencesManager preferencesManager = PreferencesManager.getInstance();
 
 	public LocationService(Activity activity, MainViewModel mainViewModel) {
 		this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
@@ -57,54 +63,38 @@ public class LocationService {
 
 	@SuppressLint("MissingPermission")
 	public void getLocation() {
-		Location loc = PreferencesManager.getInstance(activity).getLocation();
+		Location loc = PreferencesManager.getInstance().getLocation();
 		Log.i(TAG, "PREFERENCES LOC: " + loc.getProvider());
 
-		mainViewModel.getCurrentLocation().setValue(loc);
+		if (!isPermissionGranted()) {
+			weatherRequest(preferencesManager.getLocation());
+			return;
+		}
 
-		//! getLastLocation(); getCurrentLocation(); передать в них колбеки для уведомления
-		// успеха или неудачи получения местоположения
-
-		if (isProviderEnabled() && isPermissionGranted()) {
+		if (isProviderEnabled()) {
 			getCurrentLocation();
-			return;
-		}
-
-		if (!isProviderEnabled() && isPermissionGranted()) {
+		} else {
 			getLastLocation();
-			return;
 		}
-
-//		if (!isProviderEnabled() || !isPermissionGranted()) {
-//			Log.i(TAG, "provider or permission not enabled");
-//
-//			Location loc = PreferencesManager.getInstance(activity).getLocation();
-//			Log.i(TAG, "PREFERENCES LOC: " + loc.getProvider());
-//
-//			mainViewModel.getCurrentLocation().setValue(loc);
-//
-//			return;
-//		}
-
 	}
 
 	private void handleLocation(Location location, Runnable lackLocation) {
 		if (location == null) {
 			lackLocation.run();
-			return;
+		} else {
+			Log.i(TAG, "Location: " + location.getLatitude() + ", " + location.getLongitude());
+
+			preferencesManager.saveLocation(location.getLatitude(), location.getLongitude());
 		}
 
-		Log.i(TAG, "Location: " + location.getLatitude() + ", " + location.getLongitude());
-
-		mainViewModel.getCurrentLocation().setValue(location);
+		weatherRequest(preferencesManager.getLocation());
 	}
 
 	private void getLastLocation() throws SecurityException {
 		fusedLocationClient.getLastLocation()
 				.addOnSuccessListener(activity, location -> {
 					handleLocation(location, () -> {
-						Log.i(TAG, "location = null 1");
-						getCurrentLocation();
+						Log.i(TAG, "Last location = null 1");
 					});
 				})
 				.addOnFailureListener(e -> {
@@ -123,14 +113,11 @@ public class LocationService {
 			throw new SecurityException();
 		}
 
-		fusedLocationClient.getCurrentLocation(priority, new CancellationTokenSource().getToken())
+		fusedLocationClient.getCurrentLocation(priority,
+						new CancellationTokenSource().getToken())
 				.addOnSuccessListener(activity, location -> {
 					handleLocation(location, () -> {
-						Log.i(TAG, "Location = null 2");
-
-						//! кринж. добавить колбек
-//						Location loc = PreferencesManager.getInstance(activity).getLocation();
-//						mainViewModel.getCurrentLocation().setValue(loc);
+						Log.i(TAG, "Current location = null 2");
 					});
 				})
 				.addOnFailureListener(e -> {
@@ -138,9 +125,27 @@ public class LocationService {
 				});
 	}
 
-	private interface LocationCallback {
-		void onSuccess(boolean response);
+	private void weatherRequest(Location loc) {
+		if (loc == null) {
+			return;
+		}
 
-//		void onFailure(String error);
+		WeatherParse weatherParse = new WeatherParse();
+
+		weatherParse.request(
+				loc.getLatitude(),
+				loc.getLongitude(),
+				new RequestCallback() {
+					@Override
+					public void onSuccess(WeatherApiResponse response) {
+						mainViewModel.getLiveData().postValue(weatherParse.parseWeatherData(response));
+					}
+
+					@Override
+					public void onFailure(String error) {
+						Log.e(TAG, "ERROR REQUEST: api.open-meteo " + error);
+					}
+				}
+		);
 	}
 }

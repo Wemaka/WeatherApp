@@ -55,7 +55,8 @@ dependencies {
     annotationProcessor(libs.lombok)
 
     implementation(libs.datastore.preferences.rxjava3)
-    implementation(libs.rxjava)
+    implementation(libs.datastore.preferences)
+//    implementation(libs.rxjava)
 
 
     testImplementation(libs.junit)
