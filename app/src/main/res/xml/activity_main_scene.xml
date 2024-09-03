@@ -5,7 +5,8 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="1000">
+        motion:duration="1000"
+        motion:layoutDuringTransition="honorRequest">
         <KeyFrameSet>
             <KeyAttribute
                 motion:motionTarget="@+id/imgHeaderBackground"
@@ -272,7 +273,7 @@
             android:layout_width="wrap_content" />
         <Constraint
             android:id="@+id/tvMainDegree"
-            android:layout_width="54dp"
+            android:layout_width="wrap_content"
             android:layout_height="64dp"
             motion:layout_constraintBottom_toTopOf="@+id/clDateDegrees"
             motion:layout_constraintTop_toBottomOf="@+id/tvCityCountry"
