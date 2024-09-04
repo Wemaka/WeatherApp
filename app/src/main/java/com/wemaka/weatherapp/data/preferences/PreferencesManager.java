@@ -24,8 +24,7 @@ public class PreferencesManager {
 	private static final PreferencesManager instance = new PreferencesManager();
 	@Setter
 	@Getter
-//	private RxDataStore<Preferences> dataStore;
-	private AtomicReference<RxDataStore<Preferences>> dataStore = new AtomicReference<>();
+	private RxDataStore<Preferences> dataStore;
 	private static final Preferences.Key<Double> latKey = PreferencesKeys.doubleKey("location_lat");
 	private static final Preferences.Key<Double> lonKey = PreferencesKeys.doubleKey("location_lon");
 	private static final double[] DEFAULT_LOCATION = {40.72, -74.00};
@@ -33,8 +32,8 @@ public class PreferencesManager {
 	private PreferencesManager() {
 	}
 
-	public synchronized Completable saveSettings(Settings settings) {
-		return dataStore.get().updateDataAsync(prefsIn -> {
+	public Completable saveSettings(Settings settings) {
+		return dataStore.updateDataAsync(prefsIn -> {
 			MutablePreferences mutablePreferences = prefsIn.toMutablePreferences();
 
 			if (settings.getLocation() != null) {
@@ -47,8 +46,8 @@ public class PreferencesManager {
 	}
 
 
-	public synchronized Completable saveLocation(double latitude, double longitude) {
-		return dataStore.get().updateDataAsync(prefsIn -> {
+	public Completable saveLocation(double latitude, double longitude) {
+		return dataStore.updateDataAsync(prefsIn -> {
 			MutablePreferences mutablePreferences = prefsIn.toMutablePreferences();
 			mutablePreferences.set(latKey, latitude);
 			mutablePreferences.set(lonKey, longitude);
@@ -56,8 +55,8 @@ public class PreferencesManager {
 		}).ignoreElement();
 	}
 
-	public synchronized Location getLocation() {
-		Preferences prefs = dataStore.get().data().firstOrError().blockingGet();
+	public Location getLocation() {
+		Preferences prefs = dataStore.data().firstOrError().blockingGet();
 		Double lat = prefs.get(latKey);
 		Double lon = prefs.get(lonKey);
 

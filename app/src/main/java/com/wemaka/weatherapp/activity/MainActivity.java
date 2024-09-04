@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 		mLocationService = new LocationService(this, model);
 		setContentView(binding.getRoot());
 
-		if (pm.getDataStore().get() == null) {
-			pm.getDataStore().set(new RxPreferenceDataStoreBuilder(this, "settings").build());
+		if (pm.getDataStore() == null) {
+			pm.setDataStore(new RxPreferenceDataStoreBuilder(this, "settings").build());
 		}
 
 		handleLocationPermission();
@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 			binding.tvFeelsLike.setText("Feels like " + tf.getApparentTemp());
 			binding.imgMainWeatherIcon.setImageResource(tf.getImgIdWeatherCode());
 			binding.tvWeatherMainText.setText(tf.getWeatherCode());
-
 			binding.tvDegreesTime.setText("Last update\n" + tf.getDate());
 		});
 

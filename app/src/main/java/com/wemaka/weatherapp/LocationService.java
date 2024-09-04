@@ -81,13 +81,16 @@ public class LocationService {
 	private void handleLocation(Location location, Runnable lackLocation) {
 		if (location == null) {
 			lackLocation.run();
+			weatherRequest(preferencesManager.getLocation());
 		} else {
 			Log.i(TAG, "Location: " + location.getLatitude() + ", " + location.getLongitude());
 
-			preferencesManager.saveLocation(location.getLatitude(), location.getLongitude());
+			preferencesManager.saveLocation(location.getLatitude(), location.getLongitude())
+					.andThen(Completable.fromAction(() -> {
+						Log.i(TAG, "Saved location");
+						weatherRequest(preferencesManager.getLocation());
+					})).subscribe();
 		}
-
-		weatherRequest(preferencesManager.getLocation());
 	}
 
 	private void getLastLocation() throws SecurityException {
