@@ -18,14 +18,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clWeatherDayInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -327,8 +327,6 @@
                 android:id="@+id/clHourlyForecast"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/block_background"
                 android:padding="12dp">
@@ -361,9 +359,9 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"
                     android:scrollbars="none"
-                    android:nestedScrollingEnabled="false"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -376,8 +374,6 @@
                 android:id="@+id/clDayForecast"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/block_background"
                 android:padding="12dp">
@@ -418,8 +414,6 @@
                 android:id="@+id/clChanceOfRain"
                 android:layout_width="match_parent"
                 android:layout_height="210dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/block_background"
                 android:padding="12dp">
@@ -451,8 +445,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:fillViewport="true"
                     android:contentDescription="Precipitation forecast list."
+                    android:fillViewport="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -476,8 +470,6 @@
                 android:id="@+id/clWeatherSunsetInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout

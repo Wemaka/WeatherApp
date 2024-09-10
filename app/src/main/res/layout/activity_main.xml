@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="22dp"
                 android:fontFamily="@font/productsans"
-                android:text="3°"
+                android:text="20°"
                 android:textColor="@color/white"
                 android:textSize="112sp"
                 app:layout_constraintBottom_toTopOf="@+id/clDateDegrees"
