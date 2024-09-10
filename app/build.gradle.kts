@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.wire)
 }
 
 android {
@@ -35,8 +36,11 @@ android {
     }
 }
 
-dependencies {
+wire {
+    java {}
+}
 
+dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -51,12 +55,14 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.swiperefreshlayout)
     implementation(libs.fragment)
+    
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
 
-    implementation(libs.datastore.preferences.rxjava3)
-    implementation(libs.datastore.preferences)
-//    implementation(libs.rxjava)
+    implementation(libs.datastore.core)
+    implementation(libs.datastore.rxjava3)
+    implementation(libs.rxjava)
+    implementation(libs.reactivex.rxandroid)
 
 
     testImplementation(libs.junit)

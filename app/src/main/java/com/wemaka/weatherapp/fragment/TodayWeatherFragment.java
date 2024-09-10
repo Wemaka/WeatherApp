@@ -1,12 +1,7 @@
 package com.wemaka.weatherapp.fragment;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
-
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,29 +12,24 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.wemaka.weatherapp.MainViewModel;
-import com.wemaka.weatherapp.data.DayForecast;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.activity.LineChartActivity;
 import com.wemaka.weatherapp.adapter.HourlyTempForecastAdapter;
 import com.wemaka.weatherapp.adapter.decoration.ListPaddingDecoration;
-import com.wemaka.weatherapp.data.Temperature;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
-import com.wemaka.weatherapp.data.PrecipitationChance;
 import com.wemaka.weatherapp.math.UnitConverter;
-
-import org.jetbrains.annotations.NotNull;
+import com.wemaka.weatherapp.store.proto.DayForecastProto;
+import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,26 +84,26 @@ public class TodayWeatherFragment extends Fragment {
 			}
 		});
 
-		model.getLiveData().observe(getViewLifecycleOwner(), item -> {
-			DayForecast tf = item.getTodayForecast();
+		model.getDaysForecastResponseData().observe(getViewLifecycleOwner(), forecast -> {
+			DayForecastProto df = forecast.dayForecast;
 
-			binding.tvSunriseTime.setText(tf.getSunrise());
-			binding.tvSunsetTime.setText(tf.getSunset());
-			binding.tvWindSpeed.setText(tf.getWindSpeed().getCurrentWindSpeed());
-			binding.tvRainPercent.setText(tf.getPrecipitationChance().getPercent());
-			binding.tvPressureHpa.setText(tf.getPressure().getCurrentPressure());
-			binding.tvUv.setText(tf.getUvIndex().getCurrentUvIndex());
-			hourlyTempForecastAdapter.submitList(tf.getHourlyTempForecast());
-			createWeekDayForecast(item.getWeekTempForecast());
-			createPrecipitationForecast(tf.getPrecipitationChanceForecast());
-			binding.tvWindDiff.setText(tf.getWindSpeed().getWindSpeedDiff());
-			binding.tvRainDiff.setText(tf.getPrecipitationChance().getPrecipitationChanceDiff());
-			binding.tvPressureDiff.setText(tf.getPressure().getPressureDiff());
-			binding.tvUvDiff.setText(tf.getUvIndex().getUvIndexDiff());
-			binding.imgWindSpeedIndicator.setImageResource(tf.getWindSpeed().getImgIdChangeWindSpeed());
-			binding.imgRainChanceIndicator.setImageResource(tf.getPrecipitationChance().getImgIdPrecipitationChance());
-			binding.imgPressureIndicator.setImageResource(tf.getPressure().getImgIdChangePressure());
-			binding.imgUvIndexIndicator.setImageResource(tf.getUvIndex().getImgIdChangeUvIndex());
+			binding.tvSunriseTime.setText(df.sunrise);
+			binding.tvSunsetTime.setText(df.sunset);
+			binding.tvWindSpeed.setText(df.windSpeed.currentWindSpeed);
+			binding.tvRainPercent.setText(df.precipitationChance.percent);
+			binding.tvPressureHpa.setText(df.pressure.currentPressure);
+			binding.tvUv.setText(df.uvIndex.currentUvIndex);
+			hourlyTempForecastAdapter.submitList(df.hourlyTempForecast);
+			createWeekDayForecast(forecast.weekTempForecast);
+			createPrecipitationForecast(df.precipitationChanceForecast);
+			binding.tvWindDiff.setText(df.windSpeed.windSpeedDiff);
+			binding.tvRainDiff.setText(df.precipitationChance.precipitationChanceDiff);
+			binding.tvPressureDiff.setText(df.pressure.pressureDiff);
+			binding.tvUvDiff.setText(df.uvIndex.uvIndexDiff);
+			binding.imgWindSpeedIndicator.setImageResource(df.windSpeed.imgIdChangeWindSpeed);
+			binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);
+			binding.imgPressureIndicator.setImageResource(df.pressure.imgIdChangePressure);
+			binding.imgUvIndexIndicator.setImageResource(df.uvIndex.imgIdChangeUvIndex);
 		});
 	}
 
@@ -153,11 +143,11 @@ public class TodayWeatherFragment extends Fragment {
 		l.getChart().setMarker(new LineChartActivity.CustomMarkerView(binding.getRoot().getContext(), R.layout.marker_layout));
 	}
 
-	private void createPrecipitationForecast(List<PrecipitationChance> precipitationChances) {
+	private void createPrecipitationForecast(List<PrecipitationChanceProto> precipitationChances) {
 		TableLayout tableLayout = binding.tlChanceOfRain;
 
 		for (int i = 0; i < precipitationChances.size(); i++) {
-			PrecipitationChance forecastRain = precipitationChances.get(i);
+			PrecipitationChanceProto forecastRain = precipitationChances.get(i);
 
 			TableRow tableRow = new TableRow(getActivity());
 			tableRow.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -169,13 +159,13 @@ public class TodayWeatherFragment extends Fragment {
 			TextView percentView = new TextView(getActivity());
 
 
-			timeView.setText(forecastRain.getTime());
+			timeView.setText(forecastRain.time);
 			percentView.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
 			timeView.setTextColor(getResources().getColor(R.color.black, null));
 			timeView.setGravity(Gravity.END);
 
-			progressBarView.setProgress(forecastRain.getCurrentPrecipitationChance());
+			progressBarView.setProgress(forecastRain.currentPrecipitationChance);
 			TableRow.LayoutParams params = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
 			if (i == precipitationChances.size() - 1) {
 				params.setMargins(UnitConverter.dpToPx(getActivity(), 33), 0, UnitConverter.dpToPx(getActivity(), 22), 0);
@@ -184,7 +174,7 @@ public class TodayWeatherFragment extends Fragment {
 			}
 			progressBarView.setLayoutParams(params);
 
-			percentView.setText(forecastRain.getPercent());
+			percentView.setText(forecastRain.percent);
 			percentView.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			percentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
 			percentView.setTextColor(getResources().getColor(R.color.black, null));

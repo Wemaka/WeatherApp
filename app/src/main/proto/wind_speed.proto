@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.wemaka.weatherapp.store.proto";
+option java_multiple_files = true;
+option java_outer_classname = "WindSpeedProto";
+
+message WindSpeedProto {
+  string currentWindSpeed = 1;
+  string windSpeedDiff = 2;
+  int32 imgIdChangeWindSpeed = 3;
+}

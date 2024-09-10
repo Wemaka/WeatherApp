@@ -1,0 +1,12 @@
+syntax = "proto3";
+import "settings_app.proto";
+import "days_forecast_response.proto";
+
+option java_package = "com.wemaka.weatherapp.store.proto";
+option java_multiple_files = true;
+option java_outer_classname = "DataStoreProto";
+
+message DataStoreProto {
+  SettingsProto settings = 1;
+  DaysForecastResponseProto forecast = 2;
+}

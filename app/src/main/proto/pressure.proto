@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.wemaka.weatherapp.store.proto";
+option java_multiple_files = true;
+option java_outer_classname = "PressureProto";
+
+message PressureProto {
+  string currentPressure = 1;
+  string pressureDiff = 2;
+  int32 imgIdChangePressure = 3;
+}

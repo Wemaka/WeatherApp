@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -16,14 +15,14 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
+//import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
+import androidx.datastore.rxjava3.RxDataStoreBuilder;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -32,21 +31,24 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.openmeteo.sdk.WeatherApiResponse;
-import com.wemaka.weatherapp.api.RequestCallback;
-import com.wemaka.weatherapp.api.WeatherParse;
-import com.wemaka.weatherapp.data.DayForecast;
 import com.wemaka.weatherapp.LocationService;
 import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
-import com.wemaka.weatherapp.data.preferences.PreferencesManager;
+import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.data.store.DataStoreSerializer;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
+import com.wemaka.weatherapp.store.proto.DayForecastProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 	public static final String TAG = "MainActivity";
@@ -62,13 +64,35 @@ public class MainActivity extends AppCompatActivity {
 		EdgeToEdge.enable(this);
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		model = new ViewModelProvider(this).get(MainViewModel.class);
-		PreferencesManager pm = PreferencesManager.getInstance();
+		ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
 		mLocationService = new LocationService(this, model);
 		setContentView(binding.getRoot());
 
-		if (pm.getDataStore().get() == null) {
-			pm.getDataStore().set(new RxPreferenceDataStoreBuilder(this, "settings").build());
+		if (dataStoreRepository.getDataStore() == null) {
+			dataStoreRepository.setDataStore(
+					new RxDataStoreBuilder<>(this, "settings.pb", new DataStoreSerializer()).build());
 		}
+
+		DaysForecastResponseProto daysForecastResponseProto =
+				dataStoreRepository.getDaysForecastResponse().blockingGet();
+
+		if (daysForecastResponseProto != null) {
+			model.getDaysForecastResponseData().postValue(daysForecastResponseProto);
+		}
+//
+//		Disposable setUi = null;
+//		setUi = dataStoreRepository.getDaysForecastResponse()
+//				.subscribeOn(Schedulers.io())
+//				.observeOn(AndroidSchedulers.mainThread())
+//				.subscribe(forecast -> {
+//							model.getDaysForecastResponseData().postValue(forecast);
+//						}, throwable -> {
+//						},
+//						() -> {
+//							if (setUi != null && !setUi.isDisposed()) {
+//								setUi.dispose();
+//							}
+//						});
 
 		handleLocationPermission();
 
@@ -104,16 +128,16 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 
-		model.getLiveData().observe(this, item -> {
-			DayForecast tf = item.getTodayForecast();
+		model.getDaysForecastResponseData().observe(this, forecast -> {
+			DayForecastProto df = forecast.dayForecast;
 
-			binding.tvCityCountry.setText(tf.getLocationName());
-			binding.tvMainDegree.setText(tf.getTemperature());
-			binding.tvFeelsLike.setText("Feels like " + tf.getApparentTemp());
-			binding.imgMainWeatherIcon.setImageResource(tf.getImgIdWeatherCode());
-			binding.tvWeatherMainText.setText(tf.getWeatherCode());
+			binding.tvCityCountry.setText(df.locationName);
+			binding.tvMainDegree.setText(df.temperature);
+			binding.tvFeelsLike.setText("Feels like " + df.apparentTemp);
+			binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
+			binding.tvWeatherMainText.setText(df.weatherCode);
 
-			binding.tvDegreesTime.setText("Last update\n" + tf.getDate());
+			binding.tvDegreesTime.setText("Last update\n" + df.date);
 		});
 
 		ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
@@ -121,6 +145,12 @@ public class MainActivity extends AppCompatActivity {
 			v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
 			return insets;
 		});
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mLocationService.clearDisposables();
 	}
 
 	private void createCustomTabLayout() {

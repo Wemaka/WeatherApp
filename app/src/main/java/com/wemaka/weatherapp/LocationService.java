@@ -4,7 +4,6 @@ import static androidx.activity.result.ActivityResultCallerKt.registerForActivit
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -12,26 +11,27 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.openmeteo.sdk.WeatherApiResponse;
 import com.wemaka.weatherapp.api.RequestCallback;
 import com.wemaka.weatherapp.api.WeatherParse;
-import com.wemaka.weatherapp.data.MyLocation;
-import com.wemaka.weatherapp.data.Settings;
-import com.wemaka.weatherapp.data.preferences.PreferencesManager;
+import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.store.proto.DataStoreProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.LocationCoordProto;
+import com.wemaka.weatherapp.store.proto.SettingsProto;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class LocationService {
@@ -39,7 +39,10 @@ public class LocationService {
 	private final Activity activity;
 	private final MainViewModel mainViewModel;
 	private final FusedLocationProviderClient fusedLocationClient;
-	private static final PreferencesManager preferencesManager = PreferencesManager.getInstance();
+	private static final ProtoDataStoreRepository dataStoreRepository =
+			ProtoDataStoreRepository.getInstance();
+	private static final CompositeDisposable compositeDisposable = new CompositeDisposable();
+	private static final LocationCoordProto DEFAULT_LOCATION = new LocationCoordProto(40.72, -74.00);
 
 	public LocationService(Activity activity, MainViewModel mainViewModel) {
 		this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
@@ -61,33 +64,60 @@ public class LocationService {
 				ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 	}
 
-	@SuppressLint("MissingPermission")
 	public void getLocation() {
-		Location loc = PreferencesManager.getInstance().getLocation();
-		Log.i(TAG, "PREFERENCES LOC: " + loc.getProvider());
+		AtomicReference<LocationCoordProto> locCoord =
+				new AtomicReference<>(DEFAULT_LOCATION);
 
-		if (!isPermissionGranted()) {
-			weatherRequest(preferencesManager.getLocation());
-			return;
-		}
+		compositeDisposable.add(dataStoreRepository.getSettings()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.doOnTerminate(() -> {
+					Log.i(TAG, "COMPLETE SETTINGS GET 1");
 
-		if (isProviderEnabled()) {
-			getCurrentLocation();
-		} else {
-			getLastLocation();
-		}
+					if (!isPermissionGranted()) {
+						weatherRequest(locCoord.get());
+						return;
+					}
+
+					if (isProviderEnabled()) {
+						getCurrentLocation();
+					} else {
+						getLastLocation();
+					}
+				})
+				.subscribe(
+						settings -> {
+							Log.i(TAG, "SETTINGS GET 1: " + settings);
+							locCoord.set(settings.locationCoord);
+						},
+						throwable -> Log.e(TAG, "LocationService#getLocation", throwable)
+				)
+		);
 	}
 
 	private void handleLocation(Location location, Runnable lackLocation) {
 		if (location == null) {
 			lackLocation.run();
+
+			compositeDisposable.add(dataStoreRepository.getSettings()
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(
+							settings -> {
+								Log.i(TAG, "SETTINGS GET 2");
+								weatherRequest(settings.locationCoord);
+							},
+							throwable -> Log.e(TAG, "LocationService#handleLocation 1", throwable),
+							() -> {
+								weatherRequest(DEFAULT_LOCATION);
+							}
+					)
+			);
 		} else {
-			Log.i(TAG, "Location: " + location.getLatitude() + ", " + location.getLongitude());
+			Log.i(TAG, "Location: " + location.getLatitude() + " - " + location.getLongitude());
 
-			preferencesManager.saveLocation(location.getLatitude(), location.getLongitude());
+			weatherRequest(new LocationCoordProto(location.getLatitude(), location.getLongitude()));
 		}
-
-		weatherRequest(preferencesManager.getLocation());
 	}
 
 	private void getLastLocation() throws SecurityException {
@@ -125,7 +155,7 @@ public class LocationService {
 				});
 	}
 
-	private void weatherRequest(Location loc) {
+	private void weatherRequest(LocationCoordProto loc) {
 		if (loc == null) {
 			return;
 		}
@@ -133,12 +163,22 @@ public class LocationService {
 		WeatherParse weatherParse = new WeatherParse();
 
 		weatherParse.request(
-				loc.getLatitude(),
-				loc.getLongitude(),
+				loc.latitude,
+				loc.longitude,
 				new RequestCallback() {
 					@Override
 					public void onSuccess(WeatherApiResponse response) {
-						mainViewModel.getLiveData().postValue(weatherParse.parseWeatherData(response));
+						DaysForecastResponseProto daysForecast = weatherParse.parseWeatherData(response);
+
+						SettingsProto settingsProto = new SettingsProto(
+								new LocationCoordProto(loc.latitude, loc.longitude)
+						);
+
+						dataStoreRepository.saveDataStore(new DataStoreProto(settingsProto, daysForecast))
+								.doOnComplete(() -> Log.i(TAG, "SAVE DATASTORE"))
+								.subscribe();
+
+						mainViewModel.getDaysForecastResponseData().postValue(daysForecast);
 					}
 
 					@Override
@@ -147,5 +187,11 @@ public class LocationService {
 					}
 				}
 		);
+	}
+
+	public void clearDisposables() {
+		if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
+			compositeDisposable.dispose();
+		}
 	}
 }

@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "location_coord.proto";
+
+option java_package = "com.wemaka.weatherapp.store.proto";
+option java_multiple_files = true;
+option java_outer_classname = "SettingsAppProto";
+
+message SettingsProto {
+  LocationCoordProto locationCoord = 1;
+}
