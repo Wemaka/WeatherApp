@@ -175,7 +175,7 @@ public class LocationService {
 						);
 
 						dataStoreRepository.saveDataStore(new DataStoreProto(settingsProto, daysForecast))
-								.doOnComplete(() -> Log.i(TAG, "SAVE DATASTORE"))
+								.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE"))
 								.subscribe();
 
 						mainViewModel.getDaysForecastResponseData().postValue(daysForecast);

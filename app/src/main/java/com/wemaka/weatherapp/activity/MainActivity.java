@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 				dataStoreRepository.getDaysForecastResponse().blockingGet();
 
 		if (daysForecastResponseProto != null) {
-			model.getDaysForecastResponseData().postValue(daysForecastResponseProto);
+			model.getDaysForecastResponseData().setValue(daysForecastResponseProto);
 		}
 //
 //		Disposable setUi = null;
