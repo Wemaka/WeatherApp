@@ -21,17 +21,14 @@ import com.openmeteo.sdk.WeatherApiResponse;
 import com.wemaka.weatherapp.api.RequestCallback;
 import com.wemaka.weatherapp.api.WeatherParse;
 import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
-import com.wemaka.weatherapp.store.proto.DataStoreProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
-import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import lombok.Getter;
 
 
 public class LocationService {
@@ -42,7 +39,10 @@ public class LocationService {
 	private static final ProtoDataStoreRepository dataStoreRepository =
 			ProtoDataStoreRepository.getInstance();
 	private static final CompositeDisposable compositeDisposable = new CompositeDisposable();
+	@Getter
 	private static final LocationCoordProto DEFAULT_LOCATION = new LocationCoordProto(40.72, -74.00);
+	@Getter
+	private LocationCoordProto location = DEFAULT_LOCATION;
 
 	public LocationService(Activity activity, MainViewModel mainViewModel) {
 		this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
@@ -64,14 +64,13 @@ public class LocationService {
 				ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 	}
 
-	public void getLocation() {
-		AtomicReference<LocationCoordProto> locCoord =
-				new AtomicReference<>(DEFAULT_LOCATION);
+	public void fetchLocation() {
+		AtomicReference<LocationCoordProto> locCoord = new AtomicReference<>(DEFAULT_LOCATION);
 
 		compositeDisposable.add(dataStoreRepository.getSettings()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.doOnTerminate(() -> {
+				.doAfterTerminate(() -> {
 					Log.i(TAG, "COMPLETE SETTINGS GET 1");
 
 					if (!isPermissionGranted()) {
@@ -168,17 +167,19 @@ public class LocationService {
 				new RequestCallback() {
 					@Override
 					public void onSuccess(WeatherApiResponse response) {
-						DaysForecastResponseProto daysForecast = weatherParse.parseWeatherData(response);
+//						DaysForecastResponseProto daysForecast = weatherParse.parseWeatherData(response);
 
-						SettingsProto settingsProto = new SettingsProto(
-								new LocationCoordProto(loc.latitude, loc.longitude)
-						);
+//						SettingsProto settingsProto = new SettingsProto(
+//								new LocationCoordProto(loc.latitude, loc.longitude)
+//						);
+//
+//						dataStoreRepository.saveDataStore(new DataStoreProto(settingsProto, daysForecast))
+//								.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE"))
+//								.subscribe();
 
-						dataStoreRepository.saveDataStore(new DataStoreProto(settingsProto, daysForecast))
-								.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE"))
-								.subscribe();
+						location = new LocationCoordProto(loc.latitude, loc.longitude);
 
-						mainViewModel.getDaysForecastResponseData().postValue(daysForecast);
+						mainViewModel.getDaysForecastResponseData().postValue(weatherParse.parseWeatherData(response));
 					}
 
 					@Override

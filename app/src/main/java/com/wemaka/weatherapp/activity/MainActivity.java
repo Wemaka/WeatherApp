@@ -1,24 +1,34 @@
 package com.wemaka.weatherapp.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 //import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
@@ -39,12 +49,16 @@ import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.data.store.DataStoreSerializer;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
+import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.LocationCoordProto;
+import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -68,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
 		mLocationService = new LocationService(this, model);
 		setContentView(binding.getRoot());
 
+
 		if (dataStoreRepository.getDataStore() == null) {
 			dataStoreRepository.setDataStore(
 					new RxDataStoreBuilder<>(this, "settings.pb", new DataStoreSerializer()).build());
@@ -79,29 +94,16 @@ public class MainActivity extends AppCompatActivity {
 		if (daysForecastResponseProto != null) {
 			model.getDaysForecastResponseData().setValue(daysForecastResponseProto);
 		}
-//
-//		Disposable setUi = null;
-//		setUi = dataStoreRepository.getDaysForecastResponse()
-//				.subscribeOn(Schedulers.io())
-//				.observeOn(AndroidSchedulers.mainThread())
-//				.subscribe(forecast -> {
-//							model.getDaysForecastResponseData().postValue(forecast);
-//						}, throwable -> {
-//						},
-//						() -> {
-//							if (setUi != null && !setUi.isDisposed()) {
-//								setUi.dispose();
-//							}
-//						});
 
 		handleLocationPermission();
 
 		createCustomTabLayout();
 
+
 		binding.swipeRefresh.setOnRefreshListener(() -> {
 					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
 					ensureLocationProviderEnabled();
-					mLocationService.getLocation();
+					mLocationService.fetchLocation();
 					binding.swipeRefresh.setRefreshing(false);
 				}
 		);
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 				if (currentId == R.id.start) {
 					binding.swipeRefresh.setEnabled(true);
 				}
+
 			}
 
 			@Override
@@ -148,10 +151,33 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		mLocationService.clearDisposables();
+	protected void onStop() {
+		super.onStop();
+
+		Log.i(TAG, "ON STOP");
+
+		SettingsProto settingsProto = new SettingsProto(
+				mLocationService.getLocation()
+		);
+
+		ProtoDataStoreRepository.getInstance()
+				.saveDataStore(new DataStoreProto(settingsProto, model.getDaysForecastResponseData().getValue()))
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE"))
+				.doOnError(e -> Log.e(TAG, "Error saving data", e))
+				.subscribe();
 	}
+
+	@Override
+	protected void onDestroy() {
+		mLocationService.clearDisposables();
+
+		Log.i(TAG, "ON DESTROY");
+
+		super.onDestroy();
+	}
+
 
 	private void createCustomTabLayout() {
 		String[] tabTitleButton = new String[]{"Today", "10 days"};
@@ -202,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 			Log.i(TAG, "No location access granted");
 		}
 
-		mLocationService.getLocation();
+		mLocationService.fetchLocation();
 	}
 
 	private void handleLocationPermission() {

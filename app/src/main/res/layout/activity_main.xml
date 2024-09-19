@@ -23,13 +23,23 @@
             android:background="@color/backgroundPinkLight"
             app:layoutDescription="@xml/activity_main_scene">
 
+            <com.wemaka.weatherapp.MySearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:searchIcon="@drawable/ic_search"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <FrameLayout
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="369dp"
+                android:layout_height="400dp"
                 android:layout_marginTop="-30dp"
                 android:background="@color/backgroundPinkLight"
                 android:minHeight="150dp"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +50,7 @@
                 android:layout_height="0dp"
                 android:contentDescription="main_background_night"
                 android:scaleType="fitXY"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/toolbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

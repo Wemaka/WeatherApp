@@ -13,7 +13,7 @@ public class MainViewModel extends ViewModel {
 			new MutableLiveData<>();
 //	private final MutableLiveData<List<DaysForecastResponse>> liveDataList = new MutableLiveData<>();
 
-	public void setDaysForecastResponseData(DaysForecastResponseProto forecast) {
-		daysForecastResponseData.setValue(forecast);
-	}
+//	public void setDaysForecastResponseData(DaysForecastResponseProto forecast) {
+//		daysForecastResponseData.setValue(forecast);
+//	}
 }
