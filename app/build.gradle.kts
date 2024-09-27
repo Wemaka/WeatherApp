@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.swiperefreshlayout)
     implementation(libs.fragment)
-    
+
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
 
@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.datastore.rxjava3)
     implementation(libs.rxjava)
     implementation(libs.reactivex.rxandroid)
+
+    implementation(libs.blurview)
 
 
     testImplementation(libs.junit)

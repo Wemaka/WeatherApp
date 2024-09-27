@@ -3,10 +3,11 @@
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        motion:constraintSetEnd="@+id/end"
-        motion:constraintSetStart="@id/start"
+        motion:constraintSetStart="@+id/startHeader"
+        motion:constraintSetEnd="@+id/endHeader"
         motion:duration="1000"
         motion:layoutDuringTransition="honorRequest">
+
         <KeyFrameSet>
             <KeyAttribute
                 motion:motionTarget="@+id/imgHeaderBackground"
@@ -76,14 +77,14 @@
                     motion:customColorValue="@color/black" />
             </KeyAttribute>
             <KeyAttribute
-                motion:motionTarget="@+id/imgSearchIcon"
+                motion:motionTarget="@+id/searchBtn"
                 motion:framePosition="50">
                 <CustomAttribute
                     motion:attributeName="colorFilter"
                     motion:customColorValue="@color/white" />
             </KeyAttribute>
             <KeyAttribute
-                motion:motionTarget="@+id/imgSearchIcon"
+                motion:motionTarget="@+id/searchBtn"
                 motion:framePosition="60">
                 <CustomAttribute
                     motion:attributeName="colorFilter"
@@ -109,12 +110,13 @@
 
         <OnSwipe
             motion:dragDirection="dragUp"
-            motion:touchAnchorId="@id/vpContainer"
+            motion:touchAnchorId="@+id/vpContainer"
             motion:touchAnchorSide="top"
             motion:maxAcceleration="15" />
     </Transition>
 
-    <ConstraintSet android:id="@+id/start">
+
+    <ConstraintSet android:id="@+id/startHeader">
         <Constraint
             android:id="@+id/imgMainWeatherIcon"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -123,7 +125,7 @@
             motion:layout_constraintBottom_toTopOf="@+id/tvWeatherMainText"
             motion:layout_constraintVertical_bias="0.3"
             android:layout_marginEnd="22dp"
-            motion:layout_constraintTop_toBottomOf="@+id/imgSearchIcon"
+            motion:layout_constraintTop_toBottomOf="@+id/searchBtn"
             motion:layout_constraintVertical_chainStyle="packed" />
         <Constraint
             android:id="@+id/tvCityCountry"
@@ -138,13 +140,15 @@
                 motion:customColorValue="@color/white" />
         </Constraint>
         <Constraint
-            android:id="@+id/imgSearchIcon"
-            motion:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/searchBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="22dp"
-            motion:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="50dp">
+            motion:layout_constraintBottom_toBottomOf="@+id/tvCityCountry"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintHorizontal_bias="1.0"
+            motion:layout_constraintStart_toEndOf="@+id/tvCityCountry"
+            motion:layout_constraintTop_toTopOf="@+id/tvCityCountry">
             <CustomAttribute
                 motion:attributeName="colorFilter"
                 motion:customColorValue="@color/white" />
@@ -175,7 +179,6 @@
             motion:layout_constraintTop_toBottomOf="@+id/imgMainWeatherIcon" />
         <Constraint
             android:id="@+id/toolbar"
-            android:visibility="invisible"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="400dp"
@@ -199,34 +202,11 @@
                 motion:attributeName="textColor"
                 motion:customColorValue="@color/white" />
         </Constraint>
-        <Constraint
-            android:id="@+id/flNavBtn"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
-            motion:layout_constraintStart_toStartOf="parent">
-            <CustomAttribute
-                motion:attributeName="backgroundColor"
-                motion:customColorValue="@color/backgroundPinkLight" />
-        </Constraint>
-        <Constraint
-            android:id="@+id/searchView"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toStartOf="parent">
-            <CustomAttribute
-                motion:attributeName="colorFilter"
-                motion:customColorValue="@color/white" />
-        </Constraint>
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
+    <ConstraintSet android:id="@+id/endHeader">
         <Constraint
             android:id="@+id/toolbar"
-            android:visibility="invisible"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="171dp"
@@ -250,9 +230,9 @@
             android:layout_width="59dp"
             android:layout_height="59dp"
             android:layout_marginEnd="22dp"
-            motion:layout_constraintTop_toBottomOf="@+id/imgSearchIcon"
+            motion:layout_constraintTop_toBottomOf="@+id/searchBtn"
             motion:layout_constraintVertical_chainStyle="packed"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="0dp" />
         <Constraint
             android:id="@+id/tvCityCountry"
             android:layout_width="wrap_content"
@@ -266,13 +246,15 @@
                 motion:customColorValue="@color/black" />
         </Constraint>
         <Constraint
-            android:id="@+id/imgSearchIcon"
-            motion:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/searchBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="22dp"
-            motion:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="50dp">
+            motion:layout_constraintBottom_toBottomOf="@+id/tvCityCountry"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintHorizontal_bias="1.0"
+            motion:layout_constraintStart_toEndOf="@+id/tvCityCountry"
+            motion:layout_constraintTop_toTopOf="@+id/tvCityCountry">
             <CustomAttribute
                 motion:attributeName="colorFilter"
                 motion:customColorValue="@color/black" />
@@ -309,28 +291,6 @@
             motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree">
             <CustomAttribute
                 motion:attributeName="textColor"
-                motion:customColorValue="@color/black" />
-        </Constraint>
-        <Constraint
-            android:id="@+id/flNavBtn"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
-            motion:layout_constraintStart_toStartOf="parent">
-            <CustomAttribute
-                motion:attributeName="backgroundColor"
-                motion:customColorValue="@color/backgroundPink" />
-        </Constraint>
-        <Constraint
-            android:id="@+id/searchView"
-            motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toStartOf="parent">
-            <CustomAttribute
-                motion:attributeName="colorFilter"
                 motion:customColorValue="@color/black" />
         </Constraint>
     </ConstraintSet>

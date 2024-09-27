@@ -107,10 +107,6 @@ public class TodayWeatherFragment extends Fragment {
 		});
 	}
 
-	public String getTabTitle() {
-		return "Today";
-	}
-
 	private void createWeekDayForecast(List<Float> tempForecast) {
 		List<String> weekDay = List.of("", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat", "Sun");
 		List<Entry> points = new ArrayList<>();

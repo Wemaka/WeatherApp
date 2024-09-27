@@ -1,34 +1,24 @@
 package com.wemaka.weatherapp.activity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 //import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
@@ -48,29 +38,29 @@ import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
 import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.data.store.DataStoreSerializer;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
+import com.wemaka.weatherapp.fragment.SearchMenuFragment;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
-import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 	public static final String TAG = "MainActivity";
 	private ActivityMainBinding binding;
-	public LocationService mLocationService;
+	private LocationService mLocationService;
 	private MainViewModel model;
 	private final ActivityResultLauncher<String[]> locationPermissionRequest =
 			registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), this::onLocationPermissionResult);
+	private static final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,70 +68,13 @@ public class MainActivity extends AppCompatActivity {
 		EdgeToEdge.enable(this);
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		model = new ViewModelProvider(this).get(MainViewModel.class);
-		ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
-		mLocationService = new LocationService(this, model);
+
 		setContentView(binding.getRoot());
 
-
-		if (dataStoreRepository.getDataStore() == null) {
-			dataStoreRepository.setDataStore(
-					new RxDataStoreBuilder<>(this, "settings.pb", new DataStoreSerializer()).build());
-		}
-
-		DaysForecastResponseProto daysForecastResponseProto =
-				dataStoreRepository.getDaysForecastResponse().blockingGet();
-
-		if (daysForecastResponseProto != null) {
-			model.getDaysForecastResponseData().setValue(daysForecastResponseProto);
-		}
-
-		handleLocationPermission();
-
-		createCustomTabLayout();
-
-
-		binding.swipeRefresh.setOnRefreshListener(() -> {
-					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
-					ensureLocationProviderEnabled();
-					mLocationService.fetchLocation();
-					binding.swipeRefresh.setRefreshing(false);
-				}
-		);
-
-		binding.motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
-			@Override
-			public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {
-				binding.swipeRefresh.setEnabled(false);
-			}
-
-			@Override
-			public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {
-			}
-
-			@Override
-			public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
-				if (currentId == R.id.start) {
-					binding.swipeRefresh.setEnabled(true);
-				}
-
-			}
-
-			@Override
-			public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {
-			}
-		});
-
-		model.getDaysForecastResponseData().observe(this, forecast -> {
-			DayForecastProto df = forecast.dayForecast;
-
-			binding.tvCityCountry.setText(df.locationName);
-			binding.tvMainDegree.setText(df.temperature);
-			binding.tvFeelsLike.setText("Feels like " + df.apparentTemp);
-			binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
-			binding.tvWeatherMainText.setText(df.weatherCode);
-
-			binding.tvDegreesTime.setText("Last update\n" + df.date);
-		});
+		initLocationService();
+		initUi();
+		initDataStore();
+		observeViewModel();
 
 		ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
 			Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -172,15 +105,33 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		mLocationService.clearDisposables();
+		compositeDisposable.clear();
 
 		Log.i(TAG, "ON DESTROY");
 
 		super.onDestroy();
 	}
 
+	private void initLocationService() {
+		mLocationService = new LocationService(this, model);
+		handleLocationPermission();
+	}
 
-	private void createCustomTabLayout() {
-		String[] tabTitleButton = new String[]{"Today", "10 days"};
+	private void initDataStore() {
+		ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
+
+		if (dataStoreRepository.getDataStore() == null) {
+			dataStoreRepository.setDataStore(
+					new RxDataStoreBuilder<>(this, "settings.pb", new DataStoreSerializer()).build());
+		}
+
+		compositeDisposable.add(
+				dataStoreRepository.getDaysForecastResponse().observeOn(AndroidSchedulers.mainThread())
+						.subscribe(days -> model.getDaysForecastResponseData().setValue(days))
+		);
+	}
+
+	private void initUi() {
 		List<Fragment> fragmentList = new ArrayList<>();
 		fragmentList.add(TodayWeatherFragment.newInstance());
 
@@ -188,31 +139,53 @@ public class MainActivity extends AppCompatActivity {
 		FragmentStateAdapter pageAdapter = new ViewPagerAdapter(this, fragmentList);
 		pager.setAdapter(pageAdapter);
 
-		TabLayout tabLayout = binding.tbNavBtn;
-		new TabLayoutMediator(tabLayout, pager, (tab, i) -> {
-			LayoutInflater inflater = LayoutInflater.from(this);
-			View customView = inflater.inflate(R.layout.custom_tab, tabLayout, false);
-			TextView tabTitle = customView.findViewById(R.id.tvTabTitle);
-			tabTitle.setText(tabTitleButton[i]);
 
-			tab.setCustomView(customView);
-		}).attach();
-		tabLayout.getTabAt(tabLayout.getSelectedTabPosition()).getCustomView().findViewById(R.id.lnrlContainerTitle).setBackground(getResources().getDrawable(R.drawable.block_background_select_tab, null));
-		tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+		binding.swipeRefresh.setOnRefreshListener(() -> {
+					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
+					ensureLocationProviderEnabled();
+					mLocationService.fetchLocation();
+					binding.swipeRefresh.setRefreshing(false);
+				}
+		);
+
+		binding.searchBtn.setOnClickListener(v -> {
+			SearchMenuFragment searchBottomSheet = new SearchMenuFragment();
+			searchBottomSheet.show(getSupportFragmentManager(), "SearchBottomSheet");
+		});
+
+		binding.motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
 			@Override
-			public void onTabSelected(TabLayout.Tab tab) {
-				tab.getCustomView().findViewById(R.id.lnrlContainerTitle).setBackground(getResources().getDrawable(R.drawable.block_background_select_tab, null));
+			public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {
+				binding.swipeRefresh.setEnabled(false);
 			}
 
 			@Override
-			public void onTabUnselected(TabLayout.Tab tab) {
-				tab.getCustomView().findViewById(R.id.lnrlContainerTitle).setBackground(getResources().getDrawable(R.drawable.block_background_tab, null));
+			public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {
 			}
 
 			@Override
-			public void onTabReselected(TabLayout.Tab tab) {
-
+			public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
+				if (currentId == R.id.startHeader) {
+					binding.swipeRefresh.setEnabled(true);
+				}
 			}
+
+			@Override
+			public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {
+			}
+		});
+	}
+
+	private void observeViewModel() {
+		model.getDaysForecastResponseData().observe(this, forecast -> {
+			DayForecastProto df = forecast.dayForecast;
+
+			binding.tvCityCountry.setText(df.locationName);
+			binding.tvMainDegree.setText(df.temperature);
+			binding.tvFeelsLike.setText("Feels like " + df.apparentTemp);
+			binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
+			binding.tvWeatherMainText.setText(df.weatherCode);
+			binding.tvDegreesTime.setText("Last update\n" + df.date);
 		});
 	}
 

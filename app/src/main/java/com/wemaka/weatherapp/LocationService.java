@@ -74,6 +74,7 @@ public class LocationService {
 					Log.i(TAG, "COMPLETE SETTINGS GET 1");
 
 					if (!isPermissionGranted()) {
+						Log.i(TAG, "NO PERMISSION");
 						weatherRequest(locCoord.get());
 						return;
 					}

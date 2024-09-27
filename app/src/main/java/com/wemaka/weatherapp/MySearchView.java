@@ -1,68 +1,84 @@
 package com.wemaka.weatherapp;
 
+import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.SearchView;
+
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.res.ResourcesCompat;
+
+import java.lang.reflect.Field;
 
 public class MySearchView extends SearchView {
-	private final Resources res = Resources.getSystem();
-	private final int search_mag_icon = res.getIdentifier("android:id/search_button", null, null);
 	private ImageView searchIcon;
+	private ImageView searchClose;
+	private EditText searchText;
 
-	public MySearchView(Context context) {
+	public MySearchView(@NonNull Context context) {
 		super(context);
 		init();
 	}
 
-	public MySearchView(Context context, AttributeSet attrs) {
+	public MySearchView(@NonNull Context context, @Nullable AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
 
-	public MySearchView(Context context, AttributeSet attrs, int defStyleAttr) {
+	public MySearchView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		init();
 	}
 
-	public MySearchView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		super(context, attrs, defStyleAttr, defStyleRes);
-		init();
-	}
 
 	private void init() {
-		// Используем post для выполнения после инициализации
-		post(() -> {
-			searchIcon = findViewById(search_mag_icon);
-//			if (searchIcon == null) {
-			// Попробуем найти иконку через другие пути или отложенно
-//				searchIcon = findIconInViewHierarchy((ViewGroup) getParent());
-//			}
+		searchIcon = findViewById(androidx.appcompat.R.id.search_button);
+		searchText = findViewById(androidx.appcompat.R.id.search_src_text);
+		searchClose = findViewById(androidx.appcompat.R.id.search_close_btn);
 
-			setColorFilter(R.color.white);
+		setBackgroundResource(R.drawable.block_background_tab);
+		setColorFilter(R.color.white);
+		searchText.setTextColor(getResources().getColor(R.color.black, null));
+		searchClose.setColorFilter(R.color.black);
+		searchIcon.setColorFilter(R.color.black);
+
+//		setOnSearchClickListener(null);
+//
+//		setOnCloseListener(null);
+	}
+
+	@Override
+	public void setOnSearchClickListener(OnClickListener listener) {
+		super.setOnSearchClickListener(v -> {
+//			setBackgroundResource(R.drawable.block_background_tab);
+
+			if (listener != null) {
+				listener.onClick(v);
+			}
 		});
 	}
 
-	private ImageView findIconInViewHierarchy(ViewGroup viewGroup) {
-		for (int i = 0; i < viewGroup.getChildCount(); i++) {
-			View child = viewGroup.getChildAt(i);
-			if (child instanceof ImageView && child.getId() == search_mag_icon) {
-				return (ImageView) child;
-			} else if (child instanceof ViewGroup) {
-				ImageView icon = findIconInViewHierarchy((ViewGroup) child);
-				if (icon != null) {
-					return icon;
-				}
-			}
-		}
-		return null;
-	}
+	@Override
+	public void setOnCloseListener(OnCloseListener listener) {
+		super.setOnCloseListener(() -> {
+//			setBackground(null);
 
+			if (listener != null) {
+				listener.onClose();
+			}
+
+			return false;
+		});
+	}
 
 	public void setColorFilter(int color) {
 		if (searchIcon != null) {

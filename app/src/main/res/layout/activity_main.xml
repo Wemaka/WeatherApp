@@ -20,17 +20,8 @@
             android:id="@+id/motionLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/backgroundPinkLight"
+            android:background="#FFFFFF"
             app:layoutDescription="@xml/activity_main_scene">
-
-            <com.wemaka.weatherapp.MySearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:searchIcon="@drawable/ic_search"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <FrameLayout
                 android:id="@+id/toolbar"
@@ -39,10 +30,11 @@
                 android:layout_marginTop="-30dp"
                 android:background="@color/backgroundPinkLight"
                 android:minHeight="150dp"
-                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/imgHeaderBackground"
@@ -50,7 +42,6 @@
                 android:layout_height="0dp"
                 android:contentDescription="main_background_night"
                 android:scaleType="fitXY"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/toolbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -72,15 +63,15 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/imgSearchIcon"
+                android:id="@+id/searchBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="50dp"
-                android:layout_marginEnd="22dp"
-                android:layout_weight="0"
+                android:layout_marginEnd="23dp"
+                android:contentDescription="searchible"
+                android:padding="12dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCityCountry"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvCityCountry"
                 app:srcCompat="@drawable/ic_search" />
 
             <TextView
@@ -118,7 +109,7 @@
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toTopOf="@+id/tvWeatherMainText"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imgSearchIcon"
+                app:layout_constraintTop_toBottomOf="@+id/searchBtn"
                 app:layout_constraintVertical_bias="0.3"
                 app:layout_constraintVertical_chainStyle="packed"
                 app:srcCompat="@drawable/ic_clear_day" />
@@ -173,55 +164,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <FrameLayout
-                android:id="@+id/flNavBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tbNavBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:background="@android:color/transparent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-
-                    app:layout_constraintTop_toBottomOf="@+id/lnrlNavigateButtons"
-
-                    app:tabBackground="@android:color/transparent"
-                    app:tabGravity="fill"
-                    app:tabIndicator="@android:color/transparent"
-                    app:tabIndicatorAnimationMode="fade"
-                    app:tabIndicatorColor="@android:color/transparent"
-                    app:tabIndicatorFullWidth="true"
-                    app:tabIndicatorGravity="stretch"
-
-                    app:tabRippleColor="@android:color/transparent"
-                    app:tabTextAppearance="@style/TabLayoutTextStyle"
-                    app:tabUnboundedRipple="false">
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Today" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tomorrow" />
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="10 days" />
-                </com.google.android.material.tabs.TabLayout>
-            </FrameLayout>
-
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/vpContainer"
                 android:layout_width="match_parent"
@@ -229,7 +171,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/flNavBtn" />
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

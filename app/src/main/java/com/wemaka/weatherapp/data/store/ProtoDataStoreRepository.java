@@ -41,7 +41,7 @@ public class ProtoDataStoreRepository {
 	}
 
 	public Maybe<DataStoreProto> getDataStoreProto() {
-		return dataStore.data().map(data -> data).filter(Objects::nonNull).firstElement();
+		return dataStore.data().filter(Objects::nonNull).map(data -> data).firstElement();
 	}
 
 	public Completable saveSettings(SettingsProto settings) {
@@ -51,7 +51,7 @@ public class ProtoDataStoreRepository {
 	}
 
 	public Maybe<SettingsProto> getSettings() {
-		return dataStore.data().map(data -> data.settings).filter(Objects::nonNull).firstElement();
+		return dataStore.data().filter(data -> data.settings != null).map(data -> data.settings).firstElement();
 	}
 
 	public Completable saveDaysForecastResponse(DaysForecastResponseProto daysForecastResponse) {
@@ -61,7 +61,7 @@ public class ProtoDataStoreRepository {
 	}
 
 	public Maybe<DaysForecastResponseProto> getDaysForecastResponse() {
-		return dataStore.data().map(data -> data.forecast).filter(Objects::nonNull).firstElement();
+		return dataStore.data().filter(data -> data.forecast != null).map(data -> data.forecast).firstElement();
 	}
 
 //	public Maybe<LocationCoordProto> getLocationCoord() {
