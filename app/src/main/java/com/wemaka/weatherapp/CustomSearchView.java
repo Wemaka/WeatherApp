@@ -1,13 +1,9 @@
 package com.wemaka.weatherapp;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
-
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -15,26 +11,23 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.core.content.res.ResourcesCompat;
 
-import java.lang.reflect.Field;
-
-public class MySearchView extends SearchView {
+public class CustomSearchView extends SearchView {
 	private ImageView searchIcon;
 	private ImageView searchClose;
 	private EditText searchText;
 
-	public MySearchView(@NonNull Context context) {
+	public CustomSearchView(@NonNull Context context) {
 		super(context);
 		init();
 	}
 
-	public MySearchView(@NonNull Context context, @Nullable AttributeSet attrs) {
+	public CustomSearchView(@NonNull Context context, @Nullable AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
 
-	public MySearchView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+	public CustomSearchView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		init();
 	}

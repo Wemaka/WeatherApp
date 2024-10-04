@@ -17,9 +17,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.openmeteo.sdk.WeatherApiResponse;
-import com.wemaka.weatherapp.api.RequestCallback;
-import com.wemaka.weatherapp.api.WeatherParse;
+import com.wemaka.weatherapp.api.GeoNamesClient;
+import com.wemaka.weatherapp.api.OpenMeteoClient;
 import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 
@@ -75,7 +74,7 @@ public class LocationService {
 
 					if (!isPermissionGranted()) {
 						Log.i(TAG, "NO PERMISSION");
-						weatherRequest(locCoord.get());
+						fetchWeatherAndPlaceName(locCoord.get());
 						return;
 					}
 
@@ -90,7 +89,7 @@ public class LocationService {
 							Log.i(TAG, "SETTINGS GET 1: " + settings);
 							locCoord.set(settings.locationCoord);
 						},
-						throwable -> Log.e(TAG, "LocationService#getLocation", throwable)
+						throwable -> Log.e(TAG, "LocationService#fetchLocation", throwable)
 				)
 		);
 	}
@@ -105,18 +104,18 @@ public class LocationService {
 					.subscribe(
 							settings -> {
 								Log.i(TAG, "SETTINGS GET 2");
-								weatherRequest(settings.locationCoord);
+								fetchWeatherAndPlaceName(settings.locationCoord);
 							},
 							throwable -> Log.e(TAG, "LocationService#handleLocation 1", throwable),
 							() -> {
-								weatherRequest(DEFAULT_LOCATION);
+								fetchWeatherAndPlaceName(DEFAULT_LOCATION);
 							}
 					)
 			);
 		} else {
 			Log.i(TAG, "Location: " + location.getLatitude() + " - " + location.getLongitude());
 
-			weatherRequest(new LocationCoordProto(location.getLatitude(), location.getLongitude()));
+			fetchWeatherAndPlaceName(new LocationCoordProto(location.getLatitude(), location.getLongitude()));
 		}
 	}
 
@@ -155,39 +154,32 @@ public class LocationService {
 				});
 	}
 
-	private void weatherRequest(LocationCoordProto loc) {
+	public void fetchWeatherAndPlaceName(LocationCoordProto loc) {
 		if (loc == null) {
 			return;
 		}
 
-		WeatherParse weatherParse = new WeatherParse();
+		compositeDisposable.add(OpenMeteoClient.fetchWeatherForecast(loc.latitude, loc.longitude)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(
+						response -> {
+							location = new LocationCoordProto(loc.latitude, loc.longitude);
+							mainViewModel.getDaysForecastResponseData().postValue(OpenMeteoClient.parseWeatherData(response));
+						},
+						error -> Log.e(TAG, "ERROR REQUEST: api.open-meteo " + error)
+				)
+		);
 
-		weatherParse.request(
-				loc.latitude,
-				loc.longitude,
-				new RequestCallback() {
-					@Override
-					public void onSuccess(WeatherApiResponse response) {
-//						DaysForecastResponseProto daysForecast = weatherParse.parseWeatherData(response);
-
-//						SettingsProto settingsProto = new SettingsProto(
-//								new LocationCoordProto(loc.latitude, loc.longitude)
-//						);
-//
-//						dataStoreRepository.saveDataStore(new DataStoreProto(settingsProto, daysForecast))
-//								.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE"))
-//								.subscribe();
-
-						location = new LocationCoordProto(loc.latitude, loc.longitude);
-
-						mainViewModel.getDaysForecastResponseData().postValue(weatherParse.parseWeatherData(response));
-					}
-
-					@Override
-					public void onFailure(String error) {
-						Log.e(TAG, "ERROR REQUEST: api.open-meteo " + error);
-					}
-				}
+		compositeDisposable.add(GeoNamesClient.fetchNearestPlaceInfo(loc.latitude, loc.longitude)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(
+						response -> {
+							mainViewModel.getPlaceNameData().postValue(response.getToponymName());
+						},
+						error -> Log.e(TAG, "ERROR REQUEST: api.geonames " + error)
+				)
 		);
 	}
 

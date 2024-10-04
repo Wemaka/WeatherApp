@@ -64,13 +64,23 @@ public class ProtoDataStoreRepository {
 		return dataStore.data().filter(data -> data.forecast != null).map(data -> data.forecast).firstElement();
 	}
 
-//	public Maybe<LocationCoordProto> getLocationCoord() {
-//		return dataStore.data().map(data -> {
-//			if (data.settings == null) {
-//				return new LocationCoordProto(0.0, 0.0);
-//			}
-//
-//			return data.settings.locationCoord;
-//		}).filter(Objects::nonNull).firstElement();
-//	}
+	public Completable saveLocationCoord(LocationCoordProto coord) {
+		return dataStore.updateDataAsync(data -> Single.just(
+				data.newBuilder().settings(
+						data.settings.newBuilder().locationCoord(coord).build()
+				).build()
+		)).ignoreElement();
+	}
+
+	public Flowable<LocationCoordProto> getFlowLocationCoord() {
+		return dataStore.data().filter(data -> data.settings != null && data.settings.locationCoord != null)
+				.map(data -> {
+					if (data.settings == null) {
+						return new LocationCoordProto(0.0, 0.0);
+					}
+
+					return data.settings.locationCoord;
+				}).distinctUntilChanged((prev, current) ->
+						prev.latitude == current.latitude && prev.longitude == current.longitude);
+	}
 }

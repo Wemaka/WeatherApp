@@ -3,42 +3,39 @@ package com.wemaka.weatherapp.fragment;
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.Outline;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.wemaka.weatherapp.R;
+import com.wemaka.weatherapp.adapter.SearchMenuAdapter;
+import com.wemaka.weatherapp.api.GeoNamesClient;
+import com.wemaka.weatherapp.data.PlaceInfo;
+import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.databinding.FragmentSearchMenuBinding;
-
-import java.util.ArrayList;
+import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 
 import eightbitlab.com.blurview.BlurViewFacade;
 import eightbitlab.com.blurview.RenderEffectBlur;
 import eightbitlab.com.blurview.RenderScriptBlur;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
-public class SearchMenuFragment extends BottomSheetDialogFragment {
+public class SearchMenuFragment extends BottomSheetDialogFragment implements SearchMenuAdapter.ClickListener {
 	private FragmentSearchMenuBinding binding;
 
 	@Nullable
@@ -56,13 +53,31 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 
 		addBlurBackground();
 
-		ArrayList<String> lst = new ArrayList<>();
-		lst.add("Moscow");
-		lst.add("Sankt Peterburg");
-		lst.add("Perm");
+		SearchMenuAdapter searchMenuAdapter = new SearchMenuAdapter(this);
+		RecyclerView recyclerViewSearchMenu = binding.rvSearchList;
 
-		binding.searchList.setAdapter(new ArrayAdapter<>(requireContext(),
-				android.R.layout.simple_list_item_1, lst));
+		recyclerViewSearchMenu.setAdapter(searchMenuAdapter);
+
+		binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				Log.i(TAG, "Click request search");
+
+				GeoNamesClient.searchLocation(query)
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.doOnSuccess(searchMenuAdapter::submitList)
+						.doOnError(error -> Log.e(TAG, "ERROR REQUEST: api.geonames " + error))
+						.subscribe();
+
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+		});
 	}
 
 	@NonNull
@@ -80,6 +95,20 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 			}
 		});
 		return dialog;
+	}
+
+	@Override
+	public void click(PlaceInfo item) {
+		Log.i(TAG, "Click: " + item.getLatitude() + " : " + item.getLongitude());
+
+		ProtoDataStoreRepository.getInstance().saveLocationCoord(
+				new LocationCoordProto(
+						Double.parseDouble(item.getLatitude()),
+						Double.parseDouble(item.getLongitude())
+				)
+		);
+
+		dismiss();
 	}
 
 	private void setupFullHeight(View bottomSheet) {

@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.wemaka.weatherapp.MySearchView
+    <com.wemaka.weatherapp.CustomSearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -26,15 +26,17 @@
         android:layout_marginEnd="23dp"
         android:layout_marginBottom="23dp"
         app:iconifiedByDefault="false"
-        app:layout_constraintBottom_toTopOf="@+id/searchList"
+        app:layout_constraintBottom_toTopOf="@+id/rvSearchList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
-        android:id="@+id/searchList"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSearchList"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -8,9 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,8 +26,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.wemaka.weatherapp.LocationService;
 import com.wemaka.weatherapp.MainViewModel;
 import com.wemaka.weatherapp.R;
@@ -42,15 +37,16 @@ import com.wemaka.weatherapp.fragment.SearchMenuFragment;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
+import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -89,15 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
 		Log.i(TAG, "ON STOP");
 
-		SettingsProto settingsProto = new SettingsProto(
-				mLocationService.getLocation()
-		);
+		SettingsProto settingsProto = new SettingsProto(mLocationService.getLocation(),
+				model.getPlaceNameData().getValue());
 
 		ProtoDataStoreRepository.getInstance()
 				.saveDataStore(new DataStoreProto(settingsProto, model.getDaysForecastResponseData().getValue()))
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE"))
+				.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE: datastore"))
 				.doOnError(e -> Log.e(TAG, "Error saving data", e))
 				.subscribe();
 	}
@@ -127,8 +122,25 @@ public class MainActivity extends AppCompatActivity {
 
 		compositeDisposable.add(
 				dataStoreRepository.getDaysForecastResponse().observeOn(AndroidSchedulers.mainThread())
-						.subscribe(days -> model.getDaysForecastResponseData().setValue(days))
+						.subscribe(days -> model.getDaysForecastResponseData().postValue(days))
 		);
+
+		compositeDisposable.add(
+				dataStoreRepository.getSettings().observeOn(AndroidSchedulers.mainThread())
+						.subscribe(place -> model.getPlaceNameData().postValue(place.locationName))
+		);
+
+		compositeDisposable.add(ProtoDataStoreRepository.getInstance().getFlowLocationCoord()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(
+						locationCoord -> {
+							if (mLocationService.getLocation() != locationCoord) {
+								mLocationService.fetchWeatherAndPlaceName(locationCoord);
+							}
+						},
+						throwable -> Log.e(TAG, "Error observing location coordinates", throwable)
+				));
 	}
 
 	private void initUi() {
@@ -138,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
 		ViewPager2 pager = binding.vpContainer;
 		FragmentStateAdapter pageAdapter = new ViewPagerAdapter(this, fragmentList);
 		pager.setAdapter(pageAdapter);
-
 
 		binding.swipeRefresh.setOnRefreshListener(() -> {
 					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
@@ -180,12 +191,15 @@ public class MainActivity extends AppCompatActivity {
 		model.getDaysForecastResponseData().observe(this, forecast -> {
 			DayForecastProto df = forecast.dayForecast;
 
-			binding.tvCityCountry.setText(df.locationName);
 			binding.tvMainDegree.setText(df.temperature);
 			binding.tvFeelsLike.setText("Feels like " + df.apparentTemp);
 			binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
 			binding.tvWeatherMainText.setText(df.weatherCode);
 			binding.tvDegreesTime.setText("Last update\n" + df.date);
+		});
+
+		model.getPlaceNameData().observe(this, place -> {
+			binding.tvCityCountry.setText(place);
 		});
 	}
 

@@ -7,4 +7,5 @@ option java_outer_classname = "SettingsAppProto";
 
 message SettingsProto {
   LocationCoordProto locationCoord = 1;
+  string locationName = 2;
 }

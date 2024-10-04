@@ -10,18 +10,17 @@ option java_multiple_files = true;
 option java_outer_classname = "DayForecastProto";
 
 message DayForecastProto {
-  string locationName = 1;
-  string temperature = 2;
-  string apparentTemp = 3;
-  int32 imgIdWeatherCode = 4;
-  string weatherCode = 5;
-  string date = 6;
-  string sunrise = 7;
-  string sunset = 8;
-  WindSpeedProto windSpeed = 9;
-  PrecipitationChanceProto precipitationChance = 10;
-  PressureProto pressure = 11;
-  UvIndexProto uvIndex = 12;
-  repeated TemperatureProto hourlyTempForecast = 13;
-  repeated PrecipitationChanceProto precipitationChanceForecast = 14;
+  string temperature = 1;
+  string apparentTemp = 2;
+  int32 imgIdWeatherCode = 3;
+  string weatherCode = 4;
+  string date = 5;
+  string sunrise = 6;
+  string sunset = 7;
+  WindSpeedProto windSpeed = 8;
+  PrecipitationChanceProto precipitationChance = 9;
+  PressureProto pressure = 10;
+  UvIndexProto uvIndex = 11;
+  repeated TemperatureProto hourlyTempForecast = 12;
+  repeated PrecipitationChanceProto precipitationChanceForecast = 13;
 }

@@ -230,9 +230,12 @@
             android:layout_width="59dp"
             android:layout_height="59dp"
             android:layout_marginEnd="22dp"
-            motion:layout_constraintTop_toBottomOf="@+id/searchBtn"
             motion:layout_constraintVertical_chainStyle="packed"
-            android:layout_marginTop="0dp" />
+            android:layout_marginTop="0dp"
+            motion:layout_constraintTop_toTopOf="@+id/tvMainDegree"
+            motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree"
+            android:layout_marginBottom="0dp"
+            motion:layout_constraintVertical_bias="1.0" />
         <Constraint
             android:id="@+id/tvCityCountry"
             android:layout_width="wrap_content"
