@@ -26,8 +26,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.wemaka.weatherapp.LocationService;
-import com.wemaka.weatherapp.MainViewModel;
+import com.wemaka.weatherapp.api.LocationService;
+import com.wemaka.weatherapp.viewmodel.MainViewModel;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
 import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
@@ -37,13 +37,11 @@ import com.wemaka.weatherapp.fragment.SearchMenuFragment;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
-import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -135,9 +133,9 @@ public class MainActivity extends AppCompatActivity {
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						locationCoord -> {
-							if (mLocationService.getLocation() != locationCoord) {
-								mLocationService.fetchWeatherAndPlaceName(locationCoord);
-							}
+							mLocationService.fetchLocation();
+//							if (mLocationService.getLocation() != locationCoord) {
+//							}
 						},
 						throwable -> Log.e(TAG, "Error observing location coordinates", throwable)
 				));
@@ -153,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
 		binding.swipeRefresh.setOnRefreshListener(() -> {
 					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
-					ensureLocationProviderEnabled();
+					handleLocationPermission();
 					mLocationService.fetchLocation();
 					binding.swipeRefresh.setRefreshing(false);
 				}

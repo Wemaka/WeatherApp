@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp;
+package com.wemaka.weatherapp.api;
 
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
@@ -15,10 +15,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.wemaka.weatherapp.api.GeoNamesClient;
-import com.wemaka.weatherapp.api.OpenMeteoClient;
 import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
+import com.wemaka.weatherapp.viewmodel.MainViewModel;
 
 import java.util.concurrent.atomic.AtomicReference;
 

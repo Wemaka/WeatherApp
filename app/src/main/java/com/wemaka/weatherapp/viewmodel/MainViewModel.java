@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp;
+package com.wemaka.weatherapp.viewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;

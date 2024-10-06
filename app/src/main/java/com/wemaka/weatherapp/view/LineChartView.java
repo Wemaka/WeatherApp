@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.activity;
+package com.wemaka.weatherapp.view;
 
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
@@ -28,12 +28,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class LineChartActivity implements OnChartGestureListener, OnChartValueSelectedListener {
+public class LineChartView implements OnChartGestureListener, OnChartValueSelectedListener {
 	private LineChart chart;
 	private List<Entry> points = new ArrayList<>();
 	private LineDataSet dataSet;
 
-	public LineChartActivity(LineChart chart) {
+	public LineChartView(LineChart chart) {
 		this.chart = chart;
 		this.onCreate();
 	}

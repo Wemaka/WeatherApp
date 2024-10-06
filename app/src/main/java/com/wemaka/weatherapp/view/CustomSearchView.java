@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp;
+package com.wemaka.weatherapp.view;
 
 import android.content.Context;
 import android.graphics.ColorFilter;
@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+
+import com.wemaka.weatherapp.R;
 
 public class CustomSearchView extends SearchView {
 	private ImageView searchIcon;

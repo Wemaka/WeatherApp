@@ -63,12 +63,12 @@ public class SearchMenuFragment extends BottomSheetDialogFragment implements Sea
 			public boolean onQueryTextSubmit(String query) {
 				Log.i(TAG, "Click request search");
 
-//				GeoNamesClient.searchLocation(query)
-//						.subscribeOn(Schedulers.io())
-//						.observeOn(AndroidSchedulers.mainThread())
-//						.doOnSuccess(searchMenuAdapter::submitList)
-//						.doOnError(error -> Log.e(TAG, "ERROR REQUEST: api.geonames " + error))
-//						.subscribe();
+				GeoNamesClient.searchLocation(query)
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.doOnSuccess(searchMenuAdapter::submitList)
+						.doOnError(error -> Log.e(TAG, "ERROR REQUEST: api.geonames " + error))
+						.subscribe();
 
 				return false;
 			}

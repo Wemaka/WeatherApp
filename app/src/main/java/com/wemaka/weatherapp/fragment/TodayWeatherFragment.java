@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.wemaka.weatherapp.MainViewModel;
+import com.wemaka.weatherapp.viewmodel.MainViewModel;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.activity.LineChartActivity;
+import com.wemaka.weatherapp.view.LineChartView;
 import com.wemaka.weatherapp.adapter.HourlyTempForecastAdapter;
 import com.wemaka.weatherapp.adapter.decoration.ListPaddingDecoration;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
@@ -126,7 +126,7 @@ public class TodayWeatherFragment extends Fragment {
 			points.add(new Entry(x, y));
 		}
 
-		LineChartActivity l = new LineChartActivity(binding.chDayForecast);
+		LineChartView l = new LineChartView(binding.chDayForecast);
 
 		l.changeAxisY(weekDay);
 		l.setData(new LineDataSet(points, ""));
@@ -136,11 +136,12 @@ public class TodayWeatherFragment extends Fragment {
 		l.getDataSet().setFillDrawable(ContextCompat.getDrawable(binding.getRoot().getContext(),
 				R.drawable.gradient_dark_purple));
 		l.getDataSet().setHighLightColor(getResources().getColor(R.color.darkPurple, null));
-		l.getChart().setMarker(new LineChartActivity.CustomMarkerView(binding.getRoot().getContext(), R.layout.marker_layout));
+		l.getChart().setMarker(new LineChartView.CustomMarkerView(binding.getRoot().getContext(), R.layout.marker_layout));
 	}
 
 	private void createPrecipitationForecast(List<PrecipitationChanceProto> precipitationChances) {
 		TableLayout tableLayout = binding.tlChanceOfRain;
+		tableLayout.removeAllViews();
 
 		for (int i = 0; i < precipitationChances.size(); i++) {
 			PrecipitationChanceProto forecastRain = precipitationChances.get(i);
