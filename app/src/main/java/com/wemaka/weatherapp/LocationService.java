@@ -1,10 +1,8 @@
 package com.wemaka.weatherapp;
 
-import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -32,7 +30,7 @@ import lombok.Getter;
 
 public class LocationService {
 	private final LocationManager locationManager;
-	private final Activity activity;
+	private final Context context;
 	private final MainViewModel mainViewModel;
 	private final FusedLocationProviderClient fusedLocationClient;
 	private static final ProtoDataStoreRepository dataStoreRepository =
@@ -40,14 +38,17 @@ public class LocationService {
 	private static final CompositeDisposable compositeDisposable = new CompositeDisposable();
 	@Getter
 	private static final LocationCoordProto DEFAULT_LOCATION = new LocationCoordProto(40.72, -74.00);
-	@Getter
-	private LocationCoordProto location = DEFAULT_LOCATION;
+	private final AtomicReference<LocationCoordProto> location = new AtomicReference<>(DEFAULT_LOCATION);
 
-	public LocationService(Activity activity, MainViewModel mainViewModel) {
-		this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-		this.activity = activity;
+	public LocationService(Context context, MainViewModel mainViewModel) {
+		this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		this.context = context;
 		this.mainViewModel = mainViewModel;
-		this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+		this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+	}
+
+	public LocationCoordProto getLocation() {
+		return location.get();
 	}
 
 	private boolean isProviderEnabled() {
@@ -55,17 +56,15 @@ public class LocationService {
 	}
 
 	public boolean isPermissionGranted(String p) {
-		return ActivityCompat.checkSelfPermission(activity, p) == PackageManager.PERMISSION_GRANTED;
+		return ActivityCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_GRANTED;
 	}
 
 	public boolean isPermissionGranted() {
-		return ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-				ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+		return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+				ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 	}
 
 	public void fetchLocation() {
-		AtomicReference<LocationCoordProto> locCoord = new AtomicReference<>(DEFAULT_LOCATION);
-
 		compositeDisposable.add(dataStoreRepository.getSettings()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
@@ -74,7 +73,7 @@ public class LocationService {
 
 					if (!isPermissionGranted()) {
 						Log.i(TAG, "NO PERMISSION");
-						fetchWeatherAndPlaceName(locCoord.get());
+						fetchWeatherAndPlaceName(getLocation());
 						return;
 					}
 
@@ -87,48 +86,23 @@ public class LocationService {
 				.subscribe(
 						settings -> {
 							Log.i(TAG, "SETTINGS GET 1: " + settings);
-							locCoord.set(settings.locationCoord);
+							location.set(settings.locationCoord);
 						},
 						throwable -> Log.e(TAG, "LocationService#fetchLocation", throwable)
 				)
 		);
 	}
 
-	private void handleLocation(Location location, Runnable lackLocation) {
-		if (location == null) {
+	private void handleLocation(Location loc, Runnable lackLocation) {
+		if (loc == null) {
 			lackLocation.run();
-
-			compositeDisposable.add(dataStoreRepository.getSettings()
-					.subscribeOn(Schedulers.io())
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(
-							settings -> {
-								Log.i(TAG, "SETTINGS GET 2");
-								fetchWeatherAndPlaceName(settings.locationCoord);
-							},
-							throwable -> Log.e(TAG, "LocationService#handleLocation 1", throwable),
-							() -> {
-								fetchWeatherAndPlaceName(DEFAULT_LOCATION);
-							}
-					)
-			);
 		} else {
-			Log.i(TAG, "Location: " + location.getLatitude() + " - " + location.getLongitude());
+			Log.i(TAG, "Location: " + loc.getLatitude() + " - " + loc.getLongitude());
 
-			fetchWeatherAndPlaceName(new LocationCoordProto(location.getLatitude(), location.getLongitude()));
+			location.set(new LocationCoordProto(loc.getLatitude(), loc.getLongitude()));
 		}
-	}
 
-	private void getLastLocation() throws SecurityException {
-		fusedLocationClient.getLastLocation()
-				.addOnSuccessListener(activity, location -> {
-					handleLocation(location, () -> {
-						Log.i(TAG, "Last location = null 1");
-					});
-				})
-				.addOnFailureListener(e -> {
-					Log.e(TAG, "Failed to get last location", e);
-				});
+		fetchWeatherAndPlaceName(getLocation());
 	}
 
 	private void getCurrentLocation() throws SecurityException {
@@ -144,13 +118,25 @@ public class LocationService {
 
 		fusedLocationClient.getCurrentLocation(priority,
 						new CancellationTokenSource().getToken())
-				.addOnSuccessListener(activity, location -> {
+				.addOnSuccessListener(location -> {
 					handleLocation(location, () -> {
 						Log.i(TAG, "Current location = null 2");
 					});
 				})
 				.addOnFailureListener(e -> {
 					Log.e(TAG, "Failed to get current location", e);
+				});
+	}
+
+	private void getLastLocation() throws SecurityException {
+		fusedLocationClient.getLastLocation()
+				.addOnSuccessListener(location -> {
+					handleLocation(location, () -> {
+						Log.i(TAG, "Last location = null 1");
+					});
+				})
+				.addOnFailureListener(e -> {
+					Log.e(TAG, "Failed to get last location", e);
 				});
 	}
 
@@ -164,7 +150,6 @@ public class LocationService {
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						response -> {
-							location = new LocationCoordProto(loc.latitude, loc.longitude);
 							mainViewModel.getDaysForecastResponseData().postValue(OpenMeteoClient.parseWeatherData(response));
 						},
 						error -> Log.e(TAG, "ERROR REQUEST: api.open-meteo " + error)

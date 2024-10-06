@@ -122,12 +122,12 @@ public class MainActivity extends AppCompatActivity {
 
 		compositeDisposable.add(
 				dataStoreRepository.getDaysForecastResponse().observeOn(AndroidSchedulers.mainThread())
-						.subscribe(days -> model.getDaysForecastResponseData().postValue(days))
+						.subscribe(days -> model.getDaysForecastResponseData().setValue(days))
 		);
 
 		compositeDisposable.add(
 				dataStoreRepository.getSettings().observeOn(AndroidSchedulers.mainThread())
-						.subscribe(place -> model.getPlaceNameData().postValue(place.locationName))
+						.subscribe(place -> model.getPlaceNameData().setValue(place.locationName))
 		);
 
 		compositeDisposable.add(ProtoDataStoreRepository.getInstance().getFlowLocationCoord()
