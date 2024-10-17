@@ -44,7 +44,7 @@ public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.
 
 		public ViewHolder(@NonNull View itemView, ClickListener listener) {
 			super(itemView);
-			this.textView = itemView.findViewById(R.id.textView);
+			this.textView = itemView.findViewById(R.id.tvLocationName);
 			this.listener = listener;
 		}
 

@@ -28,16 +28,16 @@ import lombok.Getter;
 
 
 public class LocationService {
+	private static final ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
+	@Getter
+	private static final LocationCoordProto DEFAULT_LOCATION = new LocationCoordProto(40.72, -74.00);
 	private final LocationManager locationManager;
 	private final Context context;
 	private final MainViewModel mainViewModel;
 	private final FusedLocationProviderClient fusedLocationClient;
-	private static final ProtoDataStoreRepository dataStoreRepository =
-			ProtoDataStoreRepository.getInstance();
-	private static final CompositeDisposable compositeDisposable = new CompositeDisposable();
-	@Getter
-	private static final LocationCoordProto DEFAULT_LOCATION = new LocationCoordProto(40.72, -74.00);
 	private final AtomicReference<LocationCoordProto> location = new AtomicReference<>(DEFAULT_LOCATION);
+	private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+	private final CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
 	public LocationService(Context context, MainViewModel mainViewModel) {
 		this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -87,7 +87,8 @@ public class LocationService {
 							Log.i(TAG, "SETTINGS GET 1: " + settings);
 							location.set(settings.locationCoord);
 						},
-						throwable -> Log.e(TAG, "LocationService#fetchLocation", throwable)
+						throwable -> Log.e(TAG, "LocationService#fetchLocation", throwable),
+						() -> Log.i(TAG, "getSettings completed without emitting any data")
 				)
 		);
 	}
@@ -115,27 +116,34 @@ public class LocationService {
 			throw new SecurityException();
 		}
 
-		fusedLocationClient.getCurrentLocation(priority,
-						new CancellationTokenSource().getToken())
+		CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+		fusedLocationClient.getCurrentLocation(priority, tokenSource.getToken())
 				.addOnSuccessListener(location -> {
 					handleLocation(location, () -> {
 						Log.i(TAG, "Current location = null 2");
 					});
+					tokenSource.cancel();
 				})
 				.addOnFailureListener(e -> {
 					Log.e(TAG, "Failed to get current location", e);
+					tokenSource.cancel();
 				});
 	}
 
 	private void getLastLocation() throws SecurityException {
+		CancellationTokenSource tokenSource = new CancellationTokenSource();
+
 		fusedLocationClient.getLastLocation()
 				.addOnSuccessListener(location -> {
 					handleLocation(location, () -> {
 						Log.i(TAG, "Last location = null 1");
 					});
+					tokenSource.cancel();
 				})
 				.addOnFailureListener(e -> {
 					Log.e(TAG, "Failed to get last location", e);
+					tokenSource.cancel();
 				});
 	}
 
@@ -168,8 +176,10 @@ public class LocationService {
 	}
 
 	public void clearDisposables() {
-		if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
-			compositeDisposable.dispose();
+		if (!compositeDisposable.isDisposed()) {
+			compositeDisposable.clear();
 		}
+
+		cancellationTokenSource.cancel();
 	}
 }

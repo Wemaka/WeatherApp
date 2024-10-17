@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.codegen.intrinsics.ArrayOf
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.wire)
@@ -14,8 +16,12 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+//        resourceConfigurations.addAll(arrayOf("en", "ru"))
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+
 
     buildTypes {
         release {
@@ -26,6 +32,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -61,10 +68,10 @@ dependencies {
 
     implementation(libs.datastore.core)
     implementation(libs.datastore.rxjava3)
-    implementation(libs.rxjava)
-    implementation(libs.reactivex.rxandroid)
+    implementation(libs.rxandroid)
 
     implementation(libs.blurview)
+    implementation(libs.locale.helper.android)
 
 
     testImplementation(libs.junit)

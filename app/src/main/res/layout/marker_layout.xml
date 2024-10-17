@@ -6,9 +6,10 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageView_temperature_icon"
+        android:id="@+id/imgTemperatureIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/desc_img_temperature"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -16,16 +17,16 @@
         app:srcCompat="@drawable/ic_temperature_display_icon" />
 
     <TextView
-        android:id="@+id/tvContent"
+        android:id="@+id/tvCurrDegree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="3dp"
         android:fontFamily="@font/productsans"
-        android:text="3"
+        android:text="@string/curr_degree_default"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/imageView_temperature_icon"
-        app:layout_constraintTop_toTopOf="@+id/imageView_temperature_icon" />
+        app:layout_constraintStart_toStartOf="@+id/imgTemperatureIcon"
+        app:layout_constraintTop_toTopOf="@+id/imgTemperatureIcon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

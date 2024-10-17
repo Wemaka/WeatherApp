@@ -6,6 +6,7 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+localeHelperAndroid = "1.5.1"
 material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
@@ -16,9 +17,9 @@ legacySupportV4 = "1.0.0"
 okhttp = "4.12.0"
 openMeteo = "1.14.1"
 playServicesLocation = "21.3.0"
-rxjava = "3.0.2"
+rxandroid = "3.0.2"
 swiperefreshlayout = "1.1.0"
-fragment = "1.8.3"
+fragment = "1.8.4"
 lombok = "1.18.30"
 wire = "5.0.0"
 
@@ -30,18 +31,18 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 mpandroidChart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidChart" }
-reactivex-rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxjava" }
 roundCornerprogressbar = { group = "com.akexorcist", name = "round-corner-progress-bar", version.ref = "roundCornerprogressbar" }
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 open-meteo = { group = "com.open-meteo", name = "sdk", version.ref = "openMeteo" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
-rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
+rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }

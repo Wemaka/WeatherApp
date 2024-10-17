@@ -1,6 +1,9 @@
 package com.wemaka.weatherapp.fragment;
 
+import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +36,7 @@ import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TodayWeatherFragment extends Fragment {
 	private FragmentTodayWeatherBinding binding;

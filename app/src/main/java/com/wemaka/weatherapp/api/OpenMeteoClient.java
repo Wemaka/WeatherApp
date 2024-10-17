@@ -2,6 +2,7 @@ package com.wemaka.weatherapp.api;
 
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
+import android.net.TrafficStats;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.wemaka.weatherapp.store.proto.PressureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.UvIndexProto;
 import com.wemaka.weatherapp.store.proto.WindSpeedProto;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -71,6 +74,7 @@ public class OpenMeteoClient {
 
 			Log.i(TAG, "URL open-meteo: " + url);
 
+			TrafficStats.setThreadStatsTag(111);
 			Request request = new Request.Builder()
 					.url(url).method("GET", null)
 					.build();
@@ -89,6 +93,7 @@ public class OpenMeteoClient {
 						}
 
 						byte[] responseIN = responseBody.bytes();
+						responseBody.close();
 						ByteBuffer buffer = ByteBuffer.wrap(responseIN).order(ByteOrder.LITTLE_ENDIAN);
 						WeatherApiResponse weatherApiResponse =
 								WeatherApiResponse.getRootAsWeatherApiResponse((ByteBuffer) buffer.position(4));
@@ -97,6 +102,8 @@ public class OpenMeteoClient {
 						Log.i(TAG, responseBody.toString());
 
 						emitter.onSuccess(weatherApiResponse);
+					} catch (IOException e) {
+						emitter.onError(e);
 					}
 				}
 
@@ -130,7 +137,7 @@ public class OpenMeteoClient {
 						getImgWeatherCode(minutely15, currentIndexMinutely15),
 						getWeatherCode(minutely15, currentIndexMinutely15),
 						Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale) +
-								" " + new SimpleDateFormat("dd", Locale.getDefault()).format(currentDate) +
+								" " + new SimpleDateFormat("dd", currentLocale).format(currentDate) +
 								", " + timeFormat.format(currentDate),
 						timeFormat.format(new Date(getSunrise(daily, currentIndexDay))),
 						timeFormat.format(new Date(getSunset(daily, currentIndexDay))),

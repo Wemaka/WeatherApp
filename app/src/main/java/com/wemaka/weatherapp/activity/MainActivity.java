@@ -4,21 +4,23 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-//import androidx.datastore.preferences.rxjava3.RxPreferenceDataStoreBuilder;
 import androidx.datastore.rxjava3.RxDataStoreBuilder;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,21 +28,23 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.wemaka.weatherapp.api.LocationService;
-import com.wemaka.weatherapp.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.LocaleHelper;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.ViewPagerAdapter;
-import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.api.LocationService;
 import com.wemaka.weatherapp.data.store.DataStoreSerializer;
+import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
 import com.wemaka.weatherapp.fragment.SearchMenuFragment;
 import com.wemaka.weatherapp.fragment.TodayWeatherFragment;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
+import com.wemaka.weatherapp.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -70,6 +74,24 @@ public class MainActivity extends AppCompatActivity {
 		initDataStore();
 		observeViewModel();
 
+		binding.tvCityCountry.setOnClickListener(v -> {
+
+//			Locale locale = new Locale("en");
+//			Locale.setDefault(locale);
+//			Resources standardResources = getResources();
+//			AssetManager assets = standardResources.getAssets();
+//			DisplayMetrics metrics = standardResources.getDisplayMetrics();
+//			Configuration config = new Configuration(standardResources.getConfiguration());
+//			config.setLocale(locale);
+//			Resources res = new Resources(assets, metrics, config);
+//			getApplicationContext().createConfigurationContext(config);
+//			recreate();
+
+
+			LocaleHelper.setLocale(this, "ru");
+			recreate();
+		});
+
 		ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
 			Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 			v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
@@ -86,23 +108,32 @@ public class MainActivity extends AppCompatActivity {
 		SettingsProto settingsProto = new SettingsProto(mLocationService.getLocation(),
 				model.getPlaceNameData().getValue());
 
-		ProtoDataStoreRepository.getInstance()
+		compositeDisposable.add(ProtoDataStoreRepository.getInstance()
 				.saveDataStore(new DataStoreProto(settingsProto, model.getDaysForecastResponseData().getValue()))
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE: datastore"))
 				.doOnError(e -> Log.e(TAG, "Error saving data", e))
-				.subscribe();
+				.subscribe()
+		);
 	}
 
 	@Override
 	protected void onDestroy() {
 		mLocationService.clearDisposables();
-		compositeDisposable.clear();
+
+		if (!compositeDisposable.isDisposed()) {
+			compositeDisposable.clear();
+		}
 
 		Log.i(TAG, "ON DESTROY");
 
 		super.onDestroy();
+	}
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(LocaleHelper.onAttach(base));
 	}
 
 	private void initLocationService() {
@@ -119,12 +150,16 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		compositeDisposable.add(
-				dataStoreRepository.getDaysForecastResponse().observeOn(AndroidSchedulers.mainThread())
+				dataStoreRepository.getDaysForecastResponse()
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
 						.subscribe(days -> model.getDaysForecastResponseData().setValue(days))
 		);
 
 		compositeDisposable.add(
-				dataStoreRepository.getSettings().observeOn(AndroidSchedulers.mainThread())
+				dataStoreRepository.getSettings()
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
 						.subscribe(place -> model.getPlaceNameData().setValue(place.locationName))
 		);
 
@@ -133,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						locationCoord -> {
-							mLocationService.fetchLocation();
-//							if (mLocationService.getLocation() != locationCoord) {
-//							}
+							if (!mLocationService.getLocation().equals(locationCoord)) {
+								mLocationService.fetchLocation();
+							}
 						},
 						throwable -> Log.e(TAG, "Error observing location coordinates", throwable)
 				));
@@ -152,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 		binding.swipeRefresh.setOnRefreshListener(() -> {
 					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
 					handleLocationPermission();
-					mLocationService.fetchLocation();
+//					mLocationService.fetchLocation();
 					binding.swipeRefresh.setRefreshing(false);
 				}
 		);
@@ -190,10 +225,10 @@ public class MainActivity extends AppCompatActivity {
 			DayForecastProto df = forecast.dayForecast;
 
 			binding.tvMainDegree.setText(df.temperature);
-			binding.tvFeelsLike.setText("Feels like " + df.apparentTemp);
+			binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp));
 			binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
 			binding.tvWeatherMainText.setText(df.weatherCode);
-			binding.tvDegreesTime.setText("Last update\n" + df.date);
+			binding.tvLastUpdate.setText(getString(R.string.info_last_update, df.date));
 		});
 
 		model.getPlaceNameData().observe(this, place -> {

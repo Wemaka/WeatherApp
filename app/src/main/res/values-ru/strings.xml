@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="desc_img_main">Фон основного заголовка</string>
+    <string name="city_default">Chinatown</string>
+    <string name="button_search">Кнопка для поиска</string>
+    <string name="degree_feels_like">Ощущается как %1$s</string>
+    <string name="weather_type_default">Облачно</string>
+    <string name="info_last_update">Последнее обнолвение\n %1$s</string>
+    <!--    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>-->
+    <string name="degree_day_night">Днем %1$d°\nНочью %2$d°</string>
+    <string name="desc_img_wind">Иконка скорости ветра</string>
+    <string name="title_wind_speed">Скорость ветра</string>
+    <string name="wind_speed">10км/ч</string>
+    <string name="desc_img_wind_indicator">Индикатор, отображающий повышение или понижение
+        скорости ветра</string>
+    <string name="wind_speed_diff">2км/ч</string>
+    <string name="desc_img_rain_indicator">Индикатор, отображающий повышение или понижение
+        выпавших осадков</string>
+    <string name="desc_img_rain">Иконка дождя</string>
+    <string name="title_rain_chance">Шанс дождя</string>
+    <string name="desc_img_pressure">Иконка давления</string>
+    <string name="title_pressure">Давление</string>
+    <string name="pressure_reading">100гПа</string>
+    <string name="desc_img_pressure_indicator">Индикатор, отображающий повышение или понижение
+        атмосферного давления</string>
+    <string name="pressure_diff">5гПа</string>
+    <string name="desc_img_uv_indicator">Индикатор, отображающий повышение или понижение УФ
+    индекса</string>
+    <string name="desc_img_sun">Иконка солнца</string>
+    <string name="title_uv_index">УФ индекс</string>
+    <string name="desc_img_clock">Иконка часов</string>
+    <string name="title_hourly_forecast">Почасовой прогноз</string>
+    <string name="desc_img_calendar">Иконка календаря</string>
+    <string name="title_day_forecast">Дневной прогноз</string>
+    <string name="title_chance_rain">Шанс выпадения осадков</string>
+    <string name="desc_scroll_precipitation">Список прогнозируемых осадков</string>
+    <string name="desc_img_sunrise">Иконка восхода</string>
+    <string name="title_sunrise">Восход</string>
+    <string name="sunrise_time_default">06:00</string>
+    <string name="sunrise_through_default">через 5ч</string>
+    <string name="desc_img_sunset">Иконка заката</string>
+    <string name="title_sunset">Закат</string>
+    <string name="sunset_time_default">21:00</string>
+    <string name="sunset_through_default">через 2ч</string>
+    <string name="desc_img_temperature">Иконка температуры</string>
+    <string name="text_now">Сейчас</string>
+    <string name="desc_img_weather">Иконка погоды</string>
+    <string name="desc_img_main_weather">Иконка погоды</string>
+</resources>

@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class ProtoDataStoreRepository {
+	public static final String TAG = "ProtoDataStoreRepository";
 	@Getter
 	private static final ProtoDataStoreRepository instance = new ProtoDataStoreRepository();
 	@Setter
@@ -51,7 +52,11 @@ public class ProtoDataStoreRepository {
 	}
 
 	public Maybe<SettingsProto> getSettings() {
-		return dataStore.data().filter(data -> data.settings != null).map(data -> data.settings).firstElement();
+		return dataStore.data()
+				.doOnNext(data -> Log.i(TAG, "Raw data: " + data))
+				.filter(data -> data.settings != null).map(data -> data.settings)
+				.doOnNext(settings -> Log.i(TAG, "Filtered settings: " + settings))
+				.firstElement();
 	}
 
 	public Completable saveDaysForecastResponse(DaysForecastResponseProto daysForecastResponse) {

@@ -2,6 +2,7 @@ package com.wemaka.weatherapp.api;
 
 import static com.wemaka.weatherapp.activity.MainActivity.TAG;
 
+import android.net.TrafficStats;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Single;
@@ -42,12 +44,14 @@ public class GeoNamesClient {
 					.addQueryParameter("lng", String.valueOf(longitude))
 					.addQueryParameter("style", "FULL")
 					.addQueryParameter("cities", "cities1000")
+					.addQueryParameter("lang", Locale.getDefault().getLanguage())
 					.addQueryParameter("username", myName);
 
 			String url = urlBuilder.build().toString();
 
 			Log.i(TAG, "URL api.geonames: " + url);
 
+			TrafficStats.setThreadStatsTag(112);
 			Request request = new Request.Builder()
 					.url(url).method("GET", null)
 					.build();
@@ -66,6 +70,7 @@ public class GeoNamesClient {
 						}
 
 						String jsonResponse = responseBody.string();
+						responseBody.close();
 						Log.i(TAG, "RESPONSE fetchNearestPlaceInfo: " + jsonResponse);
 						JSONObject jsonObject = new JSONObject(jsonResponse);
 
@@ -91,7 +96,7 @@ public class GeoNamesClient {
 
 	private static PlaceInfo parsePlaceInfoJson(JSONObject jsonObject) throws JSONException {
 		return new PlaceInfo(
-				jsonObject.getString("toponymName"),
+				jsonObject.getString("name"),
 				jsonObject.getString("countryName"),
 				jsonObject.getString("countryCode"),
 				jsonObject.has("alternateNames") ?
@@ -111,12 +116,14 @@ public class GeoNamesClient {
 					.addQueryParameter("style", "LONG")
 					.addQueryParameter("maxRows", "15")
 					.addQueryParameter("fuzzy", "0.8")
+					.addQueryParameter("lang", Locale.getDefault().getLanguage())
 					.addQueryParameter("username", myName);
 
 			String url = urlBuilder.build().toString();
 
 			Log.i(TAG, "URL api.geonames: " + url);
 
+			TrafficStats.setThreadStatsTag(113);
 			Request request = new Request.Builder()
 					.url(url).method("GET", null)
 					.build();
@@ -140,6 +147,8 @@ public class GeoNamesClient {
 						}
 
 						String jsonResponse = responseBody.string();
+						responseBody.close();
+
 						JSONObject jsonObject = new JSONObject(jsonResponse);
 
 						Log.i(TAG, "RESPONSE searchLocation: " + jsonResponse);

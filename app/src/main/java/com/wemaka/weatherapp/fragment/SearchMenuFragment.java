@@ -55,7 +55,6 @@ public class SearchMenuFragment extends BottomSheetDialogFragment implements Sea
 
 		SearchMenuAdapter searchMenuAdapter = new SearchMenuAdapter(this);
 		RecyclerView recyclerViewSearchMenu = binding.rvSearchList;
-
 		recyclerViewSearchMenu.setAdapter(searchMenuAdapter);
 
 		binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

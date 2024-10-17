@@ -169,7 +169,7 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		 */
 		public CustomMarkerView(Context context, int layoutResource) {
 			super(context, layoutResource);
-			tvContent = (TextView) findViewById(R.id.tvContent);
+			tvContent = (TextView) findViewById(R.id.tvCurrDegree);
 		}
 
 		@Override
