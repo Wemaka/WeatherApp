@@ -1,6 +1,6 @@
 package com.wemaka.weatherapp.api;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
 
 import android.net.TrafficStats;
 import android.util.Log;
@@ -20,8 +20,6 @@ import com.wemaka.weatherapp.store.proto.PressureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.UvIndexProto;
 import com.wemaka.weatherapp.store.proto.WindSpeedProto;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

@@ -110,7 +110,7 @@
 
         <OnSwipe
             motion:dragDirection="dragUp"
-            motion:touchAnchorId="@+id/vpContainer"
+            motion:touchAnchorId="@+id/flTodayWeather"
             motion:touchAnchorSide="top"
             motion:maxAcceleration="15" />
     </Transition>

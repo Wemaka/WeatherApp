@@ -1,6 +1,6 @@
-package com.wemaka.weatherapp.view;
+package com.wemaka.weatherapp.ui.view;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
 
 import android.content.Context;
 import android.graphics.Color;

@@ -1,6 +1,6 @@
-package com.wemaka.weatherapp.fragment;
+package com.wemaka.weatherapp.ui.fragment;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
 
 import android.app.Dialog;
 import android.os.Build;
@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -23,7 +22,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.SearchMenuAdapter;
 import com.wemaka.weatherapp.api.GeoNamesClient;
-import com.wemaka.weatherapp.data.PlaceInfo;
 import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.databinding.FragmentSearchMenuBinding;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
@@ -35,7 +33,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
-public class SearchMenuFragment extends BottomSheetDialogFragment implements SearchMenuAdapter.ClickListener {
+public class SearchMenuFragment extends BottomSheetDialogFragment {
 	private FragmentSearchMenuBinding binding;
 
 	@Nullable
@@ -53,9 +51,21 @@ public class SearchMenuFragment extends BottomSheetDialogFragment implements Sea
 
 		addBlurBackground();
 
-		SearchMenuAdapter searchMenuAdapter = new SearchMenuAdapter(this);
-		RecyclerView recyclerViewSearchMenu = binding.rvSearchList;
-		recyclerViewSearchMenu.setAdapter(searchMenuAdapter);
+		SearchMenuAdapter searchMenuAdapter = new SearchMenuAdapter();
+		searchMenuAdapter.setOnItemClickListener(item -> {
+			Log.i(TAG, "Click: " + item.getLatitude() + " : " + item.getLongitude());
+
+			ProtoDataStoreRepository.getInstance().saveLocationCoord(
+					new LocationCoordProto(
+							Double.parseDouble(item.getLatitude()),
+							Double.parseDouble(item.getLongitude())
+					)
+			);
+
+			dismiss();
+		});
+
+		binding.rvSearchList.setAdapter(searchMenuAdapter);
 
 		binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
@@ -94,20 +104,6 @@ public class SearchMenuFragment extends BottomSheetDialogFragment implements Sea
 			}
 		});
 		return dialog;
-	}
-
-	@Override
-	public void click(PlaceInfo item) {
-		Log.i(TAG, "Click: " + item.getLatitude() + " : " + item.getLongitude());
-
-		ProtoDataStoreRepository.getInstance().saveLocationCoord(
-				new LocationCoordProto(
-						Double.parseDouble(item.getLatitude()),
-						Double.parseDouble(item.getLongitude())
-				)
-		);
-
-		dismiss();
 	}
 
 	private void setupFullHeight(View bottomSheet) {

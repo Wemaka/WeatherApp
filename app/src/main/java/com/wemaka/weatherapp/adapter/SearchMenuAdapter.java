@@ -1,6 +1,7 @@
 package com.wemaka.weatherapp.adapter;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.data.PlaceInfo;
 
+import java.util.List;
+
+import lombok.Setter;
+
 public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.ViewHolder> {
-	private final ClickListener listener;
+	private ItemClickListener listener;
 
 	public SearchMenuAdapter() {
-		this(null);
-	}
-
-	public SearchMenuAdapter(ClickListener listener) {
 		super(new SearchMenuAdapter.Comparator());
-		this.listener = listener;
 	}
 
 	@NonNull
@@ -35,28 +35,44 @@ public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.
 
 	@Override
 	public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-		holder.bindTo(getItem(position));
+		PlaceInfo placeInfo = getItem(position);
+
+		holder.bindTo(placeInfo);
+		holder.setListener(listener, placeInfo);
+	}
+
+	@Override
+	public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+		if (!payloads.isEmpty() && payloads.contains(PayloadType.UPDATE_LISTENER)) {
+			holder.setListener(listener, getItem(position));
+		} else {
+			onBindViewHolder(holder, position);
+		}
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		private final TextView textView;
-		private ClickListener listener;
+		private ItemClickListener listener;
 
-		public ViewHolder(@NonNull View itemView, ClickListener listener) {
+		public ViewHolder(@NonNull View itemView, ItemClickListener listener) {
 			super(itemView);
 			this.textView = itemView.findViewById(R.id.tvLocationName);
 			this.listener = listener;
 		}
 
-
+		@SuppressLint("SetTextI18n")
 		public void bindTo(PlaceInfo item) {
 			textView.setText(item.getToponymName() + ", " +
 					(item.getAdminName1().isEmpty() ? "" : item.getAdminName1() + ", ") +
 					item.getCountryName());
+		}
 
-			if (listener != null) {
+		public void setListener(ItemClickListener listener, PlaceInfo item) {
+			this.listener = listener;
+
+			if (this.listener != null) {
 				itemView.setOnClickListener(v -> {
-					listener.click(item);
+					this.listener.click(item);
 				});
 			}
 		}
@@ -75,7 +91,17 @@ public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.
 		}
 	}
 
-	public interface ClickListener {
+	public interface ItemClickListener {
 		void click(PlaceInfo item);
+	}
+
+	private enum PayloadType {
+		UPDATE_LISTENER
+	}
+
+	public void setOnItemClickListener(ItemClickListener listener) {
+		this.listener = listener;
+
+		notifyItemRangeChanged(0, getItemCount(), PayloadType.UPDATE_LISTENER);
 	}
 }

@@ -1,7 +1,5 @@
 package com.wemaka.weatherapp.data.store;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
-
 import android.util.Log;
 
 import androidx.datastore.rxjava3.RxDataStore;
@@ -13,7 +11,6 @@ import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.Objects;
 
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;

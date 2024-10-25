@@ -1,6 +1,6 @@
 package com.wemaka.weatherapp.api;
 
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
 
 import android.net.TrafficStats;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.view;
+package com.wemaka.weatherapp.ui.view;
 
 import android.content.Context;
 import android.graphics.ColorFilter;

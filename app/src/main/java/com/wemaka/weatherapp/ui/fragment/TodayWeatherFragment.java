@@ -1,9 +1,6 @@
-package com.wemaka.weatherapp.fragment;
-
-import static com.wemaka.weatherapp.activity.MainActivity.TAG;
+package com.wemaka.weatherapp.ui.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,32 +11,33 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.wemaka.weatherapp.viewmodel.MainViewModel;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.view.LineChartView;
 import com.wemaka.weatherapp.adapter.HourlyTempForecastAdapter;
 import com.wemaka.weatherapp.adapter.decoration.ListPaddingDecoration;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
 import com.wemaka.weatherapp.math.UnitConverter;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
+import com.wemaka.weatherapp.ui.view.LineChartView;
+import com.wemaka.weatherapp.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class TodayWeatherFragment extends Fragment {
+	public static final String TAG = "TodayWeatherFragment";
 	private FragmentTodayWeatherBinding binding;
+	private MainViewModel model;
 
 	@Nullable
 	@Override
@@ -50,15 +48,11 @@ public class TodayWeatherFragment extends Fragment {
 		return binding.getRoot();
 	}
 
-	public static TodayWeatherFragment newInstance() {
-		return new TodayWeatherFragment();
-	}
-
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		MainViewModel model = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+		model = new ViewModelProvider(requireParentFragment()).get(MainViewModel.class);
 
 		HourlyTempForecastAdapter hourlyTempForecastAdapter = new HourlyTempForecastAdapter();
 		RecyclerView recyclerViewHourlyForecast = binding.rvHourlyForecast;
@@ -109,6 +103,10 @@ public class TodayWeatherFragment extends Fragment {
 			binding.imgPressureIndicator.setImageResource(df.pressure.imgIdChangePressure);
 			binding.imgUvIndexIndicator.setImageResource(df.uvIndex.imgIdChangeUvIndex);
 		});
+	}
+
+	public static TodayWeatherFragment newInstance() {
+		return new TodayWeatherFragment();
 	}
 
 	private void createWeekDayForecast(List<Float> tempForecast) {
