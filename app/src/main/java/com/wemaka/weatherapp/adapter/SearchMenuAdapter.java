@@ -1,7 +1,6 @@
 package com.wemaka.weatherapp.adapter;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +16,11 @@ import com.wemaka.weatherapp.data.PlaceInfo;
 
 import java.util.List;
 
-import lombok.Setter;
-
 public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.ViewHolder> {
 	private ItemClickListener listener;
 
 	public SearchMenuAdapter() {
-		super(new SearchMenuAdapter.Comparator());
+		super(new Comparator());
 	}
 
 	@NonNull

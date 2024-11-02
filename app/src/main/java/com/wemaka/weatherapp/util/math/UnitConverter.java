@@ -1,7 +1,6 @@
-package com.wemaka.weatherapp.math;
+package com.wemaka.weatherapp.util.math;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import org.jetbrains.annotations.NotNull;

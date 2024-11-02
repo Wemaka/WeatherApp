@@ -46,4 +46,5 @@
     <string name="text_now">Сейчас</string>
     <string name="desc_img_weather">Иконка погоды</string>
     <string name="desc_img_main_weather">Иконка погоды</string>
+    <string name="no_internet_connection">Включите мобильную передачу данных или подключитесь к сети Wi-Fi</string>
 </resources>

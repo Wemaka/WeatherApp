@@ -1,7 +1,5 @@
 package com.wemaka.weatherapp.ui.fragment;
 
-import static androidx.core.app.ActivityCompat.recreate;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -21,35 +20,25 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.api.LocationService;
-import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.util.Resource;
 import com.wemaka.weatherapp.databinding.FragmentMainBinding;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
+import com.wemaka.weatherapp.ui.activity.MainActivity;
 import com.wemaka.weatherapp.viewmodel.MainViewModel;
-import com.zeugmasolutions.localehelper.LocaleHelper;
 
-import java.util.Locale;
 import java.util.Map;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainFragment extends Fragment {
 	public static final String TAG = "MainFragment";
 	private FragmentMainBinding binding;
 	private MainViewModel model;
-	private LocationService mLocationService;
 	private final ActivityResultLauncher<String[]> locationPermissionRequest =
 			registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), this::onLocationPermissionResult);
-	private static final CompositeDisposable compositeDisposable = new CompositeDisposable();
-	private final ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
 
 
 	@Nullable
@@ -71,29 +60,17 @@ public class MainFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		model = new ViewModelProvider(this).get(MainViewModel.class);
+		model = ((MainActivity) requireActivity()).getModel();
 
-		initDataStore();
-		initLocationService();
+		initSavedData();
 		initUi();
 		observeViewModel();
 
-		binding.tvCityCountry.setOnClickListener(v -> {
-
-//			Locale locale = new Locale("en");
-//			Locale.setDefault(locale);
-//			Resources standardResources = getResources();
-//			AssetManager assets = standardResources.getAssets();
-//			DisplayMetrics metrics = standardResources.getDisplayMetrics();
-//			Configuration config = new Configuration(standardResources.getConfiguration());
-//			config.setLocale(locale);
-//			Resources res = new Resources(assets, metrics, config);
-//			getApplicationContext().createConfigurationContext(config);
-//			recreate();
-
-			LocaleHelper.INSTANCE.setLocale(requireContext(), new Locale("ru"));
-			recreate(requireActivity());
-		});
+//		binding.tvCityCountry.setOnClickListener(v -> {
+//			LocaleHelper.INSTANCE.setLocale(requireContext(), new Locale("en"));
+//
+//			recreate(requireActivity());
+//		});
 	}
 
 	@Override
@@ -102,80 +79,40 @@ public class MainFragment extends Fragment {
 
 		Log.i(TAG, "ON STOP");
 
-		SettingsProto settingsProto = new SettingsProto(mLocationService.getLocation(),
-				model.getPlaceNameData().getValue());
-
-		compositeDisposable.add(ProtoDataStoreRepository.getInstance()
-				.saveDataStore(new DataStoreProto(settingsProto, model.getDaysForecastResponseData().getValue()))
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.doOnComplete(() -> Log.i(TAG, "SAVE FORECAST DATASTORE: datastore"))
-				.doOnError(e -> Log.e(TAG, "Error saving data", e))
-				.subscribe()
+		DataStoreProto dataStoreProto = new DataStoreProto(
+				new SettingsProto(model.getLocation(), model.getPlaceName().getValue().getData()),
+				model.getDaysForecast().getValue().getData()
 		);
-	}
 
-	@Override
-	public void onDestroy() {
-		mLocationService.clearDisposables();
-
-		if (!compositeDisposable.isDisposed()) {
-			compositeDisposable.clear();
-		}
-
-		Log.i(TAG, "ON DESTROY");
-
-		super.onDestroy();
+		model.saveDataStore(dataStoreProto);
 	}
 
 	public static MainFragment newInstance() {
 		return new MainFragment();
 	}
 
-	private void initLocationService() {
-		mLocationService = new LocationService(requireContext(), model);
-		handleLocationPermission();
-	}
+	private void initSavedData() {
+		model.getSavedDaysForecast().observe(getViewLifecycleOwner(), forecast -> {
+			model.getDaysForecast().postValue(new Resource.Success<>(forecast));
+		});
 
-	private void initDataStore() {
-		compositeDisposable.add(dataStoreRepository.getDaysForecastResponse()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(days -> model.getDaysForecastResponseData().setValue(days))
-		);
+		model.getSavedSettings().observe(getViewLifecycleOwner(), settings -> {
+			model.getPlaceName().postValue(new Resource.Success<>(settings.locationName));
+		});
 
-		compositeDisposable.add(dataStoreRepository.getSettings()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(place -> model.getPlaceNameData().setValue(place.locationName))
-		);
-//
-//		compositeDisposable.add(ProtoDataStoreRepository.getInstance().getFlowLocationCoord()
-//				.subscribeOn(Schedulers.io())
-//				.observeOn(AndroidSchedulers.mainThread())
-//				.subscribe(
-//						locationCoord -> {
-//							if (!mLocationService.getLocation().equals(locationCoord)) {
-//								mLocationService.fetchLocation();
-//							}
-//						},
-//						throwable -> Log.e(TAG, "Error observing location coordinates", throwable)
-//				));
+		model.getSavedLocationCoord().observe(getViewLifecycleOwner(), location -> {
+			Log.i(TAG, "GET SAVE LOCATION COORDS: " + location);
+
+			model.setLocation(location);
+
+			handleLocationPermission();
+		});
 	}
 
 	private void initUi() {
-//		List<Fragment> fragmentList = new ArrayList<>();
-//		fragmentList.add(TodayWeatherFragment.newInstance());
-//
-//		ViewPager2 pager = binding.vpContainer;
-//		FragmentStateAdapter pageAdapter = new ViewPagerAdapter(requireActivity(), fragmentList);
-//		pager.setAdapter(pageAdapter);
-
 		binding.swipeRefresh.setOnRefreshListener(() -> {
 					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
 					handleLocationPermission();
-//					mLocationService.fetchLocation();
-					binding.swipeRefresh.setRefreshing(false);
 				}
 		);
 
@@ -209,21 +146,38 @@ public class MainFragment extends Fragment {
 	}
 
 	private void observeViewModel() {
-		model.getDaysForecastResponseData().observe(getViewLifecycleOwner(), forecast -> {
-			DayForecastProto df = forecast.dayForecast;
+		model.getDaysForecast().observe(getViewLifecycleOwner(), resource -> {
+			if (resource.isLoading()) {
+				binding.swipeRefresh.setRefreshing(true);
 
-			Log.i(TAG, "EEEEEEEEEEEEEEEEEEEEEEEEEEEEe observeViewModel: " + model);
+			} else if (resource.isSuccess() && resource.getData() != null) {
+				binding.swipeRefresh.setRefreshing(false);
 
-			binding.tvMainDegree.setText(df.temperature);
-			binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp));
-			binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
-			binding.tvWeatherMainText.setText(df.weatherCode);
-			binding.tvLastUpdate.setText(getString(R.string.info_last_update, df.date));
+				DayForecastProto df = resource.getData().dayForecast;
+				binding.tvMainDegree.setText(df.temperature);
+				binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp));
+				binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
+				binding.tvWeatherMainText.setText(df.weatherCode);
+				binding.tvLastUpdate.setText(getString(R.string.info_last_update, df.date));
+
+			} else if (resource.isError() && resource.getMessage() != null) {
+				binding.swipeRefresh.setRefreshing(false);
+				showToast(resource.getMessage());
+			}
 		});
 
-		model.getPlaceNameData().observe(getViewLifecycleOwner(), place -> {
-			binding.tvCityCountry.setText(place);
+		model.getPlaceName().observe(getViewLifecycleOwner(), resource -> {
+			if (resource.isSuccess() && resource.getData() != null) {
+				binding.tvCityCountry.setText(resource.getData());
+
+			} else if (resource.isError()) {
+				Log.i(TAG, resource.getErrorMes().orElse(""));
+			}
 		});
+	}
+
+	private void showToast(String message) {
+		Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
 	}
 
 	private void onLocationPermissionResult(Map<String, Boolean> result) {
@@ -238,13 +192,16 @@ public class MainFragment extends Fragment {
 			Log.i(TAG, "No location access granted");
 		}
 
-		mLocationService.fetchLocation();
+//		model.fetchCurrentWeatherAndPlace();
 	}
 
 	private void handleLocationPermission() {
 		if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
 				ActivityCompat.checkSelfPermission(requireContext(),
 						Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+//			model.fetchCurrentWeatherAndPlace();
+
 			ensureLocationProviderEnabled();
 		} else {
 			locationPermissionRequest.launch(new String[]{
@@ -252,6 +209,8 @@ public class MainFragment extends Fragment {
 					Manifest.permission.ACCESS_COARSE_LOCATION
 			});
 		}
+
+		model.fetchCurrentWeatherAndPlace();
 	}
 
 	private void ensureLocationProviderEnabled() {

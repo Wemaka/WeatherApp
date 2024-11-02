@@ -2,21 +2,18 @@ package com.wemaka.weatherapp.adapter.decoration;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.wemaka.weatherapp.math.UnitConverter;
+import com.wemaka.weatherapp.util.math.UnitConverter;
 
 public class ListPaddingDecoration extends RecyclerView.ItemDecoration {
 	private final int padding;
 	private final Orientation orientation;
 
 	public ListPaddingDecoration(@NonNull Context context, int paddingDp, Orientation orientation) {
-//		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		this.padding = UnitConverter.dpToPx(context, paddingDp);
 		this.orientation = orientation;
 	}

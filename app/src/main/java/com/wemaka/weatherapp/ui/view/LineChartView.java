@@ -161,12 +161,6 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		private TextView tvContent;
 		private MPPointF mOffset;
 
-		/**
-		 * Constructor. Sets up the MarkerView with a custom layout resource.
-		 *
-		 * @param context
-		 * @param layoutResource the layout resource to use for the MarkerView
-		 */
 		public CustomMarkerView(Context context, int layoutResource) {
 			super(context, layoutResource);
 			tvContent = (TextView) findViewById(R.id.tvCurrDegree);

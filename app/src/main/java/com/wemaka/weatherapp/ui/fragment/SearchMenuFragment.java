@@ -1,7 +1,5 @@
 package com.wemaka.weatherapp.ui.fragment;
 
-import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
-
 import android.app.Dialog;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,20 +20,20 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.SearchMenuAdapter;
-import com.wemaka.weatherapp.api.GeoNamesClient;
-import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.databinding.FragmentSearchMenuBinding;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
+import com.wemaka.weatherapp.ui.activity.MainActivity;
+import com.wemaka.weatherapp.viewmodel.MainViewModel;
 
 import eightbitlab.com.blurview.BlurViewFacade;
 import eightbitlab.com.blurview.RenderEffectBlur;
 import eightbitlab.com.blurview.RenderScriptBlur;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class SearchMenuFragment extends BottomSheetDialogFragment {
+	public static final String TAG = "SearchMenuFragment";
 	private FragmentSearchMenuBinding binding;
+	private MainViewModel model;
 
 	@Nullable
 	@Override
@@ -49,13 +48,15 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
+		model = ((MainActivity) requireActivity()).getModel();
+
 		addBlurBackground();
 
 		SearchMenuAdapter searchMenuAdapter = new SearchMenuAdapter();
 		searchMenuAdapter.setOnItemClickListener(item -> {
 			Log.i(TAG, "Click: " + item.getLatitude() + " : " + item.getLongitude());
 
-			ProtoDataStoreRepository.getInstance().saveLocationCoord(
+			model.fetchWeatherAndPlace(
 					new LocationCoordProto(
 							Double.parseDouble(item.getLatitude()),
 							Double.parseDouble(item.getLongitude())
@@ -72,12 +73,14 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 			public boolean onQueryTextSubmit(String query) {
 				Log.i(TAG, "Click request search");
 
-				GeoNamesClient.searchLocation(query)
-						.subscribeOn(Schedulers.io())
-						.observeOn(AndroidSchedulers.mainThread())
-						.doOnSuccess(searchMenuAdapter::submitList)
-						.doOnError(error -> Log.e(TAG, "ERROR REQUEST: api.geonames " + error))
-						.subscribe();
+				model.searchLocation(query).observe(getViewLifecycleOwner(), resource -> {
+					if (resource.isSuccess() && resource.getData() != null) {
+						searchMenuAdapter.submitList(resource.getData());
+
+					} else if (resource.isError() && resource.getMessage() != null) {
+						showToast(resource.getMessage());
+					}
+				});
 
 				return false;
 			}
@@ -132,5 +135,9 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 		binding.blurView.setBackgroundResource(R.drawable.block_blur_rounded_background);
 
 		binding.blurView.setClipToOutline(true);
+	}
+
+	private void showToast(String message) {
+		Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
 	}
 }

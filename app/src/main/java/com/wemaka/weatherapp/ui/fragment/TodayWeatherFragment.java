@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.data.Entry;
@@ -25,9 +24,10 @@ import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.adapter.HourlyTempForecastAdapter;
 import com.wemaka.weatherapp.adapter.decoration.ListPaddingDecoration;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
-import com.wemaka.weatherapp.math.UnitConverter;
+import com.wemaka.weatherapp.util.math.UnitConverter;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
+import com.wemaka.weatherapp.ui.activity.MainActivity;
 import com.wemaka.weatherapp.ui.view.LineChartView;
 import com.wemaka.weatherapp.viewmodel.MainViewModel;
 
@@ -52,7 +52,7 @@ public class TodayWeatherFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		model = new ViewModelProvider(requireParentFragment()).get(MainViewModel.class);
+		model = ((MainActivity) requireActivity()).getModel();
 
 		HourlyTempForecastAdapter hourlyTempForecastAdapter = new HourlyTempForecastAdapter();
 		RecyclerView recyclerViewHourlyForecast = binding.rvHourlyForecast;
@@ -82,26 +82,28 @@ public class TodayWeatherFragment extends Fragment {
 			}
 		});
 
-		model.getDaysForecastResponseData().observe(getViewLifecycleOwner(), forecast -> {
-			DayForecastProto df = forecast.dayForecast;
+		model.getDaysForecast().observe(getViewLifecycleOwner(), resource -> {
+			if (resource.isSuccess() && resource.getData() != null) {
+				DayForecastProto df = resource.getData().dayForecast;
+				binding.tvSunriseTime.setText(df.sunrise);
+				binding.tvSunsetTime.setText(df.sunset);
+				binding.tvWindSpeed.setText(df.windSpeed.currentWindSpeed);
+				binding.tvRainPercent.setText(df.precipitationChance.percent);
+				binding.tvPressureHpa.setText(df.pressure.currentPressure);
+				binding.tvUv.setText(df.uvIndex.currentUvIndex);
+				hourlyTempForecastAdapter.submitList(df.hourlyTempForecast);
+				createWeekDayForecast(resource.getData().weekTempForecast);
+				createPrecipitationForecast(df.precipitationChanceForecast);
+				binding.tvWindDiff.setText(df.windSpeed.windSpeedDiff);
+				binding.tvRainDiff.setText(df.precipitationChance.precipitationChanceDiff);
+				binding.tvPressureDiff.setText(df.pressure.pressureDiff);
+				binding.tvUvDiff.setText(df.uvIndex.uvIndexDiff);
+				binding.imgWindSpeedIndicator.setImageResource(df.windSpeed.imgIdChangeWindSpeed);
+				binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);
+				binding.imgPressureIndicator.setImageResource(df.pressure.imgIdChangePressure);
+				binding.imgUvIndexIndicator.setImageResource(df.uvIndex.imgIdChangeUvIndex);
 
-			binding.tvSunriseTime.setText(df.sunrise);
-			binding.tvSunsetTime.setText(df.sunset);
-			binding.tvWindSpeed.setText(df.windSpeed.currentWindSpeed);
-			binding.tvRainPercent.setText(df.precipitationChance.percent);
-			binding.tvPressureHpa.setText(df.pressure.currentPressure);
-			binding.tvUv.setText(df.uvIndex.currentUvIndex);
-			hourlyTempForecastAdapter.submitList(df.hourlyTempForecast);
-			createWeekDayForecast(forecast.weekTempForecast);
-			createPrecipitationForecast(df.precipitationChanceForecast);
-			binding.tvWindDiff.setText(df.windSpeed.windSpeedDiff);
-			binding.tvRainDiff.setText(df.precipitationChance.precipitationChanceDiff);
-			binding.tvPressureDiff.setText(df.pressure.pressureDiff);
-			binding.tvUvDiff.setText(df.uvIndex.uvIndexDiff);
-			binding.imgWindSpeedIndicator.setImageResource(df.windSpeed.imgIdChangeWindSpeed);
-			binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);
-			binding.imgPressureIndicator.setImageResource(df.pressure.imgIdChangePressure);
-			binding.imgUvIndexIndicator.setImageResource(df.uvIndex.imgIdChangeUvIndex);
+			}
 		});
 	}
 

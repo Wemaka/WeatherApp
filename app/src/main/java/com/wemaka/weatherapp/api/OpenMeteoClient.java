@@ -12,7 +12,7 @@ import com.openmeteo.sdk.VariableWithValues;
 import com.openmeteo.sdk.VariablesSearch;
 import com.openmeteo.sdk.VariablesWithTime;
 import com.openmeteo.sdk.WeatherApiResponse;
-import com.wemaka.weatherapp.data.ChangeIndicator;
+import com.wemaka.weatherapp.util.ChangeIndicator;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
@@ -20,6 +20,7 @@ import com.wemaka.weatherapp.store.proto.PressureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.UvIndexProto;
 import com.wemaka.weatherapp.store.proto.WindSpeedProto;
+import com.wemaka.weatherapp.util.WeatherCode;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -52,7 +53,7 @@ public class OpenMeteoClient {
 			.readTimeout(30, TimeUnit.SECONDS)
 			.build();
 
-	public static Single<WeatherApiResponse> fetchWeatherForecast(double latitude, double longitude) {
+	public static Single<DaysForecastResponseProto> fetchWeatherForecast(double latitude, double longitude) {
 		return Single.create(emitter -> {
 			HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
 			urlBuilder
@@ -79,7 +80,7 @@ public class OpenMeteoClient {
 
 			client.newCall(request).enqueue(new Callback() {
 				@Override
-				public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+				public void onResponse(@NonNull Call call, @NonNull Response response) {
 					try (ResponseBody responseBody = response.body()) {
 						if (!response.isSuccessful()) {
 							emitter.onError(new IOException("ERROR REQUEST SERVER: api.open-meteo " + response));
@@ -99,7 +100,7 @@ public class OpenMeteoClient {
 
 						Log.i(TAG, responseBody.toString());
 
-						emitter.onSuccess(weatherApiResponse);
+						emitter.onSuccess(parseWeatherData(weatherApiResponse));
 					} catch (IOException e) {
 						emitter.onError(e);
 					}
@@ -113,7 +114,7 @@ public class OpenMeteoClient {
 		});
 	}
 
-	public static DaysForecastResponseProto parseWeatherData(WeatherApiResponse response) {
+	private static DaysForecastResponseProto parseWeatherData(WeatherApiResponse response) {
 		VariablesWithTime minutely15 = response.minutely15();
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();

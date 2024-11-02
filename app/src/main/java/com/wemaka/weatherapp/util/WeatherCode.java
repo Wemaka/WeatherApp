@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.api;
+package com.wemaka.weatherapp.util;
 
 import com.wemaka.weatherapp.R;
 

@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
@@ -45,17 +44,11 @@ public class CustomSearchView extends SearchView {
 		searchText.setTextColor(getResources().getColor(R.color.black, null));
 		searchClose.setColorFilter(R.color.black);
 		searchIcon.setColorFilter(R.color.black);
-
-//		setOnSearchClickListener(null);
-//
-//		setOnCloseListener(null);
 	}
 
 	@Override
 	public void setOnSearchClickListener(OnClickListener listener) {
 		super.setOnSearchClickListener(v -> {
-//			setBackgroundResource(R.drawable.block_background_tab);
-
 			if (listener != null) {
 				listener.onClick(v);
 			}
@@ -65,8 +58,6 @@ public class CustomSearchView extends SearchView {
 	@Override
 	public void setOnCloseListener(OnCloseListener listener) {
 		super.setOnCloseListener(() -> {
-//			setBackground(null);
-
 			if (listener != null) {
 				listener.onClose();
 			}

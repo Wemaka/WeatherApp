@@ -52,5 +52,6 @@
     <string name="search_menu_location_name" translatable="false" />
     <string name="desc_img_main_weather">Weather icon</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="no_internet_connection">Turn on mobile data or connect to a Wi-Fi network</string>
 </resources>

@@ -1,7 +1,5 @@
 package com.wemaka.weatherapp.data.store;
 
-import android.util.Log;
-
 import androidx.datastore.rxjava3.RxDataStore;
 
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
@@ -39,7 +37,11 @@ public class ProtoDataStoreRepository {
 	}
 
 	public Maybe<DataStoreProto> getDataStoreProto() {
-		return dataStore.data().filter(Objects::nonNull).map(data -> data).firstElement();
+		return dataStore.data()
+				.filter(Objects::nonNull)
+				.map(data -> data)
+				.firstOrError()
+				.onErrorComplete();
 	}
 
 	public Completable saveSettings(SettingsProto settings) {
@@ -50,10 +52,9 @@ public class ProtoDataStoreRepository {
 
 	public Maybe<SettingsProto> getSettings() {
 		return dataStore.data()
-				.doOnNext(data -> Log.i(TAG, "Raw data: " + data))
-				.filter(data -> data.settings != null).map(data -> data.settings)
-				.doOnNext(settings -> Log.i(TAG, "Filtered settings: " + settings))
-				.firstElement();
+				.map(data -> data.settings)
+				.firstOrError()
+				.onErrorComplete();
 	}
 
 	public Completable saveDaysForecastResponse(DaysForecastResponseProto daysForecastResponse) {
@@ -63,7 +64,10 @@ public class ProtoDataStoreRepository {
 	}
 
 	public Maybe<DaysForecastResponseProto> getDaysForecastResponse() {
-		return dataStore.data().filter(data -> data.forecast != null).map(data -> data.forecast).firstElement();
+		return dataStore.data()
+				.map(data -> data.forecast)
+				.firstOrError()
+				.onErrorComplete();
 	}
 
 	public Completable saveLocationCoord(LocationCoordProto coord) {
