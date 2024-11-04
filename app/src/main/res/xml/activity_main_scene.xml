@@ -90,6 +90,20 @@
                     motion:attributeName="colorFilter"
                     motion:customColorValue="@color/black" />
             </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/settingsBtn"
+                motion:framePosition="50">
+                <CustomAttribute
+                    motion:attributeName="colorFilter"
+                    motion:customColorValue="@color/white" />
+            </KeyAttribute>
+            <KeyAttribute
+                motion:motionTarget="@+id/settingsBtn"
+                motion:framePosition="60">
+                <CustomAttribute
+                    motion:attributeName="colorFilter"
+                    motion:customColorValue="@color/black" />
+            </KeyAttribute>
             <KeyPosition
                 motion:motionTarget="@+id/tvWeatherMainText"
                 motion:framePosition="10"
@@ -143,12 +157,10 @@
             android:id="@+id/searchBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="22dp"
             motion:layout_constraintBottom_toBottomOf="@+id/tvCityCountry"
-            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintHorizontal_bias="1.0"
-            motion:layout_constraintStart_toEndOf="@+id/tvCityCountry"
-            motion:layout_constraintTop_toTopOf="@+id/tvCityCountry">
+            motion:layout_constraintTop_toTopOf="@+id/tvCityCountry"
+            motion:layout_constraintEnd_toStartOf="@+id/settingsBtn">
             <CustomAttribute
                 motion:attributeName="colorFilter"
                 motion:customColorValue="@color/white" />
@@ -202,6 +214,18 @@
                 motion:attributeName="textColor"
                 motion:customColorValue="@color/white" />
         </Constraint>
+        <Constraint
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@+id/searchBtn"
+            android:layout_marginEnd="22dp"
+            motion:layout_constraintTop_toTopOf="@+id/searchBtn"
+            android:id="@+id/settingsBtn">
+            <CustomAttribute
+                motion:attributeName="colorFilter"
+                motion:customColorValue="@color/white" />
+        </Constraint>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/endHeader">
@@ -252,12 +276,11 @@
             android:id="@+id/searchBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="22dp"
+            android:layout_marginEnd="0dp"
             motion:layout_constraintBottom_toBottomOf="@+id/tvCityCountry"
-            motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintHorizontal_bias="1.0"
-            motion:layout_constraintStart_toEndOf="@+id/tvCityCountry"
-            motion:layout_constraintTop_toTopOf="@+id/tvCityCountry">
+            motion:layout_constraintTop_toTopOf="@+id/tvCityCountry"
+            motion:layout_constraintEnd_toStartOf="@+id/settingsBtn">
             <CustomAttribute
                 motion:attributeName="colorFilter"
                 motion:customColorValue="@color/black" />
@@ -294,6 +317,18 @@
             motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree">
             <CustomAttribute
                 motion:attributeName="textColor"
+                motion:customColorValue="@color/black" />
+        </Constraint>
+        <Constraint
+            android:id="@+id/settingsBtn"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@+id/searchBtn"
+            android:layout_marginEnd="22dp"
+            motion:layout_constraintTop_toTopOf="@+id/searchBtn">
+            <CustomAttribute
+                motion:attributeName="colorFilter"
                 motion:customColorValue="@color/black" />
         </Constraint>
     </ConstraintSet>

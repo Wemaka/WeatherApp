@@ -29,7 +29,7 @@ import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.ui.activity.MainActivity;
 import com.wemaka.weatherapp.ui.view.LineChartView;
-import com.wemaka.weatherapp.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

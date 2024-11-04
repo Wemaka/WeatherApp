@@ -1,7 +1,5 @@
 package com.wemaka.weatherapp.api;
 
-import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
-
 import android.net.TrafficStats;
 import android.util.Log;
 
@@ -28,7 +26,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+
 public class GeoNamesClient {
+	public static final String TAG = "GeoNamesClient";
 	private static final String baseUrl = "http://api.geonames.org";
 	private static final String myName = "my_weather_app";
 	private static final OkHttpClient client = new OkHttpClient.Builder()

@@ -1,7 +1,5 @@
 package com.wemaka.weatherapp.api;
 
-import static com.wemaka.weatherapp.ui.activity.MainActivity.TAG;
-
 import android.net.TrafficStats;
 import android.util.Log;
 
@@ -44,7 +42,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+
 public class OpenMeteoClient {
+	public static final String TAG = "OpenMeteoClient";
 	private static final String baseUrl = "https://api.open-meteo.com/v1/forecast";
 	private static final int pastDays = 6;
 	private static final int forecastDays = 10;

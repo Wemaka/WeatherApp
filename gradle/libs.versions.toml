@@ -22,6 +22,7 @@ swiperefreshlayout = "1.1.0"
 fragment = "1.8.4"
 lombok = "1.18.30"
 wire = "5.0.0"
+preference = "1.2.0"
 
 [libraries]
 blurview = { module = "com.github.Dimezis:BlurView", version.ref = "blurview" }
@@ -46,6 +47,7 @@ rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroi
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 
 
 [plugins]

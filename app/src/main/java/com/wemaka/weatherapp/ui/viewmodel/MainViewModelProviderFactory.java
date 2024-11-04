@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.viewmodel;
+package com.wemaka.weatherapp.ui.viewmodel;
 
 import android.app.Application;
 

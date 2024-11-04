@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.viewmodel;
+package com.wemaka.weatherapp.ui.viewmodel;
 
 
 import android.app.Application;
@@ -33,6 +33,8 @@ public class MainViewModel extends AndroidViewModel {
 	public static final String TAG = "MainViewModel";
 	private final WeatherForecastRepository repository;
 	private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+	//	@Getter
+//	private final MutableLiveData<Boolean> isDataLoaded = new MutableLiveData<>(false);
 	@Getter
 	private final MutableLiveData<Resource<DaysForecastResponseProto>> daysForecast = new MutableLiveData<>();
 	@Getter
@@ -41,6 +43,7 @@ public class MainViewModel extends AndroidViewModel {
 	public MainViewModel(WeatherForecastRepository repository, @NonNull Application app) {
 		super(app);
 		this.repository = repository;
+		initData();
 	}
 
 	@Override
@@ -50,6 +53,52 @@ public class MainViewModel extends AndroidViewModel {
 		if (!compositeDisposable.isDisposed()) {
 			compositeDisposable.clear();
 		}
+	}
+
+//	public void loadData() {
+//		if (Boolean.FALSE.equals(isDataLoaded.getValue())) {
+//			isDataLoaded.setValue(true);
+//		}
+//	}
+
+	private void initData() {
+		Log.i(TAG, "INIT DATA");
+
+		compositeDisposable.add(repository.getDaysForecastResponse()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(
+						forecast -> getDaysForecast().postValue(new Resource.Success<>(forecast))
+				)
+		);
+
+		compositeDisposable.add(repository.getSettings()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(
+						settings -> getPlaceName().postValue(new Resource.Success<>(settings.locationName))
+				)
+		);
+
+		compositeDisposable.add(repository.getSettings()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.doOnTerminate(this::fetchCurrentWeatherAndPlace)
+				.subscribe(
+						settings -> {
+							Log.i(TAG, "getLocationCoord 1: " + settings);
+							setLocation(settings.locationCoord);
+						},
+						throwable -> {
+							Log.e(TAG, "getSavedLocationCoord", throwable);
+							setLocation(getLocation());
+						},
+						() -> {
+							Log.e(TAG, "getSavedLocationCoord Complete");
+							setLocation(getLocation());
+						}
+				)
+		);
 	}
 
 	public LocationCoordProto getLocation() {
@@ -124,7 +173,10 @@ public class MainViewModel extends AndroidViewModel {
 		compositeDisposable.add(repository.requestLocation()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(this::fetchWeatherAndPlace)
+				.subscribe(
+						this::fetchWeatherAndPlace,
+						error -> Log.e(TAG, error.getMessage(), error)
+				)
 		);
 	}
 

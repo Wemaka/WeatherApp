@@ -23,7 +23,7 @@ import com.wemaka.weatherapp.adapter.SearchMenuAdapter;
 import com.wemaka.weatherapp.databinding.FragmentSearchMenuBinding;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.ui.activity.MainActivity;
-import com.wemaka.weatherapp.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
 import eightbitlab.com.blurview.BlurViewFacade;
 import eightbitlab.com.blurview.RenderEffectBlur;
@@ -107,6 +107,10 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 			}
 		});
 		return dialog;
+	}
+
+	public static SearchMenuFragment newInstance() {
+		return new SearchMenuFragment();
 	}
 
 	private void setupFullHeight(View bottomSheet) {

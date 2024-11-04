@@ -1,6 +1,8 @@
 package com.wemaka.weatherapp.ui.fragment;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,13 +25,12 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.util.Resource;
 import com.wemaka.weatherapp.databinding.FragmentMainBinding;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 import com.wemaka.weatherapp.ui.activity.MainActivity;
-import com.wemaka.weatherapp.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
 import java.util.Map;
 
@@ -62,6 +63,14 @@ public class MainFragment extends Fragment {
 
 		model = ((MainActivity) requireActivity()).getModel();
 
+//		model.getIsDataLoaded().observe(getViewLifecycleOwner(), isDataLoaded -> {
+//			Log.i(TAG, "333: " + isDataLoaded);
+//			if (isDataLoaded) {
+//				Log.i(TAG, "444: " + isDataLoaded);
+//				initSavedData();
+//			}
+//		});
+
 		initSavedData();
 		initUi();
 		observeViewModel();
@@ -92,34 +101,55 @@ public class MainFragment extends Fragment {
 	}
 
 	private void initSavedData() {
-		model.getSavedDaysForecast().observe(getViewLifecycleOwner(), forecast -> {
-			model.getDaysForecast().postValue(new Resource.Success<>(forecast));
-		});
+//		model.getSavedLocationCoord().observe(getViewLifecycleOwner(), location -> {
+//			Log.i(TAG, "GET SAVE LOCATION COORDS: " + location);
+//
+//			model.setLocation(location);
+//
+//			handleLocationPermission();
+//		});
+//
+		handleLocationPermission();
 
-		model.getSavedSettings().observe(getViewLifecycleOwner(), settings -> {
-			model.getPlaceName().postValue(new Resource.Success<>(settings.locationName));
-		});
+//		model.getSavedDaysForecast().observe(getViewLifecycleOwner(), forecast -> {
+//			model.getDaysForecast().postValue(new Resource.Success<>(forecast));
+//		});
 
-		model.getSavedLocationCoord().observe(getViewLifecycleOwner(), location -> {
-			Log.i(TAG, "GET SAVE LOCATION COORDS: " + location);
-
-			model.setLocation(location);
-
-			handleLocationPermission();
-		});
+//		model.getSavedSettings().observe(getViewLifecycleOwner(), settings -> {
+//			model.getPlaceName().postValue(new Resource.Success<>(settings.locationName));
+//		});
 	}
 
 	private void initUi() {
 		binding.swipeRefresh.setOnRefreshListener(() -> {
 					Log.i(TAG, "onRefresh called from SwipeRefreshLayout");
 					handleLocationPermission();
+					model.fetchCurrentWeatherAndPlace();
 				}
 		);
 
 		binding.searchBtn.setOnClickListener(v -> {
-			SearchMenuFragment searchBottomSheet = new SearchMenuFragment();
+			SearchMenuFragment searchBottomSheet = SearchMenuFragment.newInstance();
 			searchBottomSheet.show(requireActivity().getSupportFragmentManager(),
 					"SearchBottomSheet");
+		});
+
+		binding.settingsBtn.setOnClickListener(v -> {
+			Animator animator = AnimatorInflater.loadAnimator(requireContext(), R.animator.slide_left);
+			animator.setTarget(binding.swipeRefresh);
+			animator.start();
+
+			MainSettingsFragment settingsFragment = MainSettingsFragment.newInstance();
+			requireActivity().getSupportFragmentManager().beginTransaction()
+					.setCustomAnimations(
+							R.anim.slide_in_right,
+							R.anim.slide_out_right,
+							R.anim.slide_in_right,
+							R.anim.slide_out_right
+					)
+					.replace(R.id.fragment_container, settingsFragment)
+					.addToBackStack(null)
+					.commit();
 		});
 
 		binding.motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
@@ -210,7 +240,7 @@ public class MainFragment extends Fragment {
 			});
 		}
 
-		model.fetchCurrentWeatherAndPlace();
+//		model.fetchCurrentWeatherAndPlace();
 	}
 
 	private void ensureLocationProviderEnabled() {

@@ -1,7 +1,9 @@
 package com.wemaka.weatherapp.ui.activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,14 +11,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.wemaka.weatherapp.api.LocationService;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
 import com.wemaka.weatherapp.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.ui.fragment.MainFragment;
-import com.wemaka.weatherapp.viewmodel.MainViewModel;
-import com.wemaka.weatherapp.viewmodel.MainViewModelProviderFactory;
+import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.ui.viewmodel.MainViewModelProviderFactory;
 import com.zeugmasolutions.localehelper.LocaleHelper;
+
+import java.util.Locale;
 
 import lombok.Getter;
 
@@ -31,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		EdgeToEdge.enable(this);
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
-
+		setLang();
 		setContentView(binding.getRoot());
 
 		LocationService locationService = new LocationService(this);
@@ -56,5 +61,15 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(LocaleHelper.INSTANCE.onAttach(base));
+	}
+
+	private void setLang() {
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//		if (prefs.getString("language", "English").equals("English")) {
+//			LocaleHelper.INSTANCE.setLocale(this, new Locale("en"));
+//		} else {
+//			LocaleHelper.INSTANCE.setLocale(this, new Locale("ru"));
+//		}
+//		attachBaseContext(this);
 	}
 }

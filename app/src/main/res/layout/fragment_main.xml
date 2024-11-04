@@ -66,13 +66,24 @@
                 android:id="@+id/searchBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="23dp"
                 android:contentDescription="@string/button_search"
                 android:padding="12dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tvCityCountry"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/settingsBtn"
                 app:layout_constraintTop_toTopOf="@+id/tvCityCountry"
                 app:srcCompat="@drawable/ic_search" />
+
+            <ImageView
+                android:id="@+id/settingsBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="22dp"
+                android:contentDescription="@string/button_settings"
+                android:padding="12dp"
+                app:layout_constraintBottom_toBottomOf="@+id/searchBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/searchBtn"
+                app:srcCompat="@drawable/ic_settings" />
 
             <TextView
                 android:id="@+id/tvMainDegree"
@@ -176,4 +187,13 @@
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

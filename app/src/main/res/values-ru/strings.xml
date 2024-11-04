@@ -3,6 +3,7 @@
     <string name="desc_img_main">Фон основного заголовка</string>
     <string name="city_default">Chinatown</string>
     <string name="button_search">Кнопка для поиска</string>
+    <string name="button_settings">Кнопка настроек</string>
     <string name="degree_feels_like">Ощущается как %1$s</string>
     <string name="weather_type_default">Облачно</string>
     <string name="info_last_update">Последнее обнолвение\n %1$s</string>

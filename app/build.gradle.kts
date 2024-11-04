@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.fragment)
 
     implementation(libs.lombok)
+    implementation(libs.preference)
     annotationProcessor(libs.lombok)
 
     implementation(libs.datastore.core)
