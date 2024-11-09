@@ -8,16 +8,36 @@
     tools:context=".ui.fragment.MainSettingsFragment"
     android:background="@color/black">
 
-    <TextView
-        android:id="@+id/btnBack"
+    <Toolbar
+        android:id="@+id/toolbar2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="BACK"
-        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:fontFamily="@font/productsans"
+        android:text="@string/title_settings"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/backBtn"
+        app:layout_constraintStart_toEndOf="@+id/backBtn"
+        app:layout_constraintTop_toTopOf="@+id/backBtn" />
+
+    <ImageButton
+        android:id="@+id/backBtn"
+        style="@style/CircleImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:contentDescription="@string/desc_button_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2"
+        app:srcCompat="@drawable/ic_arrow_direction_left_icon" />
 
     <FrameLayout
         android:id="@+id/settingsContainer"
@@ -26,7 +46,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnBack">
-
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/backBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-//        resourceConfigurations.addAll(arrayOf("en", "ru"))
+        resourceConfigurations.addAll(arrayOf("en", "ru"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

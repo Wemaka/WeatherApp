@@ -24,9 +24,8 @@ import lombok.Setter;
 
 public class LocationService {
 	public static final String TAG = "LocationService";
+	public static final double[] DEFAULT_COORD = {40.72, -74.00};
 	private static final ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
-	@Getter
-	private static final double[] DEFAULT_COORD = {40.72, -74.00};
 	private final LocationManager locationManager;
 	private final Context context;
 	private final FusedLocationProviderClient fusedLocationClient;
@@ -62,7 +61,7 @@ public class LocationService {
 			location = new LocationCoordProto(loc.getLatitude(), loc.getLongitude());
 		}
 
-		return getLocation();
+		return location;
 	}
 
 	private Task<Location> getCurrentLocation() throws SecurityException {
@@ -86,8 +85,8 @@ public class LocationService {
 	public Single<LocationCoordProto> requestLocation() {
 		return Single.create(emitter -> {
 			if (!isPermissionGranted()) {
-				Log.i(TAG, "NO PERMISSION: " + getLocation());
-				emitter.onSuccess(getLocation());
+				Log.i(TAG, "NO PERMISSION: " + location);
+				emitter.onSuccess(location);
 				return;
 			}
 

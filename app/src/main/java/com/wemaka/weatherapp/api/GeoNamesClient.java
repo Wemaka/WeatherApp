@@ -18,6 +18,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Single;
+import lombok.Getter;
+import lombok.Setter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -35,6 +37,9 @@ public class GeoNamesClient {
 			.connectTimeout(10, TimeUnit.SECONDS)
 			.readTimeout(30, TimeUnit.SECONDS)
 			.build();
+	@Getter
+	@Setter
+	private static Locale locale = Locale.getDefault();
 
 	public static Single<PlaceInfo> fetchNearestPlaceInfo(double latitude, double longitude) {
 		return Single.create(emitter -> {
@@ -44,7 +49,7 @@ public class GeoNamesClient {
 					.addQueryParameter("lng", String.valueOf(longitude))
 					.addQueryParameter("style", "FULL")
 					.addQueryParameter("cities", "cities1000")
-					.addQueryParameter("lang", Locale.getDefault().getLanguage())
+					.addQueryParameter("lang", locale.getLanguage())
 					.addQueryParameter("username", myName);
 
 			String url = urlBuilder.build().toString();

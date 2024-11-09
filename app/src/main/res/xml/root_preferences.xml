@@ -1,35 +1,40 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="Language">
+        <ListPreference
+            app:title="Select language"
+            app:key="language"
+            app:entries="@array/language_names"
+            app:entryValues="@array/language_values"
+            app:defaultValue="en"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
+    <PreferenceCategory app:title="Units">
+        <ListPreference
+            app:title="Temperature"
+            app:key="temperature"
+            app:entries="@array/temperature_names"
+            app:entryValues="@array/temperature_values"
+            app:defaultValue="celsius"
             app:useSimpleSummaryProvider="true" />
 
         <ListPreference
-            app:defaultValue="en"
-            app:entries="@array/languages_entries"
-            app:entryValues="@array/languages"
-            app:key="language"
-            app:title="Change language"
+            app:title="Wind"
+            app:key="wind"
+            app:entries="@array/wind_names"
+            app:entryValues="@array/wind_values"
+            app:defaultValue="kmh"
             app:useSimpleSummaryProvider="true" />
 
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/sync_header">
-
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
-
+        <ListPreference
+            app:title="Air pressure"
+            app:key="air_pressure"
+            app:entries="@array/air_pressure_names"
+            app:entryValues="@array/air_pressure_values"
+            app:defaultValue="hpa"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>

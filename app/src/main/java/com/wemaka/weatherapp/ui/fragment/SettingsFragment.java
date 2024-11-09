@@ -13,6 +13,8 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.wemaka.weatherapp.R;
+import com.wemaka.weatherapp.api.GeoNamesClient;
+import com.wemaka.weatherapp.ui.activity.MainActivity;
 import com.zeugmasolutions.localehelper.LocaleHelper;
 
 import java.util.Locale;
@@ -25,6 +27,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		setPreferencesFromResource(R.xml.root_preferences, rootKey);
 	}
 
+	@NonNull
+	@Override
+	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -34,9 +42,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		if (listLang != null) {
 			listLang.setOnPreferenceChangeListener((preference, newValue) -> {
 				Log.i(TAG, "Change language: " + newValue.toString());
-				LocaleHelper.INSTANCE.setLocale(requireContext(), new Locale(newValue.toString()));
-				requireActivity().recreate();
-				return false;
+
+				Locale newLocale = new Locale(newValue.toString());
+
+				GeoNamesClient.setLocale(newLocale);
+				((MainActivity) requireActivity()).updateLocale(newLocale);
+
+				return true;
 			});
 		}
 	}

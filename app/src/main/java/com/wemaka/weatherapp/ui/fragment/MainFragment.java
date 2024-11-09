@@ -25,13 +25,19 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.wemaka.weatherapp.R;
+import com.wemaka.weatherapp.api.LocationService;
+import com.wemaka.weatherapp.data.PlaceInfo;
 import com.wemaka.weatherapp.databinding.FragmentMainBinding;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 import com.wemaka.weatherapp.ui.activity.MainActivity;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.util.Resource;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class MainFragment extends Fragment {
@@ -63,23 +69,11 @@ public class MainFragment extends Fragment {
 
 		model = ((MainActivity) requireActivity()).getModel();
 
-//		model.getIsDataLoaded().observe(getViewLifecycleOwner(), isDataLoaded -> {
-//			Log.i(TAG, "333: " + isDataLoaded);
-//			if (isDataLoaded) {
-//				Log.i(TAG, "444: " + isDataLoaded);
-//				initSavedData();
-//			}
-//		});
+//		model.fetchNearestPlaceInfo();
 
-		initSavedData();
+		handleLocationPermission();
 		initUi();
 		observeViewModel();
-
-//		binding.tvCityCountry.setOnClickListener(v -> {
-//			LocaleHelper.INSTANCE.setLocale(requireContext(), new Locale("en"));
-//
-//			recreate(requireActivity());
-//		});
 	}
 
 	@Override
@@ -88,36 +82,28 @@ public class MainFragment extends Fragment {
 
 		Log.i(TAG, "ON STOP");
 
-		DataStoreProto dataStoreProto = new DataStoreProto(
-				new SettingsProto(model.getLocation(), model.getPlaceName().getValue().getData()),
-				model.getDaysForecast().getValue().getData()
-		);
+		Resource<String> resourcePlaceInfo = model.getPlaceName().getValue();
+		Resource<DaysForecastResponseProto> resourceForecast = model.getDaysForecast().getValue();
+		LocationCoordProto coord = model.getLocation();
 
-		model.saveDataStore(dataStoreProto);
+		if (coord == null) {
+			coord = new LocationCoordProto(
+					LocationService.DEFAULT_COORD[0],
+					LocationService.DEFAULT_COORD[1]);
+		}
+
+		if (resourcePlaceInfo != null && resourcePlaceInfo.getData() != null && resourceForecast != null) {
+			DataStoreProto dataStoreProto = new DataStoreProto(
+					new SettingsProto(coord, resourcePlaceInfo.getData()),
+					resourceForecast.getData()
+			);
+
+			model.saveDataStore(dataStoreProto);
+		}
 	}
 
 	public static MainFragment newInstance() {
 		return new MainFragment();
-	}
-
-	private void initSavedData() {
-//		model.getSavedLocationCoord().observe(getViewLifecycleOwner(), location -> {
-//			Log.i(TAG, "GET SAVE LOCATION COORDS: " + location);
-//
-//			model.setLocation(location);
-//
-//			handleLocationPermission();
-//		});
-//
-		handleLocationPermission();
-
-//		model.getSavedDaysForecast().observe(getViewLifecycleOwner(), forecast -> {
-//			model.getDaysForecast().postValue(new Resource.Success<>(forecast));
-//		});
-
-//		model.getSavedSettings().observe(getViewLifecycleOwner(), settings -> {
-//			model.getPlaceName().postValue(new Resource.Success<>(settings.locationName));
-//		});
 	}
 
 	private void initUi() {

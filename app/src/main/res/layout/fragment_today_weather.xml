@@ -445,7 +445,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/productsans"
-                    android:text="@string/title_chance_rain"
+                    android:text="@string/title_chance_precipitation"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="@+id/imgRainIcon2"

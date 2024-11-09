@@ -40,7 +40,7 @@ public class MainSettingsFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		binding.btnBack.setOnClickListener(v -> {
+		binding.backBtn.setOnClickListener(v -> {
 			backAnimation();
 		});
 

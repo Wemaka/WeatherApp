@@ -11,5 +11,5 @@
     <color name="textPrimary">#1D1B20</color>
     <color name="dartPurple20">#332B00A5</color>
     <color name="darkPurple">#21005D</color>
-    <color name="tabButtonTransparent">#00FFFFFF</color>
+    <color name="ColorTransparent">#00FFFFFF</color>
 </resources>

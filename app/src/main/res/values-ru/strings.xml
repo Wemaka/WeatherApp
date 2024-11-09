@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Приложение погоды</string>
     <string name="desc_img_main">Фон основного заголовка</string>
     <string name="city_default">Chinatown</string>
     <string name="button_search">Кнопка для поиска</string>
     <string name="button_settings">Кнопка настроек</string>
-    <string name="degree_feels_like">Ощущается как %1$s</string>
+    <string name="degree_feels_like">Ощущается %1$s</string>
     <string name="weather_type_default">Облачно</string>
     <string name="info_last_update">Последнее обнолвение\n %1$s</string>
     <!--    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>-->
@@ -33,7 +34,7 @@
     <string name="title_hourly_forecast">Почасовой прогноз</string>
     <string name="desc_img_calendar">Иконка календаря</string>
     <string name="title_day_forecast">Дневной прогноз</string>
-    <string name="title_chance_rain">Шанс выпадения осадков</string>
+    <string name="title_chance_precipitation">Вероятность осадков</string>
     <string name="desc_scroll_precipitation">Список прогнозируемых осадков</string>
     <string name="desc_img_sunrise">Иконка восхода</string>
     <string name="title_sunrise">Восход</string>
@@ -48,4 +49,6 @@
     <string name="desc_img_weather">Иконка погоды</string>
     <string name="desc_img_main_weather">Иконка погоды</string>
     <string name="no_internet_connection">Включите мобильную передачу данных или подключитесь к сети Wi-Fi</string>
+    <string name="desc_button_back">Вернуться назад</string>
+    <string name="title_settings">Настройки</string>
 </resources>
