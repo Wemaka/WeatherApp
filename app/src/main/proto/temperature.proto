@@ -6,6 +6,6 @@ option java_outer_classname = "TemperatureProto";
 
 message TemperatureProto {
   string time = 1;
-  string temperature = 2;
+  int32 temperature = 2;
   int32 imgIdWeatherCode = 3;
 }

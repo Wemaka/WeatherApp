@@ -14,14 +14,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.data.PlaceInfo;
-import com.wemaka.weatherapp.repository.WeatherForecastRepository;
+import com.wemaka.weatherapp.data.model.PlaceInfo;
+import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
+import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 import com.wemaka.weatherapp.util.Resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -60,7 +62,7 @@ public class MainViewModel extends AndroidViewModel {
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
-						forecast -> getDaysForecast().postValue(new Resource.Success<>(forecast))
+						forecast -> daysForecast.postValue(new Resource.Success<>(forecast))
 				)
 		);
 
@@ -68,7 +70,7 @@ public class MainViewModel extends AndroidViewModel {
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
-						settings -> getPlaceName().postValue(new Resource.Success<>(settings.locationName))
+						settings -> placeName.postValue(new Resource.Success<>(settings.locationName))
 				)
 		);
 
@@ -78,15 +80,15 @@ public class MainViewModel extends AndroidViewModel {
 				.doAfterTerminate(this::fetchCurrentWeatherAndPlace)
 				.subscribe(
 						settings -> {
-							Log.i(TAG, "getSavedLocationCoord 1: " + settings);
+							Log.i(TAG, "init getSettings: " + settings);
 							setLocation(settings.locationCoord);
 						},
 						throwable -> {
-							Log.e(TAG, "getSavedLocationCoord", throwable);
+							Log.e(TAG, "init getSettings error", throwable);
 							setLocation(getLocation());
 						},
 						() -> {
-							Log.e(TAG, "getSavedLocationCoord Complete");
+							Log.i(TAG, "init getSettings complete");
 							setLocation(getLocation());
 						}
 				)
@@ -274,5 +276,16 @@ public class MainViewModel extends AndroidViewModel {
 		return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
+	}
+
+	private void formatDaysForecast(DaysForecastResponseProto daysForecastResponse) {
+		DayForecastProto.Builder dfBuilder = daysForecastResponse.dayForecast.newBuilder();
+
+		dfBuilder.hourlyTempForecast(new ArrayList<>(dfBuilder.hourlyTempForecast));
+
+
+//		df.windSpeed.currentWindSpeed =
+//				getApplication().getResources().getString(R.string.speed_insert_kmh,
+//				df.windSpeed.currentWindSpeed);
 	}
 }

@@ -1,10 +1,9 @@
-package com.wemaka.weatherapp.repository;
+package com.wemaka.weatherapp.data.repository;
 
-import com.wemaka.weatherapp.api.GeoNamesClient;
-import com.wemaka.weatherapp.api.LocationService;
-import com.wemaka.weatherapp.api.OpenMeteoClient;
-import com.wemaka.weatherapp.data.PlaceInfo;
-import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.data.api.GeoNamesClient;
+import com.wemaka.weatherapp.data.service.LocationService;
+import com.wemaka.weatherapp.data.api.OpenMeteoClient;
+import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;

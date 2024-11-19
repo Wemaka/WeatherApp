@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.data;
+package com.wemaka.weatherapp.data.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

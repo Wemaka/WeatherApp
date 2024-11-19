@@ -6,6 +6,7 @@ import android.animation.AnimatorInflater;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.util.Calendar;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -25,18 +26,19 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.api.LocationService;
-import com.wemaka.weatherapp.data.PlaceInfo;
+import com.wemaka.weatherapp.data.service.LocationService;
 import com.wemaka.weatherapp.databinding.FragmentMainBinding;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
-import com.wemaka.weatherapp.ui.activity.MainActivity;
+import com.wemaka.weatherapp.ui.MainActivity;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 import com.wemaka.weatherapp.util.Resource;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 
@@ -68,8 +70,6 @@ public class MainFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		model = ((MainActivity) requireActivity()).getModel();
-
-//		model.fetchNearestPlaceInfo();
 
 		handleLocationPermission();
 		initUi();
@@ -162,6 +162,9 @@ public class MainFragment extends Fragment {
 	}
 
 	private void observeViewModel() {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+		SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+
 		model.getDaysForecast().observe(getViewLifecycleOwner(), resource -> {
 			if (resource.isLoading()) {
 				binding.swipeRefresh.setRefreshing(true);
@@ -170,11 +173,17 @@ public class MainFragment extends Fragment {
 				binding.swipeRefresh.setRefreshing(false);
 
 				DayForecastProto df = resource.getData().dayForecast;
-				binding.tvMainDegree.setText(df.temperature);
-				binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp));
+
+				binding.tvMainDegree.setText(df.temperature + "°");
+				binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp + "°"));
 				binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
 				binding.tvWeatherMainText.setText(df.weatherCode);
-				binding.tvLastUpdate.setText(getString(R.string.info_last_update, df.date));
+
+				Calendar calendar = parseDate(df.date);
+				binding.tvLastUpdate.setText(getString(R.string.info_last_update,
+						monthFormat.format(calendar.getTime()),
+						calendar.get(Calendar.DAY_OF_MONTH),
+						timeFormat.format(calendar.getTime())));
 
 			} else if (resource.isError() && resource.getMessage() != null) {
 				binding.swipeRefresh.setRefreshing(false);
@@ -190,6 +199,18 @@ public class MainFragment extends Fragment {
 				Log.i(TAG, resource.getErrorMes().orElse(""));
 			}
 		});
+	}
+
+	private Calendar parseDate(String formattedDate) {
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+
+		try {
+			calendar.setTime(dateFormat.parse(formattedDate));
+		} catch (ParseException e) {
+			Log.e(TAG, e.getMessage(), e);
+		}
+		return calendar;
 	}
 
 	private void showToast(String message) {

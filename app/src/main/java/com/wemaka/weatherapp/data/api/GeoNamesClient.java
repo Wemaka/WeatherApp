@@ -1,11 +1,11 @@
-package com.wemaka.weatherapp.api;
+package com.wemaka.weatherapp.data.api;
 
 import android.net.TrafficStats;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.wemaka.weatherapp.data.PlaceInfo;
+import com.wemaka.weatherapp.data.model.PlaceInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;

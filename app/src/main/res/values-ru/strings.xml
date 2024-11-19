@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Приложение погоды</string>
+    <string name="app_name">Погода</string>
     <string name="desc_img_main">Фон основного заголовка</string>
     <string name="city_default">Chinatown</string>
     <string name="button_search">Кнопка для поиска</string>
     <string name="button_settings">Кнопка настроек</string>
     <string name="degree_feels_like">Ощущается %1$s</string>
     <string name="weather_type_default">Облачно</string>
-    <string name="info_last_update">Последнее обнолвение\n %1$s</string>
-    <!--    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>-->
+    <!--    <string name="info_last_update">Последнее обнолвение\n%1$s</string>-->
+    <string name="info_last_update">Последнее обновление\n%2$d %1$s, %3$s</string>
     <string name="degree_day_night">Днем %1$d°\nНочью %2$d°</string>
     <string name="desc_img_wind">Иконка скорости ветра</string>
     <string name="title_wind_speed">Скорость ветра</string>
-    <string name="wind_speed">10км/ч</string>
+    <string name="speed_insert_kmh">%1$d км/ч</string>
     <string name="desc_img_wind_indicator">Индикатор, отображающий повышение или понижение
         скорости ветра</string>
     <string name="wind_speed_diff">2км/ч</string>
@@ -22,7 +22,7 @@
     <string name="title_rain_chance">Шанс дождя</string>
     <string name="desc_img_pressure">Иконка давления</string>
     <string name="title_pressure">Давление</string>
-    <string name="pressure_reading">100гПа</string>
+    <string name="air_pressure_insert_hpa">%1$d гПа</string>
     <string name="desc_img_pressure_indicator">Индикатор, отображающий повышение или понижение
         атмосферного давления</string>
     <string name="pressure_diff">5гПа</string>
@@ -51,4 +51,22 @@
     <string name="no_internet_connection">Включите мобильную передачу данных или подключитесь к сети Wi-Fi</string>
     <string name="desc_button_back">Вернуться назад</string>
     <string name="title_settings">Настройки</string>
+    <string name="title_language_settings">Выбрать язык</string>
+    <string name="title_language_category">Язык</string>
+    <string name="title_units_category">Единицы</string>
+    <string name="title_temp_settings">Температура</string>
+    <string name="title_wind_settings">Ветер</string>
+    <string name="title_air_pressure_settings">Давление воздуха</string>
+    <string name="temperature_name_celsius">цельсия</string>
+    <string name="speed_name_kmh">км/ч</string>
+    <string name="air_pressure_name_hpa">гПа</string>
+    <string-array name="days_of_week">
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+        <item>Вс</item>
+    </string-array>
 </resources>

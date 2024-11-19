@@ -10,7 +10,7 @@
     </string-array>
 
     <string-array name="temperature_names">
-        <item>celsius</item>
+        <item>@string/temperature_name_celsius</item>
     </string-array>
 
     <string-array name="temperature_values">
@@ -18,7 +18,7 @@
     </string-array>
 
     <string-array name="wind_names">
-        <item>kmh</item>
+        <item>@string/speed_name_kmh</item>
     </string-array>
 
     <string-array name="wind_values">
@@ -26,7 +26,7 @@
     </string-array>
 
     <string-array name="air_pressure_names">
-        <item>hpa</item>
+        <item>@string/air_pressure_name_hpa</item>
     </string-array>
 
     <string-array name="air_pressure_values">

@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.wemaka.weatherapp.repository.WeatherForecastRepository;
+import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 
 public class MainViewModelProviderFactory implements ViewModelProvider.Factory {
 	private final WeatherForecastRepository weatherForecastRepository;

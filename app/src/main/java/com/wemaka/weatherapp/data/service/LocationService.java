@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.api;
+package com.wemaka.weatherapp.data.service;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,7 +14,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.Task;
-import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.data.repository.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 
 import io.reactivex.rxjava3.core.Single;
@@ -25,7 +25,6 @@ import lombok.Setter;
 public class LocationService {
 	public static final String TAG = "LocationService";
 	public static final double[] DEFAULT_COORD = {40.72, -74.00};
-	private static final ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
 	private final LocationManager locationManager;
 	private final Context context;
 	private final FusedLocationProviderClient fusedLocationClient;
@@ -94,7 +93,7 @@ public class LocationService {
 				getCurrentLocation()
 						.addOnSuccessListener(location -> {
 							emitter.onSuccess(handleLocation(location,
-									() -> Log.i(TAG, "Current location = null 2")));
+									() -> Log.i(TAG, "Current location is null")));
 						})
 						.addOnFailureListener(e -> {
 							Log.e(TAG, "Failed to get current location", e);
@@ -105,7 +104,7 @@ public class LocationService {
 				getLastLocation()
 						.addOnSuccessListener(location -> {
 							emitter.onSuccess(handleLocation(location,
-									() -> Log.i(TAG, "Last location = null 1")));
+									() -> Log.i(TAG, "Last location is null")));
 						})
 						.addOnFailureListener(e -> {
 							Log.e(TAG, "Failed to get last location", e);

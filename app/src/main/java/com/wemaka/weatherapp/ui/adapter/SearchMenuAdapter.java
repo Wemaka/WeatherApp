@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.adapter;
+package com.wemaka.weatherapp.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.data.PlaceInfo;
+import com.wemaka.weatherapp.data.model.PlaceInfo;
 
 import java.util.List;
 

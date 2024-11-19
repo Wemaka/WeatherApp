@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.adapter.decoration;
+package com.wemaka.weatherapp.ui.adapter.decoration;
 
 import android.content.Context;
 import android.graphics.Rect;

@@ -5,7 +5,7 @@ option java_multiple_files = true;
 option java_outer_classname = "UvIndexProto";
 
 message UvIndexProto {
-  string currentUvIndex = 1;
-  string uvIndexDiff = 2;
+  int32 currentUvIndex = 1;
+  int32 uvIndexDiff = 2;
   int32 imgIdChangeUvIndex = 3;
 }

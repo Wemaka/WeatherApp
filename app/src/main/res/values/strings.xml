@@ -7,12 +7,12 @@
     <string name="degree_default" translatable="false">20°</string>
     <string name="degree_feels_like">Feels like %1$s</string>
     <string name="weather_type_default">Cloudy</string>
-    <string name="info_last_update">Last update\n%1$s</string>
-    <!--    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>-->
+    <!--    <string name="info_last_update">Last update\n%1$s</string>-->
+    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>
     <string name="degree_day_night">Day %1$d°\nNight %2$d°</string>
     <string name="desc_img_wind">Wind speed icon</string>
     <string name="title_wind_speed">Wind speed</string>
-    <string name="wind_speed">10km/h</string>
+    <string name="speed_insert_kmh">%1$d km/h</string>
     <string name="desc_img_wind_indicator">Indicator showing the increase or decrease in
         wind speed</string>
     <string name="wind_speed_diff">2km/h</string>
@@ -23,7 +23,7 @@
     <string name="rain_percent" translatable="false">0%</string>
     <string name="desc_img_pressure">Waves icon</string>
     <string name="title_pressure">Pressure</string>
-    <string name="pressure_reading">100hpa</string>
+    <string name="air_pressure_insert_hpa">%1$d hpa</string>
     <string name="desc_img_pressure_indicator">Indicator that shows whether the atmospheric pressure is rising or falling</string>
     <string name="pressure_diff">5hpa</string>
     <string name="uv_diff" translatable="false">0</string>
@@ -57,4 +57,22 @@
     <string name="no_internet_connection">Turn on mobile data or connect to a Wi-Fi network</string>
     <string name="desc_button_back">Go back</string>
     <string name="title_settings">Settings</string>
+    <string name="title_language_settings">Select language</string>
+    <string name="title_language_category">Language</string>
+    <string name="title_units_category">Units</string>
+    <string name="title_temp_settings">Temperature</string>
+    <string name="title_wind_settings">Wind</string>
+    <string name="title_air_pressure_settings">Air pressure</string>
+    <string name="temperature_name_celsius">celsius</string>
+    <string name="speed_name_kmh">km/h</string>
+    <string name="air_pressure_name_hpa">hPa</string>
+    <string-array name="days_of_week">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wen</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
 </resources>

@@ -19,10 +19,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.adapter.SearchMenuAdapter;
+import com.wemaka.weatherapp.ui.adapter.SearchMenuAdapter;
 import com.wemaka.weatherapp.databinding.FragmentSearchMenuBinding;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
-import com.wemaka.weatherapp.ui.activity.MainActivity;
+import com.wemaka.weatherapp.ui.MainActivity;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
 import eightbitlab.com.blurview.BlurViewFacade;

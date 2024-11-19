@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.adapter;
+package com.wemaka.weatherapp.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -48,7 +48,7 @@ public class HourlyTempForecastAdapter extends ListAdapter<TemperatureProto,
 
 		public void bindTo(TemperatureProto item) {
 			timeView.setText(item.time);
-			degreeView.setText(item.temperature);
+			degreeView.setText(item.temperature + "°");
 			iconView.setImageResource(item.imgIdWeatherCode);
 		}
 	}

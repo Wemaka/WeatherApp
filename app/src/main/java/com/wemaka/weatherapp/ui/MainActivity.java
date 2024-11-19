@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.ui.activity;
+package com.wemaka.weatherapp.ui;
 
 import android.os.Bundle;
 
@@ -8,9 +8,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.wemaka.weatherapp.api.LocationService;
+import com.wemaka.weatherapp.data.service.LocationService;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
-import com.wemaka.weatherapp.repository.WeatherForecastRepository;
+import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.ui.fragment.MainFragment;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModelProviderFactory;

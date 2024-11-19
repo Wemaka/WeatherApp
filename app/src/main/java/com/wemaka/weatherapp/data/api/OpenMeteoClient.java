@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.api;
+package com.wemaka.weatherapp.data.api;
 
 import android.net.TrafficStats;
 import android.util.Log;
@@ -61,6 +61,7 @@ public class OpenMeteoClient {
 					.addQueryParameter("longitude", String.valueOf(longitude))
 					.addQueryParameter("temperature_unit", "celsius")
 					.addQueryParameter("wind_speed_unit", "kmh")
+					.addQueryParameter("pressure_msl", "hpa")
 					.addQueryParameter("timeformat", "unixtime")
 					.addQueryParameter("past_days", pastDays + "")
 					.addQueryParameter("forecast_days", forecastDays + "")
@@ -122,12 +123,14 @@ public class OpenMeteoClient {
 //		PlaceInfoResponse placeInfoResponse = GeoNamesClient.fetchNearestPlaceInfo(response.latitude(), response.longitude());
 //		Locale currentLocale = new Locale(locationResponse.getLang(), locationResponse.getCountryCode());
 		Locale currentLocale = Locale.getDefault();
-
 		Date currentDate = new Date();
+
 		int currentIndexMinutely15 = getIndexMinutely15(minutely15, currentDate);
 		int currentIndexHourly = getIndexHourly(hourly, currentDate);
 		int currentIndexDay = getIndexDaily(daily, currentDate);
+
 		DateFormat timeFormat = new SimpleDateFormat("HH:mm", currentLocale);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", currentLocale);
 
 		DaysForecastResponseProto daysForecastResponse = new DaysForecastResponseProto(
 				new DayForecastProto(
@@ -135,9 +138,7 @@ public class OpenMeteoClient {
 						getApparentTemp(minutely15, currentIndexMinutely15),
 						getImgWeatherCode(minutely15, currentIndexMinutely15),
 						getWeatherCode(minutely15, currentIndexMinutely15),
-						Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, currentLocale) +
-								" " + new SimpleDateFormat("dd", currentLocale).format(currentDate) +
-								", " + timeFormat.format(currentDate),
+						dateFormat.format(currentDate),
 						timeFormat.format(new Date(getSunrise(daily, currentIndexDay))),
 						timeFormat.format(new Date(getSunset(daily, currentIndexDay))),
 						getWindSpeed(minutely15, currentIndexMinutely15),
@@ -169,13 +170,13 @@ public class OpenMeteoClient {
 				.values(index);
 	}
 
-	private static String getTemp(VariablesWithTime minutely15, int index) {
-		return Math.round(getValueMinutely15(Variable.temperature, minutely15, index)) + "°";
+	private static int getTemp(VariablesWithTime minutely15, int index) {
+		return Math.round(getValueMinutely15(Variable.temperature, minutely15, index));
 	}
 
-	private static String getApparentTemp(VariablesWithTime minutely15, int index) {
+	private static int getApparentTemp(VariablesWithTime minutely15, int index) {
 		return Math.round(getValueMinutely15(Variable.apparent_temperature, minutely15,
-				index)) + "°";
+				index));
 	}
 
 	private static int getImgWeatherCode(VariablesWithTime minutely15, int index) {
@@ -194,7 +195,7 @@ public class OpenMeteoClient {
 				minutely15,
 				index - 1));
 
-		return new WindSpeedProto(currWindSpeed + "km/h", Math.abs(diffWindSpeed) + "km/h",
+		return new WindSpeedProto(currWindSpeed, Math.abs(diffWindSpeed),
 				ChangeIndicator.getIndicatorValue(diffWindSpeed));
 	}
 
@@ -206,7 +207,7 @@ public class OpenMeteoClient {
 				currPrecipitationChance - Math.round(getValueMinutely15(Variable.precipitation_probability, minutely15, index - 1));
 
 		return new PrecipitationChanceProto("", currPrecipitationChance,
-				currPrecipitationChance + "%", Math.abs(diffPrecipitationChance) + "%",
+				currPrecipitationChance, Math.abs(diffPrecipitationChance),
 				ChangeIndicator.getIndicatorValue(diffPrecipitationChance));
 	}
 
@@ -215,7 +216,7 @@ public class OpenMeteoClient {
 		int diffPressure = currPressure - Math.round(getValueMinutely15(Variable.pressure_msl,
 				minutely15, index - 1));
 
-		return new PressureProto(currPressure + "hpa", diffPressure + "hpa",
+		return new PressureProto(currPressure, diffPressure,
 				ChangeIndicator.getIndicatorValue(diffPressure));
 	}
 
@@ -224,7 +225,7 @@ public class OpenMeteoClient {
 		int diffUvIndex = currUvIndex - Math.round(getValueMinutely15(Variable.uv_index,
 				minutely15, index - 1));
 
-		return new UvIndexProto(String.valueOf(currUvIndex), String.valueOf(diffUvIndex),
+		return new UvIndexProto(currUvIndex, diffUvIndex,
 				ChangeIndicator.getIndicatorValue(diffUvIndex));
 	}
 
@@ -254,21 +255,20 @@ public class OpenMeteoClient {
 
 	private static List<TemperatureProto> getHourlyTempForecast(VariablesWithTime hourly,
 	                                                            int hourlyIndex) {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:00", Locale.getDefault());
 		List<TemperatureProto> hourlyForecastList = new ArrayList<>();
-		String nowDate = "Now";
+//		String nowDate = "Now";
 
 		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
-			int wmoIndex =
-					(int) new VariablesSearch(hourly).variable(Variable.weather_code).first().values(i);
+			int wmoIndex = (int) new VariablesSearch(hourly).variable(Variable.weather_code).first().values(i);
 
 			TemperatureProto oneHourForecast = new TemperatureProto(
-					nowDate,
-					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)) + "°",
+					timeFormat.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L)),
+					Math.round(new VariablesSearch(hourly).variable(Variable.temperature).first().values(i)),
 					WeatherCode.getIconIdByCode(wmoIndex, true).get()
 			);
 
-			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
-					.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L));
+//			nowDate = timeFormat.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L));
 
 			hourlyForecastList.add(oneHourForecast);
 		}
@@ -294,22 +294,23 @@ public class OpenMeteoClient {
 	private static List<PrecipitationChanceProto> getPrecipitationChanceForecast(VariablesWithTime hourly,
 	                                                                             int hourlyIndex) {
 		List<PrecipitationChanceProto> precipitationChanceList = new ArrayList<>();
-		String nowDate = "Now";
+//		String nowDate = "Now";
 		VariableWithValues hourlyPrecipitation = Objects.requireNonNull(new VariablesSearch(hourly)
 				.variable(Variable.precipitation_probability)
 				.first());
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:00", Locale.getDefault());
 
 		for (int i = hourlyIndex; i < hourlyIndex + 24; i++) {
 			PrecipitationChanceProto oneHourChance = new PrecipitationChanceProto(
-					nowDate,
+					timeFormat.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L)),
 					(int) hourlyPrecipitation.values(i),
-					(int) hourlyPrecipitation.values(i) + "%",
-					"",
+					(int) hourlyPrecipitation.values(i),
+					null,
 					0
 			);
 
-			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
-					.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L));
+//			nowDate = new SimpleDateFormat("HH:00", Locale.getDefault())
+//					.format(new Date((hourly.time() + hourly.interval()) * (i + 1) * 1000L));
 
 			precipitationChanceList.add(oneHourChance);
 		}

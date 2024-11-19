@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.data.store;
+package com.wemaka.weatherapp.data.repository;
 
 import androidx.datastore.rxjava3.RxDataStore;
 

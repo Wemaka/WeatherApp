@@ -3,7 +3,7 @@ package com.wemaka.weatherapp;
 import androidx.datastore.rxjava3.RxDataStoreBuilder;
 
 import com.wemaka.weatherapp.data.store.DataStoreSerializer;
-import com.wemaka.weatherapp.data.store.ProtoDataStoreRepository;
+import com.wemaka.weatherapp.data.repository.ProtoDataStoreRepository;
 import com.zeugmasolutions.localehelper.LocaleAwareApplication;
 
 public class App extends LocaleAwareApplication {

@@ -10,8 +10,8 @@ option java_multiple_files = true;
 option java_outer_classname = "DayForecastProto";
 
 message DayForecastProto {
-  string temperature = 1;
-  string apparentTemp = 2;
+  int32 temperature = 1;
+  int32 apparentTemp = 2;
   int32 imgIdWeatherCode = 3;
   string weatherCode = 4;
   string date = 5;

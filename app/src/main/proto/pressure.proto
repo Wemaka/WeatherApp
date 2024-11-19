@@ -5,7 +5,7 @@ option java_multiple_files = true;
 option java_outer_classname = "PressureProto";
 
 message PressureProto {
-  string currentPressure = 1;
-  string pressureDiff = 2;
+  int32 currentPressure = 1;
+  int32 pressureDiff = 2;
   int32 imgIdChangePressure = 3;
 }
