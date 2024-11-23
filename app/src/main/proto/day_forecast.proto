@@ -13,7 +13,7 @@ message DayForecastProto {
   int32 temperature = 1;
   int32 apparentTemp = 2;
   int32 imgIdWeatherCode = 3;
-  string weatherCode = 4;
+  int32 weatherCode = 4;
   string date = 5;
   string sunrise = 6;
   string sunset = 7;

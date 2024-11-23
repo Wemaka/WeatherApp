@@ -7,7 +7,6 @@
     <string name="button_settings">Кнопка настроек</string>
     <string name="degree_feels_like">Ощущается %1$s</string>
     <string name="weather_type_default">Облачно</string>
-    <!--    <string name="info_last_update">Последнее обнолвение\n%1$s</string>-->
     <string name="info_last_update">Последнее обновление\n%2$d %1$s, %3$s</string>
     <string name="degree_day_night">Днем %1$d°\nНочью %2$d°</string>
     <string name="desc_img_wind">Иконка скорости ветра</string>
@@ -69,4 +68,32 @@
         <item>Сб</item>
         <item>Вс</item>
     </string-array>
+    <string name="clear_sky">Ясное небо</string>
+    <string name="mainly_clear">Преимущественно ясно</string>
+    <string name="partly_cloudy">Переменная облачность</string>
+    <string name="overcast">Пасмурно</string>
+    <string name="fog">Туман</string>
+    <string name="ice_fog">Ледяной туман</string>
+    <string name="light_drizzle">Мелкий дождь</string>
+    <string name="drizzle">Дождь</string>
+    <string name="heavy_drizzle">Сильный дождь</string>
+    <string name="light_freezing_drizzle">Ледяной мелкий дождь</string>
+    <string name="freezing_drizzle">Ледяной дождь</string>
+    <string name="light_rain">Небольшой дождь</string>
+    <string name="rain">Дождь</string>
+    <string name="heavy_rain">Сильный дождь</string>
+    <string name="light_freezing_rain">Ледяной небольшой дождь</string>
+    <string name="freezing_rain">Ледяной дождь</string>
+    <string name="light_snow">Небольшой снег</string>
+    <string name="snow">Снег</string>
+    <string name="heavy_snow">Сильный снег</string>
+    <string name="snow_grains">Снежная крупа</string>
+    <string name="light_showers">Небольшие ливни</string>
+    <string name="showers">Ливни</string>
+    <string name="heavy_showers">Сильные ливни</string>
+    <string name="light_snow_showers">Небольшие снегопады</string>
+    <string name="snow_showers">Снегопады</string>
+    <string name="thunderstorm">Гроза</string>
+    <string name="light_thunderstorm_hail">Небольшая гроза с градом</string>
+    <string name="thunderstorm_hail">Гроза с градом</string>
 </resources>

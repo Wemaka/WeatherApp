@@ -120,8 +120,6 @@ public class OpenMeteoClient {
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();
 
-//		PlaceInfoResponse placeInfoResponse = GeoNamesClient.fetchNearestPlaceInfo(response.latitude(), response.longitude());
-//		Locale currentLocale = new Locale(locationResponse.getLang(), locationResponse.getCountryCode());
 		Locale currentLocale = Locale.getDefault();
 		Date currentDate = new Date();
 
@@ -184,8 +182,8 @@ public class OpenMeteoClient {
 				minutely15, index), true).get();
 	}
 
-	private static String getWeatherCode(VariablesWithTime minutely15, int index) {
-		return WeatherCode.getNameByCode((int) getValueMinutely15(Variable.weather_code,
+	private static int getWeatherCode(VariablesWithTime minutely15, int index) {
+		return WeatherCode.getResIdByCode((int) getValueMinutely15(Variable.weather_code,
 				minutely15, index)).get();
 	}
 

@@ -7,7 +7,6 @@
     <string name="degree_default" translatable="false">20°</string>
     <string name="degree_feels_like">Feels like %1$s</string>
     <string name="weather_type_default">Cloudy</string>
-    <!--    <string name="info_last_update">Last update\n%1$s</string>-->
     <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>
     <string name="degree_day_night">Day %1$d°\nNight %2$d°</string>
     <string name="desc_img_wind">Wind speed icon</string>
@@ -75,4 +74,32 @@
         <item>Sat</item>
         <item>Sun</item>
     </string-array>
+    <string name="clear_sky">Clear Sky</string>
+    <string name="mainly_clear">Mainly Clear</string>
+    <string name="partly_cloudy">Partly Cloudy</string>
+    <string name="overcast">Overcast</string>
+    <string name="fog">Fog</string>
+    <string name="ice_fog">Ice Fog</string>
+    <string name="light_drizzle">Light Drizzle</string>
+    <string name="drizzle">Drizzle</string>
+    <string name="heavy_drizzle">Heavy Drizzle</string>
+    <string name="light_freezing_drizzle">Light Freezing Drizzle</string>
+    <string name="freezing_drizzle">Freezing Drizzle</string>
+    <string name="light_rain">Light Rain</string>
+    <string name="rain">Rain</string>
+    <string name="heavy_rain">Heavy Rain</string>
+    <string name="light_freezing_rain">Light Freezing Rain</string>
+    <string name="freezing_rain">Freezing Rain</string>
+    <string name="light_snow">Light Snow</string>
+    <string name="snow">Snow</string>
+    <string name="heavy_snow">Heavy Snow</string>
+    <string name="snow_grains">Snow Grains</string>
+    <string name="light_showers">Light Showers</string>
+    <string name="showers">Showers</string>
+    <string name="heavy_showers">Heavy Showers</string>
+    <string name="light_snow_showers">Light Snow Showers</string>
+    <string name="snow_showers">Snow Showers</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="light_thunderstorm_hail">Light T-storm w/ hail</string>
+    <string name="thunderstorm_hail">T-storm w/ hail</string>
 </resources>

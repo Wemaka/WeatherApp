@@ -187,7 +187,7 @@
             android:layout_marginTop="11dp"
             motion:layout_constraintBottom_toTopOf="@+id/clDateDegrees"
             motion:layout_constraintEnd_toEndOf="@+id/imgMainWeatherIcon"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             motion:layout_constraintTop_toBottomOf="@+id/imgMainWeatherIcon" />
         <Constraint
             android:id="@+id/toolbar"
@@ -205,7 +205,7 @@
             android:id="@+id/tvFeelsLike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            motion:layout_constraintVertical_bias="0.8"
+            motion:layout_constraintVertical_bias="0.75"
             motion:layout_constraintStart_toEndOf="@+id/tvMainDegree"
             motion:layout_constraintTop_toTopOf="@+id/tvMainDegree"
             motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree"
@@ -291,7 +291,8 @@
             android:layout_marginTop="11dp"
             motion:layout_constraintTop_toBottomOf="@+id/imgMainWeatherIcon"
             motion:layout_constraintStart_toEndOf="parent"
-            android:layout_width="wrap_content" />
+            android:layout_width="0dp"
+            android:maxWidth="150dp" />
         <Constraint
             android:id="@+id/tvMainDegree"
             android:layout_width="wrap_content"
@@ -311,7 +312,7 @@
             android:id="@+id/tvFeelsLike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            motion:layout_constraintVertical_bias="0.8"
+            motion:layout_constraintVertical_bias="0.75"
             motion:layout_constraintStart_toEndOf="@+id/tvMainDegree"
             motion:layout_constraintTop_toTopOf="@+id/tvMainDegree"
             motion:layout_constraintBottom_toBottomOf="@+id/tvMainDegree">

@@ -145,14 +145,14 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 
 	@Override
 	public void onValueSelected(Entry e, Highlight h) {
-		Log.i(TAG, "onValueSelected: " + e.getX() + ":" + e.getY() + " highLight: " + h);
+//		Log.i(TAG, "onValueSelected: " + e.getX() + ":" + e.getY() + " highLight: " + h);
 //		lineData.getDataSetByIndex(h.getDataSetIndex());
 //		lineData.setDrawValues(true);
 	}
 
 	@Override
 	public void onNothingSelected() {
-		Log.i(TAG, "onNothingSelected");
+//		Log.i(TAG, "onNothingSelected");
 //		lineData.setDrawValues(false);
 	}
 

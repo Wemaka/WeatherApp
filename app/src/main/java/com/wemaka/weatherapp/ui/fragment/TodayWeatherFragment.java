@@ -131,14 +131,12 @@ public class TodayWeatherFragment extends Fragment {
 		List<String> days = new ArrayList<>(Arrays.asList(daysOfWeek));
 		int firstDayOfWeek = Calendar.getInstance(Locale.getDefault()).getFirstDayOfWeek();
 
-		//TODO добавить изменение через настройки
 		if (firstDayOfWeek == Calendar.SUNDAY) {
 			days.add(0, days.remove(days.size() - 1));
 		}
 		days.add(0, "");
 
 		List<Entry> points = new ArrayList<>();
-
 		for (int i = 0; i <= tempForecast.size(); i += 6) {
 			int dayIndex = i / 24 + 1;
 			float hourFraction = (i % 24) / 24.0f;
@@ -154,17 +152,17 @@ public class TodayWeatherFragment extends Fragment {
 			points.add(new Entry(x, y));
 		}
 
-		LineChartView l = new LineChartView(binding.chDayForecast);
+		LineChartView lineChart = new LineChartView(binding.chDayForecast);
 
-		l.changeAxisY(days);
-		l.setData(new LineDataSet(points, ""));
+		lineChart.changeAxisY(days);
+		lineChart.setData(new LineDataSet(points, ""));
 
-		l.setAxisYMax(l.getAxisYMax() + 2);
-		l.setAxisYMin(l.getAxisYMin() - 2);
-		l.getDataSet().setFillDrawable(ContextCompat.getDrawable(binding.getRoot().getContext(),
+		lineChart.setAxisYMax(lineChart.getAxisYMax() + 2);
+		lineChart.setAxisYMin(lineChart.getAxisYMin() - 2);
+		lineChart.getDataSet().setFillDrawable(ContextCompat.getDrawable(binding.getRoot().getContext(),
 				R.drawable.gradient_dark_purple));
-		l.getDataSet().setHighLightColor(getResources().getColor(R.color.darkPurple, null));
-		l.getChart().setMarker(new LineChartView.CustomMarkerView(binding.getRoot().getContext(), R.layout.marker_layout));
+		lineChart.getDataSet().setHighLightColor(getResources().getColor(R.color.darkPurple, null));
+		lineChart.getChart().setMarker(new LineChartView.CustomMarkerView(binding.getRoot().getContext(), R.layout.marker_layout));
 	}
 
 	private void createPrecipitationForecast(List<PrecipitationChanceProto> precipitationChances) {

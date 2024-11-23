@@ -177,7 +177,7 @@ public class MainFragment extends Fragment {
 				binding.tvMainDegree.setText(df.temperature + "°");
 				binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp + "°"));
 				binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
-				binding.tvWeatherMainText.setText(df.weatherCode);
+				binding.tvWeatherMainText.setText(getString(df.weatherCode));
 
 				Calendar calendar = parseDate(df.date);
 				binding.tvLastUpdate.setText(getString(R.string.info_last_update,
