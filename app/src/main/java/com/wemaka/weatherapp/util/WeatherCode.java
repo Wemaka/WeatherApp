@@ -2,6 +2,7 @@ package com.wemaka.weatherapp.util;
 
 import com.wemaka.weatherapp.R;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;
@@ -40,31 +41,38 @@ public enum WeatherCode {
 	THUNDERSTORM_HAIL(99, R.string.thunderstorm_hail, R.drawable.ic_thunderstorms_and_hail_heavy, R.drawable.ic_thunderstorms_and_hail_heavy),
 	;
 
-	int code;
-	int resId;
-	int iconDayId;
-	int iconNightId;
+	private final int code;
+	private final int resId;
+	private final int iconDayId;
+	private final int iconNightId;
 
-	public static Optional<Integer> getResIdByCode(int code) {
-		for (WeatherCode weatherCode : WeatherCode.values()) {
-			if (weatherCode.code == code) {
-				return Optional.of(weatherCode.resId);
+	public static Optional<WeatherCode> searchWeatherCode(int code) {
+		WeatherCode[] weatherValues = WeatherCode.values();
+
+		int left = 0;
+		int right = weatherValues.length - 1;
+
+		while (left <= right) {
+			int mid = left + (right - left) / 2;
+			WeatherCode midWeather = weatherValues[mid];
+
+			if (code > midWeather.code) {
+				left = mid + 1;
+			} else if (code < midWeather.code) {
+				right = mid - 1;
+			} else {
+				return Optional.of(midWeather);
 			}
 		}
 
 		return Optional.empty();
 	}
 
-	public static Optional<Integer> getIconIdByCode(int code, boolean isDay) {
-		for (WeatherCode weatherCode : WeatherCode.values()) {
-			if (weatherCode.code == code) {
-				if (isDay) {
-					return Optional.of(weatherCode.iconDayId);
-				}
-				return Optional.of(weatherCode.iconNightId);
-			}
-		}
+	public static Optional<Integer> getResIdByCode(int code) {
+		return searchWeatherCode(code).map(w -> w.resId);
+	}
 
-		return Optional.empty();
+	public static Optional<Integer> getIconIdByCode(int code, boolean isDay) {
+		return searchWeatherCode(code).map(w -> isDay ? w.iconDayId : w.iconNightId);
 	}
 }
