@@ -56,7 +56,7 @@
     <string name="title_temp_settings">Температура</string>
     <string name="title_wind_settings">Ветер</string>
     <string name="title_air_pressure_settings">Давление воздуха</string>
-    <string name="temperature_name_celsius">цельсия</string>
+    <string name="temperature_name_celsius">Градусы Цельсия (°C)</string>
     <string name="speed_name_kmh">км/ч</string>
     <string name="air_pressure_name_hpa">гПа</string>
     <string-array name="days_of_week">
@@ -96,4 +96,5 @@
     <string name="thunderstorm">Гроза</string>
     <string name="light_thunderstorm_hail">Небольшая гроза с градом</string>
     <string name="thunderstorm_hail">Гроза с градом</string>
+    <string name="temperature_name_fahrenheit">Градусы Фаренгейта (°F)</string>
 </resources>

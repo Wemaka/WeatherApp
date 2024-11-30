@@ -16,6 +16,8 @@ import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.databinding.FragmentMainSettingsBinding;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
+import java.util.Objects;
+
 public class MainSettingsFragment extends Fragment {
 	public static final String TAG = "MainSettingsFragment";
 	private FragmentMainSettingsBinding binding;
@@ -28,10 +30,12 @@ public class MainSettingsFragment extends Fragment {
 	                         @Nullable Bundle savedInstanceState) {
 		binding = FragmentMainSettingsBinding.inflate(getLayoutInflater());
 
-		getChildFragmentManager()
-				.beginTransaction()
-				.replace(binding.settingsContainer.getId(), SettingsFragment.newInstance())
-				.commit();
+		if (savedInstanceState == null) {
+			getChildFragmentManager()
+					.beginTransaction()
+					.replace(binding.settingsContainer.getId(), SettingsFragment.newInstance())
+					.commit();
+		}
 
 		return binding.getRoot();
 	}

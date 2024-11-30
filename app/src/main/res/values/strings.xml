@@ -62,7 +62,7 @@
     <string name="title_temp_settings">Temperature</string>
     <string name="title_wind_settings">Wind</string>
     <string name="title_air_pressure_settings">Air pressure</string>
-    <string name="temperature_name_celsius">celsius</string>
+    <string name="temperature_name_celsius">Degrees Celsius (°C)</string>
     <string name="speed_name_kmh">km/h</string>
     <string name="air_pressure_name_hpa">hPa</string>
     <string-array name="days_of_week">
@@ -102,4 +102,5 @@
     <string name="thunderstorm">Thunderstorm</string>
     <string name="light_thunderstorm_hail">Light T-storm w/ hail</string>
     <string name="thunderstorm_hail">T-storm w/ hail</string>
+    <string name="temperature_name_fahrenheit">Degrees Fahrenheit (°F)</string>
 </resources>

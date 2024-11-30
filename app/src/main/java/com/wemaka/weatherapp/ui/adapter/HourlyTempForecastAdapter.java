@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.store.proto.TemperatureProto;
+import com.wemaka.weatherapp.store.proto.HourlyTemperatureProto;
 
-public class HourlyTempForecastAdapter extends ListAdapter<TemperatureProto,
+public class HourlyTempForecastAdapter extends ListAdapter<HourlyTemperatureProto,
 		HourlyTempForecastAdapter.ViewHolder> {
 	public HourlyTempForecastAdapter() {
 		super(new Comparator());
@@ -46,22 +46,22 @@ public class HourlyTempForecastAdapter extends ListAdapter<TemperatureProto,
 		}
 
 
-		public void bindTo(TemperatureProto item) {
+		public void bindTo(HourlyTemperatureProto item) {
 			timeView.setText(item.time);
 			degreeView.setText(item.temperature + "°");
 			iconView.setImageResource(item.imgIdWeatherCode);
 		}
 	}
 
-	public static class Comparator extends DiffUtil.ItemCallback<TemperatureProto> {
+	public static class Comparator extends DiffUtil.ItemCallback<HourlyTemperatureProto> {
 		@Override
-		public boolean areItemsTheSame(@NonNull TemperatureProto oldItem, @NonNull TemperatureProto newItem) {
+		public boolean areItemsTheSame(@NonNull HourlyTemperatureProto oldItem, @NonNull HourlyTemperatureProto newItem) {
 			return oldItem == newItem;
 		}
 
 		@SuppressLint("DiffUtilEquals")
 		@Override
-		public boolean areContentsTheSame(@NonNull TemperatureProto oldItem, @NonNull TemperatureProto newItem) {
+		public boolean areContentsTheSame(@NonNull HourlyTemperatureProto oldItem, @NonNull HourlyTemperatureProto newItem) {
 			return oldItem == newItem;
 		}
 	}

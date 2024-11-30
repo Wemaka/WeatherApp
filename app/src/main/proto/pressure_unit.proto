@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.wemaka.weatherapp.store.proto";
+option java_multiple_files = true;
+option java_outer_classname = "PressureUnitProto";
+
+enum PressureUnitProto {
+  MM_HG = 0; // Millimeters of mercury column
+  HPA = 1; // Hectopascals
+  IN_HG = 2; // Inches of mercury column
+}

@@ -17,11 +17,13 @@ import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
-import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.HourlyTemperatureProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
+import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
 import com.wemaka.weatherapp.util.Resource;
+import com.wemaka.weatherapp.util.math.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -278,14 +280,20 @@ public class MainViewModel extends AndroidViewModel {
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
 	}
 
-	private void formatDaysForecast(DaysForecastResponseProto daysForecastResponse) {
-		DayForecastProto.Builder dfBuilder = daysForecastResponse.dayForecast.newBuilder();
+	private List<HourlyTemperatureProto> convertTemperatureList(List<HourlyTemperatureProto> temperatureList,
+	                                                            TemperatureUnitProto unit) {
+		if (temperatureList == null || temperatureList.isEmpty()) {
+			return null;
+		}
 
-		dfBuilder.hourlyTempForecast(new ArrayList<>(dfBuilder.hourlyTempForecast));
+		List<HourlyTemperatureProto> convertedList = new ArrayList<>();
 
+		for (HourlyTemperatureProto temp : temperatureList) {
+			int newTemperature = Math.round(UnitConverter.convertTemperature(temp.temperature, temp.temperatureUnit, unit));
 
-//		df.windSpeed.currentWindSpeed =
-//				getApplication().getResources().getString(R.string.speed_insert_kmh,
-//				df.windSpeed.currentWindSpeed);
+			convertedList.add(temp.newBuilder().temperature(newTemperature).temperatureUnit(unit).build());
+		}
+
+		return convertedList;
 	}
 }

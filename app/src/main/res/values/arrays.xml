@@ -11,10 +11,12 @@
 
     <string-array name="temperature_names">
         <item>@string/temperature_name_celsius</item>
+        <item>@string/temperature_name_fahrenheit</item>
     </string-array>
 
     <string-array name="temperature_values">
         <item>celsius</item>
+        <item>fahrenheit</item>
     </string-array>
 
     <string-array name="wind_names">

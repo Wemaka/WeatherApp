@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "speed_unit.proto";
 
 option java_package = "com.wemaka.weatherapp.store.proto";
 option java_multiple_files = true;
@@ -8,4 +9,5 @@ message WindSpeedProto {
   int32 currentWindSpeed = 1;
   int32 windSpeedDiff = 2;
   int32 imgIdChangeWindSpeed = 3;
+  SpeedUnitProto speedUnit = 4;
 }

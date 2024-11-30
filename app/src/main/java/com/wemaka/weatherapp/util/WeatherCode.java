@@ -2,7 +2,6 @@ package com.wemaka.weatherapp.util;
 
 import com.wemaka.weatherapp.R;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;

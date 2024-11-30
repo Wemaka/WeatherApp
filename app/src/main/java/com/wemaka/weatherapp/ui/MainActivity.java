@@ -38,10 +38,12 @@ public class MainActivity extends LocaleAwareCompatActivity {
 
 		model = new ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel.class);
 
-		getSupportFragmentManager()
-				.beginTransaction()
-				.replace(binding.placeHolder.getId(), MainFragment.newInstance())
-				.commit();
+		if (savedInstanceState == null) {
+			getSupportFragmentManager()
+					.beginTransaction()
+					.replace(binding.placeHolder.getId(), MainFragment.newInstance())
+					.commit();
+		}
 
 		ViewCompat.setOnApplyWindowInsetsListener(binding.placeHolder, (v, insets) -> {
 			Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

@@ -40,7 +40,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		model = ((MainActivity) requireActivity()).getModel();
 
 		ListPreference listLang = getPreferenceManager().findPreference("language");
-
 		if (listLang != null) {
 			listLang.setOnPreferenceChangeListener((preference, newValue) -> {
 				Log.i(TAG, "Change language: " + newValue.toString());
@@ -55,6 +54,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 				return true;
 			});
 		}
+
+
 	}
 
 	public static SettingsFragment newInstance() {

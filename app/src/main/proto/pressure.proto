@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "pressure_unit.proto";
 
 option java_package = "com.wemaka.weatherapp.store.proto";
 option java_multiple_files = true;
@@ -8,4 +9,5 @@ message PressureProto {
   int32 currentPressure = 1;
   int32 pressureDiff = 2;
   int32 imgIdChangePressure = 3;
+  PressureUnitProto pressureUnit = 4;
 }

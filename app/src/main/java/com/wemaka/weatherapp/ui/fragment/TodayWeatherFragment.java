@@ -16,23 +16,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.ui.adapter.HourlyTempForecastAdapter;
-import com.wemaka.weatherapp.ui.adapter.decoration.ListPaddingDecoration;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
-import com.wemaka.weatherapp.store.proto.TemperatureProto;
-import com.wemaka.weatherapp.util.math.UnitConverter;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
+import com.wemaka.weatherapp.store.proto.HourlyTemperatureProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.ui.MainActivity;
+import com.wemaka.weatherapp.ui.adapter.HourlyTempForecastAdapter;
+import com.wemaka.weatherapp.ui.adapter.decoration.ListPaddingDecoration;
 import com.wemaka.weatherapp.ui.view.LineChartView;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
+import com.wemaka.weatherapp.util.math.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,7 +97,7 @@ public class TodayWeatherFragment extends Fragment {
 				binding.tvPressureHpa.setText(getString(R.string.air_pressure_insert_hpa, df.pressure.currentPressure));
 				binding.tvUv.setText(df.uvIndex.currentUvIndex + "");
 
-				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
+				List<HourlyTemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
 				formatTemperatureList.set(0,
 						formatTemperatureList.get(0).newBuilder().time(getString(R.string.text_now)).build());
 				hourlyTempForecastAdapter.submitList(formatTemperatureList);
@@ -136,7 +135,8 @@ public class TodayWeatherFragment extends Fragment {
 		}
 		days.add(0, "");
 
-		List<Entry> points = new ArrayList<>();
+		List<Entry> points = new ArrayList<>(tempForecast.size() / 6 + 1);
+
 		for (int i = 0; i <= tempForecast.size(); i += 6) {
 			int dayIndex = i / 24 + 1;
 			float hourFraction = (i % 24) / 24.0f;
@@ -181,7 +181,6 @@ public class TodayWeatherFragment extends Fragment {
 			TextView timeView = new TextView(getActivity());
 			TextView percentView = new TextView(getActivity());
 
-
 			timeView.setText(forecastRain.time);
 			percentView.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			timeView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
@@ -204,7 +203,6 @@ public class TodayWeatherFragment extends Fragment {
 			percentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
 			percentView.setTextColor(getResources().getColor(R.color.black, null));
 			percentView.setGravity(Gravity.END);
-
 
 			tableRow.addView(timeView, 0);
 			tableRow.addView(progressBarView, 1);
