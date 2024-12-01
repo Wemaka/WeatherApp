@@ -5,7 +5,7 @@ import com.wemaka.weatherapp.data.service.LocationService;
 import com.wemaka.weatherapp.data.api.OpenMeteoClient;
 import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 
@@ -22,7 +22,7 @@ public class WeatherForecastRepository {
 		this.locationService = locationService;
 	}
 
-	public Single<DaysForecastResponseProto> fetchWeatherForecast(double latitude, double longitude) {
+	public Single<DaysForecastProto> fetchWeatherForecast(double latitude, double longitude) {
 		return OpenMeteoClient.fetchWeatherForecast(latitude, longitude);
 	}
 
@@ -42,7 +42,7 @@ public class WeatherForecastRepository {
 		return ProtoDataStoreRepository.getInstance().saveDataStore(dataStoreProto);
 	}
 
-	public Maybe<DaysForecastResponseProto> getDaysForecastResponse() {
+	public Maybe<DaysForecastProto> getDaysForecastResponse() {
 		return ProtoDataStoreRepository.getInstance().getDaysForecastResponse();
 	}
 

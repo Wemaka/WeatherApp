@@ -15,7 +15,7 @@ import com.openmeteo.sdk.VariablesSearch;
 import com.openmeteo.sdk.VariablesWithTime;
 import com.openmeteo.sdk.WeatherApiResponse;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.store.proto.PressureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
@@ -70,7 +70,7 @@ public class OpenMeteoClient {
 	@Setter
 	private static PressureUnitProto pressureUnit = PressureUnitProto.HPA;
 
-	public static Single<DaysForecastResponseProto> fetchWeatherForecast(double latitude, double longitude) {
+	public static Single<DaysForecastProto> fetchWeatherForecast(double latitude, double longitude) {
 		return Single.create(emitter -> {
 			HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
 			urlBuilder
@@ -78,7 +78,7 @@ public class OpenMeteoClient {
 					.addQueryParameter("longitude", String.valueOf(longitude))
 					.addQueryParameter("temperature_unit", temperatureUnit.toString().toLowerCase())
 					.addQueryParameter("wind_speed_unit", speedUnit.toString().toLowerCase())
-					.addQueryParameter("pressure_msl", pressureUnit.toString().toLowerCase())
+					.addQueryParameter("pressure_msl", "hpa")
 					.addQueryParameter("timeformat", "unixtime")
 					.addQueryParameter("timezone", "auto")
 					.addQueryParameter("past_days", pastDays + "")
@@ -134,7 +134,7 @@ public class OpenMeteoClient {
 		});
 	}
 
-	private static DaysForecastResponseProto parseWeatherData(WeatherApiResponse response) {
+	private static DaysForecastProto parseWeatherData(WeatherApiResponse response) {
 		VariablesWithTime minutely15 = response.minutely15();
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();
@@ -154,7 +154,7 @@ public class OpenMeteoClient {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
-		DaysForecastResponseProto daysForecastResponse = new DaysForecastResponseProto(
+		DaysForecastProto daysForecastResponse = new DaysForecastProto(
 				new DayForecastProto(
 						getTemp(minutely15, currentIndexMinutely15),
 						getApparentTemp(minutely15, currentIndexMinutely15),

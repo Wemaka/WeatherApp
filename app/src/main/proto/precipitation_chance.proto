@@ -7,6 +7,6 @@ option java_outer_classname = "PrecipitationChanceProto";
 message PrecipitationChanceProto {
   optional string time = 1;
   int32 percent = 2;
-  optional int32 precipitationChanceDiff = 3;
+  optional int32 percentDiff = 3;
   optional int32 imgIdPrecipitationChance = 4;
 }

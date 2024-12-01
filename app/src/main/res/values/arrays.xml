@@ -19,19 +19,27 @@
         <item>fahrenheit</item>
     </string-array>
 
-    <string-array name="wind_names">
+    <string-array name="wind_speed_names">
         <item>@string/speed_name_kmh</item>
+        <item>@string/speed_name_ms</item>
+        <item>@string/speed_name_mph</item>
     </string-array>
 
-    <string-array name="wind_values">
+    <string-array name="wind_speed_values">
         <item>kmh</item>
+        <item>ms</item>
+        <item>mph</item>
     </string-array>
 
     <string-array name="air_pressure_names">
         <item>@string/air_pressure_name_hpa</item>
+        <item>@string/air_pressure_name_mmhg</item>
+        <item>@string/air_pressure_name_inhg</item>
     </string-array>
 
     <string-array name="air_pressure_values">
         <item>hpa</item>
+        <item>mmhg</item>
+        <item>inhg</item>
     </string-array>
 </resources>

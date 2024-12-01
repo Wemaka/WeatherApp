@@ -4,9 +4,9 @@ import "temperature.proto";
 
 option java_package = "com.wemaka.weatherapp.store.proto";
 option java_multiple_files = true;
-option java_outer_classname = "DaysForecastResponseProto";
+option java_outer_classname = "DaysForecastProto";
 
-message DaysForecastResponseProto {
+message DaysForecastProto {
   DayForecastProto dayForecast = 1;
   repeated TemperatureProto weekTempForecast = 2;
 }

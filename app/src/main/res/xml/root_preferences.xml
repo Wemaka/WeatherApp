@@ -23,8 +23,8 @@
         <ListPreference
             app:title="@string/title_wind_settings"
             app:key="windSpeedPrefs"
-            app:entries="@array/wind_names"
-            app:entryValues="@array/wind_values"
+            app:entries="@array/wind_speed_names"
+            app:entryValues="@array/wind_speed_values"
             app:defaultValue="kmh"
             app:useSimpleSummaryProvider="true" />
 

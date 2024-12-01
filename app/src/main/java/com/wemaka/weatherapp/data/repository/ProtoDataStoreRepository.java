@@ -3,7 +3,7 @@ package com.wemaka.weatherapp.data.repository;
 import androidx.datastore.rxjava3.RxDataStore;
 
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 
@@ -57,13 +57,13 @@ public class ProtoDataStoreRepository {
 				.onErrorComplete();
 	}
 
-	public Completable saveDaysForecastResponse(DaysForecastResponseProto daysForecastResponse) {
+	public Completable saveDaysForecastResponse(DaysForecastProto daysForecastResponse) {
 		return dataStore.updateDataAsync(data -> Single.just(
 				data.newBuilder().forecast(daysForecastResponse).build()
 		)).ignoreElement();
 	}
 
-	public Maybe<DaysForecastResponseProto> getDaysForecastResponse() {
+	public Maybe<DaysForecastProto> getDaysForecastResponse() {
 		return dataStore.data()
 				.map(data -> data.forecast)
 				.firstOrError()

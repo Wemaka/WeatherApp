@@ -30,7 +30,7 @@ import com.wemaka.weatherapp.data.service.LocationService;
 import com.wemaka.weatherapp.databinding.FragmentMainBinding;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 import com.wemaka.weatherapp.ui.MainActivity;
@@ -83,7 +83,7 @@ public class MainFragment extends Fragment {
 		Log.i(TAG, "ON STOP");
 
 		Resource<String> resourcePlaceInfo = model.getPlaceName().getValue();
-		Resource<DaysForecastResponseProto> resourceForecast = model.getDaysForecast().getValue();
+		Resource<DaysForecastProto> resourceForecast = model.getDaysForecast().getValue();
 		LocationCoordProto coord = model.getLocation();
 
 		if (coord == null) {

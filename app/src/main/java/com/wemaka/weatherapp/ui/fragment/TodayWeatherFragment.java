@@ -24,6 +24,8 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
+import com.wemaka.weatherapp.store.proto.PressureUnitProto;
+import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.ui.MainActivity;
@@ -92,10 +94,10 @@ public class TodayWeatherFragment extends Fragment {
 
 				binding.tvSunriseTime.setText(df.sunrise);
 				binding.tvSunsetTime.setText(df.sunset);
-				binding.tvWindSpeed.setText(getString(R.string.speed_insert_kmh, df.windSpeed.currentWindSpeed));
+				binding.tvWindSpeed.setText(formatSpeedUnit(df.windSpeed.speed, df.windSpeed.speedUnit));
 				binding.tvRainPercent.setText(df.precipitationChance.percent + "%");
-				binding.tvPressureHpa.setText(getString(R.string.air_pressure_insert_hpa, df.pressure.pressure));
-				binding.tvUv.setText(df.uvIndex.currentUvIndex + "");
+				binding.tvPressureHpa.setText(formatPressureUnit(df.pressure.pressure, df.pressure.pressureUnit));
+				binding.tvUv.setText(df.uvIndex.uvIndexDiff + "");
 
 				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
 				formatTemperatureList.set(0,
@@ -109,9 +111,9 @@ public class TodayWeatherFragment extends Fragment {
 						formatPrecipitationList.get(0).newBuilder().time(getString(R.string.text_now)).build());
 				createPrecipitationForecast(formatPrecipitationList);
 
-				binding.tvWindDiff.setText(getString(R.string.speed_insert_kmh, df.windSpeed.windSpeedDiff));
-				binding.tvRainDiff.setText(df.precipitationChance.precipitationChanceDiff + "%");
-				binding.tvPressureDiff.setText(getString(R.string.air_pressure_insert_hpa, df.pressure.pressureDiff));
+				binding.tvWindDiff.setText(formatSpeedUnit(df.windSpeed.speedDiff, df.windSpeed.speedUnit));
+				binding.tvRainDiff.setText(df.precipitationChance.percentDiff + "%");
+				binding.tvPressureDiff.setText(formatPressureUnit(df.pressure.pressureDiff, df.pressure.pressureUnit));
 				binding.tvUvDiff.setText(df.uvIndex.uvIndexDiff + "");
 				binding.imgWindSpeedIndicator.setImageResource(df.windSpeed.imgIdChangeWindSpeed);
 				binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);
@@ -209,6 +211,28 @@ public class TodayWeatherFragment extends Fragment {
 			tableRow.addView(percentView, 2);
 
 			tableLayout.addView(tableRow, -1);
+		}
+	}
+
+	private String formatSpeedUnit(int speed, SpeedUnitProto speedUnit) {
+		switch (speedUnit) {
+			case MS:
+				return getString(R.string.speed_insert_ms, speed);
+			case MPH:
+				return getString(R.string.speed_insert_mph, speed);
+			default:
+				return getString(R.string.speed_insert_kmh, speed);
+		}
+	}
+
+	private String formatPressureUnit(int pressure, PressureUnitProto pressureUnit) {
+		switch (pressureUnit) {
+			case IN_HG:
+				return getString(R.string.air_pressure_insert_inhg, pressure);
+			case MM_HG:
+				return getString(R.string.air_pressure_insert_mmhg, pressure);
+			default:
+				return getString(R.string.air_pressure_insert_hpa, pressure);
 		}
 	}
 }

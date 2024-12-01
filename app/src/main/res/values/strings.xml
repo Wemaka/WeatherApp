@@ -1,70 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="air_pressure_insert_hpa">%1$d hpa</string>
+    <string name="air_pressure_insert_mmhg">%1$d mmHg</string>
+    <string name="air_pressure_insert_inhg">%1$d inHg</string>
+    <string name="air_pressure_name_hpa">Hectopascals (hPa)</string>
+    <string name="air_pressure_name_mmhg">Millimeters of mercury column (mmHg)</string>
+    <string name="air_pressure_name_inhg">Inch of mercury column (inHg)</string>
     <string name="app_name">Weather App</string>
-    <string name="desc_img_main">main header background</string>
-    <string name="city_default">Chinatown</string>
     <string name="button_search">button searchable</string>
     <string name="button_settings">button settings</string>
-    <string name="degree_default" translatable="false">20°</string>
-    <string name="degree_feels_like">Feels like %1$s</string>
-    <string name="weather_type_default">Cloudy</string>
-    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>
-    <string name="degree_day_night">Day %1$d°\nNight %2$d°</string>
-    <string name="desc_img_wind">Wind speed icon</string>
-    <string name="title_wind_speed">Wind speed</string>
-    <string name="speed_insert_kmh">%1$d km/h</string>
-    <string name="desc_img_wind_indicator">Indicator showing the increase or decrease in
-        wind speed</string>
-    <string name="wind_speed_diff">2km/h</string>
-    <string name="rain_diff" translatable="false">0%</string>
-    <string name="desc_img_rain_indicator">An indicator that shows whether the chance of precipitation is increasing or decreasing</string>
-    <string name="desc_img_rain">Rain icon</string>
-    <string name="title_rain_chance">Rain chance</string>
-    <string name="rain_percent" translatable="false">0%</string>
-    <string name="desc_img_pressure">Waves icon</string>
-    <string name="title_pressure">Pressure</string>
-    <string name="air_pressure_insert_hpa">%1$d hpa</string>
-    <string name="desc_img_pressure_indicator">Indicator that shows whether the atmospheric pressure is rising or falling</string>
-    <string name="pressure_diff">5hpa</string>
-    <string name="uv_diff" translatable="false">0</string>
-    <string name="desc_img_uv_indicator">Indicator showing the increase or decrease of the uv index</string>
-    <string name="desc_img_sun">Sun icon</string>
-    <string name="title_uv_index">UV Index</string>
-    <string name="uv_index_reading" translatable="false">1.0</string>
-    <string name="desc_img_clock">Clock icon</string>
-    <string name="title_hourly_forecast">Hourly forecast</string>
-    <string name="desc_img_calendar">Calendar icon</string>
-    <string name="title_day_forecast">Day forecast</string>
-    <string name="title_chance_precipitation">Chance of precipitation</string>
-    <string name="desc_scroll_precipitation">Precipitation forecast list.</string>
-    <string name="desc_img_sunrise">Sunrise icon</string>
-    <string name="title_sunrise">Sunrise</string>
-    <string name="sunrise_time_default">4:15 AM</string>
-    <string name="sunrise_through_default">4h ago</string>
-    <string name="desc_img_sunset">Sunset icon</string>
-    <string name="title_sunset">Sunset</string>
-    <string name="sunset_time_default">9:00 PM</string>
-    <string name="sunset_through_default">in 9h</string>
-    <string name="desc_img_temperature">Temperature icon</string>
+    <string name="city_default">Chinatown</string>
+    <string name="clear_sky">Clear Sky</string>
     <string name="curr_degree_default" translatable="false">3°</string>
-    <string name="text_now">Now</string>
-    <string name="desc_img_weather">Weather icon</string>
-    <string name="degree_hourly_forecast" translatable="false">3°</string>
-    <string name="search_menu_location_name" translatable="false" />
-    <string name="desc_img_main_weather">Weather icon</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="no_internet_connection">Turn on mobile data or connect to a Wi-Fi network</string>
-    <string name="desc_button_back">Go back</string>
-    <string name="title_settings">Settings</string>
-    <string name="title_language_settings">Select language</string>
-    <string name="title_language_category">Language</string>
-    <string name="title_units_category">Units</string>
-    <string name="title_temp_settings">Temperature</string>
-    <string name="title_wind_settings">Wind</string>
-    <string name="title_air_pressure_settings">Air pressure</string>
-    <string name="temperature_name_celsius">Degrees Celsius (°C)</string>
-    <string name="speed_name_kmh">km/h</string>
-    <string name="air_pressure_name_hpa">hPa</string>
     <string-array name="days_of_week">
         <item>Mon</item>
         <item>Tue</item>
@@ -74,33 +21,93 @@
         <item>Sat</item>
         <item>Sun</item>
     </string-array>
-    <string name="clear_sky">Clear Sky</string>
-    <string name="mainly_clear">Mainly Clear</string>
-    <string name="partly_cloudy">Partly Cloudy</string>
-    <string name="overcast">Overcast</string>
-    <string name="fog">Fog</string>
-    <string name="ice_fog">Ice Fog</string>
-    <string name="light_drizzle">Light Drizzle</string>
+    <string name="degree_day_night">Day %1$d°\nNight %2$d°</string>
+    <string name="degree_default" translatable="false">20°</string>
+    <string name="degree_feels_like">Feels like %1$s</string>
+    <string name="degree_hourly_forecast" translatable="false">3°</string>
+    <string name="desc_button_back">Go back</string>
+    <string name="desc_img_calendar">Calendar icon</string>
+    <string name="desc_img_clock">Clock icon</string>
+    <string name="desc_img_main">main header background</string>
+    <string name="desc_img_main_weather">Weather icon</string>
+    <string name="desc_img_pressure">Waves icon</string>
+    <string name="desc_img_pressure_indicator">Indicator that shows whether the atmospheric pressure is rising or falling</string>
+    <string name="desc_img_rain">Rain icon</string>
+    <string name="desc_img_rain_indicator">An indicator that shows whether the chance of precipitation is increasing or decreasing</string>
+    <string name="desc_img_sun">Sun icon</string>
+    <string name="desc_img_sunrise">Sunrise icon</string>
+    <string name="desc_img_sunset">Sunset icon</string>
+    <string name="desc_img_temperature">Temperature icon</string>
+    <string name="desc_img_uv_indicator">Indicator showing the increase or decrease of the uv index</string>
+    <string name="desc_img_weather">Weather icon</string>
+    <string name="desc_img_wind">Wind speed icon</string>
+    <string name="desc_img_wind_indicator">Indicator showing the increase or decrease in wind speed</string>
+    <string name="desc_scroll_precipitation">Precipitation forecast list.</string>
     <string name="drizzle">Drizzle</string>
-    <string name="heavy_drizzle">Heavy Drizzle</string>
-    <string name="light_freezing_drizzle">Light Freezing Drizzle</string>
+    <string name="fog">Fog</string>
     <string name="freezing_drizzle">Freezing Drizzle</string>
-    <string name="light_rain">Light Rain</string>
-    <string name="rain">Rain</string>
-    <string name="heavy_rain">Heavy Rain</string>
-    <string name="light_freezing_rain">Light Freezing Rain</string>
     <string name="freezing_rain">Freezing Rain</string>
-    <string name="light_snow">Light Snow</string>
-    <string name="snow">Snow</string>
-    <string name="heavy_snow">Heavy Snow</string>
-    <string name="snow_grains">Snow Grains</string>
-    <string name="light_showers">Light Showers</string>
-    <string name="showers">Showers</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="heavy_drizzle">Heavy Drizzle</string>
+    <string name="heavy_rain">Heavy Rain</string>
     <string name="heavy_showers">Heavy Showers</string>
+    <string name="heavy_snow">Heavy Snow</string>
+    <string name="ice_fog">Ice Fog</string>
+    <string name="info_last_update">Last update\n%1$s %2$d, %3$s</string>
+    <string name="light_drizzle">Light Drizzle</string>
+    <string name="light_freezing_drizzle">Light Freezing Drizzle</string>
+    <string name="light_freezing_rain">Light Freezing Rain</string>
+    <string name="light_rain">Light Rain</string>
+    <string name="light_showers">Light Showers</string>
+    <string name="light_snow">Light Snow</string>
     <string name="light_snow_showers">Light Snow Showers</string>
-    <string name="snow_showers">Snow Showers</string>
-    <string name="thunderstorm">Thunderstorm</string>
     <string name="light_thunderstorm_hail">Light T-storm w/ hail</string>
-    <string name="thunderstorm_hail">T-storm w/ hail</string>
+    <string name="mainly_clear">Mainly Clear</string>
+    <string name="no_internet_connection">Turn on mobile data or connect to a Wi-Fi network</string>
+    <string name="overcast">Overcast</string>
+    <string name="partly_cloudy">Partly Cloudy</string>
+    <string name="pressure_diff">5hpa</string>
+    <string name="rain">Rain</string>
+    <string name="rain_diff" translatable="false">0%</string>
+    <string name="rain_percent" translatable="false">0%</string>
+    <string name="search_menu_location_name" translatable="false" />
+    <string name="showers">Showers</string>
+    <string name="snow">Snow</string>
+    <string name="snow_grains">Snow Grains</string>
+    <string name="snow_showers">Snow Showers</string>
+    <string name="speed_insert_kmh">%1$d km/h</string>
+    <string name="speed_insert_ms">%1$d m/s</string>
+    <string name="speed_insert_mph">%1$d mph</string>
+    <string name="speed_name_kmh">Kilometers per hour (km/h)</string>
+    <string name="speed_name_mph">Miles per hour (mph)</string>
+    <string name="speed_name_ms">Meters per second (m/s)</string>
+    <string name="sunrise_through_default">4h ago</string>
+    <string name="sunrise_time_default">4:15 AM</string>
+    <string name="sunset_through_default">in 9h</string>
+    <string name="sunset_time_default">9:00 PM</string>
+    <string name="temperature_name_celsius">Degrees Celsius (°C)</string>
     <string name="temperature_name_fahrenheit">Degrees Fahrenheit (°F)</string>
+    <string name="text_now">Now</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="thunderstorm_hail">T-storm w/ hail</string>
+    <string name="title_air_pressure_settings">Air pressure</string>
+    <string name="title_chance_precipitation">Chance of precipitation</string>
+    <string name="title_day_forecast">Day forecast</string>
+    <string name="title_hourly_forecast">Hourly forecast</string>
+    <string name="title_language_category">Language</string>
+    <string name="title_language_settings">Select language</string>
+    <string name="title_pressure">Pressure</string>
+    <string name="title_rain_chance">Rain chance</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_sunrise">Sunrise</string>
+    <string name="title_sunset">Sunset</string>
+    <string name="title_temp_settings">Temperature</string>
+    <string name="title_units_category">Units</string>
+    <string name="title_uv_index">UV Index</string>
+    <string name="title_wind_settings">Wind</string>
+    <string name="title_wind_speed">Wind speed</string>
+    <string name="uv_diff" translatable="false">0</string>
+    <string name="uv_index_reading" translatable="false">1.0</string>
+    <string name="weather_type_default">Cloudy</string>
+    <string name="wind_speed_diff">2km/h</string>
 </resources>

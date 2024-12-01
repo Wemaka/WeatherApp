@@ -18,9 +18,11 @@ import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
-import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
+import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
+import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
+import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
 import com.wemaka.weatherapp.util.Resource;
@@ -39,7 +41,7 @@ public class MainViewModel extends AndroidViewModel {
 	private final WeatherForecastRepository repository;
 	private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 	@Getter
-	private final MutableLiveData<Resource<DaysForecastResponseProto>> daysForecast = new MutableLiveData<>();
+	private final MutableLiveData<Resource<DaysForecastProto>> daysForecast = new MutableLiveData<>();
 	@Getter
 	private final MutableLiveData<Resource<String>> placeName = new MutableLiveData<>();
 
@@ -155,8 +157,8 @@ public class MainViewModel extends AndroidViewModel {
 		return liveData;
 	}
 
-	public LiveData<DaysForecastResponseProto> getSavedDaysForecast() {
-		MutableLiveData<DaysForecastResponseProto> liveData = new MutableLiveData<>();
+	public LiveData<DaysForecastProto> getSavedDaysForecast() {
+		MutableLiveData<DaysForecastProto> liveData = new MutableLiveData<>();
 
 		compositeDisposable.add(repository.getDaysForecastResponse()
 				.subscribeOn(Schedulers.io())
@@ -283,33 +285,33 @@ public class MainViewModel extends AndroidViewModel {
 
 
 	public void changeTemperatureUnit(TemperatureUnitProto unit) {
-		Resource<DaysForecastResponseProto> resourceForecast = daysForecast.getValue();
+		Resource<DaysForecastProto> resource = daysForecast.getValue();
 
-		if (resourceForecast != null) {
-			DaysForecastResponseProto forecastResponse = resourceForecast.getData();
+		if (resource != null) {
+			DaysForecastProto days = resource.getData();
 
-			if (forecastResponse != null && forecastResponse.dayForecast != null && forecastResponse.weekTempForecast != null) {
-				DaysForecastResponseProto.Builder forecastResponseBuilder = forecastResponse.newBuilder();
-				DayForecastProto.Builder dayForecastBuilder = forecastResponse.dayForecast.newBuilder();
+			if (days != null && days.dayForecast != null && days.weekTempForecast != null) {
+				DaysForecastProto.Builder daysBuilder = days.newBuilder();
+				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
 
-				TemperatureUnitProto currTemperature = dayForecastBuilder.temperature.temperatureUnit;
+				TemperatureUnitProto currUnit = dayBuilder.temperature.temperatureUnit;
 
-				dayForecastBuilder.temperature(
-						dayForecastBuilder.temperature.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(dayForecastBuilder.temperature.temperature, currTemperature, unit))
+				dayBuilder.temperature(
+						dayBuilder.temperature.newBuilder().temperature(
+								Math.round(UnitConverter.convertTemperature(dayBuilder.temperature.temperature, currUnit, unit))
 						).temperatureUnit(unit).build()
 				);
-				dayForecastBuilder.apparentTemp(
-						dayForecastBuilder.apparentTemp.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(dayForecastBuilder.apparentTemp.temperature, currTemperature, unit))
+				dayBuilder.apparentTemp(
+						dayBuilder.apparentTemp.newBuilder().temperature(
+								Math.round(UnitConverter.convertTemperature(dayBuilder.apparentTemp.temperature, currUnit, unit))
 						).temperatureUnit(unit).build()
 				);
-				dayForecastBuilder.hourlyTempForecast(convertTemperatureList(dayForecastBuilder.hourlyTempForecast, unit));
+				dayBuilder.hourlyTempForecast(convertTemperatureList(dayBuilder.hourlyTempForecast, unit));
 
-				forecastResponseBuilder.weekTempForecast(convertTemperatureList(forecastResponseBuilder.weekTempForecast, unit));
-				forecastResponseBuilder.dayForecast(dayForecastBuilder.build());
+				daysBuilder.weekTempForecast(convertTemperatureList(daysBuilder.weekTempForecast, unit));
+				daysBuilder.dayForecast(dayBuilder.build());
 
-				daysForecast.postValue(new Resource.Success<>(forecastResponseBuilder.build()));
+				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
 			}
 		}
 	}
@@ -329,5 +331,56 @@ public class MainViewModel extends AndroidViewModel {
 		}
 
 		return convertedList;
+	}
+
+	public void changeSpeedUnit(SpeedUnitProto unit) {
+		Resource<DaysForecastProto> resource = daysForecast.getValue();
+
+		if (resource != null) {
+			DaysForecastProto days = resource.getData();
+
+			if (days != null && days.dayForecast != null && days.weekTempForecast != null) {
+				DaysForecastProto.Builder daysBuilder = days.newBuilder();
+				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
+
+				SpeedUnitProto currUnit = dayBuilder.windSpeed.speedUnit;
+
+				dayBuilder.windSpeed(
+						dayBuilder.windSpeed.newBuilder().speed(
+								Math.round(UnitConverter.convertSpeed(dayBuilder.windSpeed.speed, currUnit, unit))
+						).speedUnit(unit).build()
+				);
+
+				daysBuilder.dayForecast(dayBuilder.build());
+
+				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
+			}
+		}
+	}
+
+	public void changePressureUnit(PressureUnitProto unit) {
+		Resource<DaysForecastProto> resource = daysForecast.getValue();
+
+		if (resource != null) {
+			DaysForecastProto days = resource.getData();
+
+			if (days != null && days.dayForecast != null && days.weekTempForecast != null) {
+				DaysForecastProto.Builder daysBuilder = days.newBuilder();
+				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
+
+				// always in open-meteo api
+				PressureUnitProto currUnit = PressureUnitProto.HPA;
+
+				dayBuilder.pressure(
+						dayBuilder.pressure.newBuilder().pressure(
+								Math.round(UnitConverter.convertPressure(dayBuilder.pressure.pressure, currUnit, unit))
+						).pressureUnit(unit).build()
+				);
+
+				daysBuilder.dayForecast(dayBuilder.build());
+
+				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
+			}
+		}
 	}
 }
