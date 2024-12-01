@@ -25,6 +25,10 @@ import java.util.Locale;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 	public static final String TAG = "SettingsFragment";
+	public static final String PREF_KEY_LANGUAGE = "languagePrefs";
+	public static final String PREF_KEY_TEMPERATURE = "temperaturePrefs";
+	public static final String PREF_KEY_WIND_SPEED = "windSpeedPrefs";
+	public static final String PREF_KEY_AIR_PRESSURE = "airPressurePrefs";
 	private MainViewModel model;
 
 	@Override
@@ -52,10 +56,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 	}
 
 	private void setSettingsListeners() {
-		ListPreference languageList = getPreferenceManager().findPreference("languagePrefs");
-		ListPreference temperatureList = getPreferenceManager().findPreference("temperaturePrefs");
-		ListPreference windSpeedList = getPreferenceManager().findPreference("windSpeedPrefs");
-		ListPreference pressureList = getPreferenceManager().findPreference("airPressurePrefs");
+		ListPreference languageList = getPreferenceManager().findPreference(PREF_KEY_LANGUAGE);
+		ListPreference temperatureList = getPreferenceManager().findPreference(PREF_KEY_TEMPERATURE);
+		ListPreference windSpeedList = getPreferenceManager().findPreference(PREF_KEY_WIND_SPEED);
+		ListPreference pressureList = getPreferenceManager().findPreference(PREF_KEY_AIR_PRESSURE);
 
 		if (languageList != null) {
 			languageList.setOnPreferenceChangeListener(getLanguagePrefsListener());

@@ -61,10 +61,10 @@ public class UnitConverter {
 		float tempHpa;
 
 		switch (fromUnit) {
-			case MM_HG:
+			case MMHG:
 				tempHpa = (float) (pressure * 1.33322);
 				break;
-			case IN_HG:
+			case INHG:
 				tempHpa = (float) (pressure * 33.8638);
 				break;
 			default:
@@ -72,9 +72,9 @@ public class UnitConverter {
 		}
 
 		switch (toUnit) {
-			case MM_HG:
+			case MMHG:
 				return (float) (tempHpa / 1.33322);
-			case IN_HG:
+			case INHG:
 				return (float) (tempHpa / 33.8638);
 			default:
 				return tempHpa;

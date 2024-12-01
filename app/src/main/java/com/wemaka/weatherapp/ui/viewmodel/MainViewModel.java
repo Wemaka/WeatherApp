@@ -3,6 +3,7 @@ package com.wemaka.weatherapp.ui.viewmodel;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -12,19 +13,23 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.preference.PreferenceManager;
 
 import com.wemaka.weatherapp.R;
+import com.wemaka.weatherapp.data.api.OpenMeteoClient;
 import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
+import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
+import com.wemaka.weatherapp.ui.fragment.SettingsFragment;
 import com.wemaka.weatherapp.util.Resource;
 import com.wemaka.weatherapp.util.math.UnitConverter;
 
@@ -218,10 +223,46 @@ public class MainViewModel extends AndroidViewModel {
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
-						forecast -> daysForecast.postValue(new Resource.Success<>(forecast)),
+						forecast -> daysForecast.postValue(new Resource.Success<>(formatDaysForecast(forecast))),
 						error -> daysForecast.postValue(new Resource.Error<>("Couldn't get the weather forecast"))
 				)
 		);
+	}
+
+	private DaysForecastProto formatDaysForecast(DaysForecastProto daysForecastProto) {
+		if (daysForecastProto != null && daysForecastProto.dayForecast != null) {
+			DaysForecastProto.Builder daysBuilder = daysForecastProto.newBuilder();
+			DayForecastProto.Builder dayBuilder = daysForecastProto.dayForecast.newBuilder();
+
+			// always in open-meteo api
+			PressureUnitProto currUnit = PressureUnitProto.HPA;
+
+			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+			PressureUnitProto toUnit = PressureUnitProto.valueOf(sharedPreferences.getString(SettingsFragment.PREF_KEY_AIR_PRESSURE,
+					"hpa").toUpperCase());
+
+			dayBuilder.pressure(
+					dayBuilder.pressure.newBuilder().pressure(
+							Math.round(UnitConverter.convertPressure(dayBuilder.pressure.pressure, currUnit, toUnit))
+					).build()
+			);
+
+			List<TemperatureProto> formatTemperatureList = new ArrayList<>(dayBuilder.hourlyTempForecast);
+			formatTemperatureList.set(0, formatTemperatureList.get(0).newBuilder().time(getApplication().getString(R.string.text_now)).build());
+
+			dayBuilder.hourlyTempForecast(formatTemperatureList);
+
+			List<PrecipitationChanceProto> formatPrecipitationList = new ArrayList<>(dayBuilder.precipitationChanceForecast);
+			formatPrecipitationList.set(0, formatPrecipitationList.get(0).newBuilder().time(getApplication().getString(R.string.text_now)).build());
+
+			dayBuilder.precipitationChanceForecast(formatPrecipitationList);
+
+
+			return daysBuilder.dayForecast(dayBuilder.build()).build();
+		}
+
+
+		return daysForecastProto;
 	}
 
 	private void safeFetchNearestPlaceInfo(double latitude, double longitude) {
@@ -368,8 +409,7 @@ public class MainViewModel extends AndroidViewModel {
 				DaysForecastProto.Builder daysBuilder = days.newBuilder();
 				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
 
-				// always in open-meteo api
-				PressureUnitProto currUnit = PressureUnitProto.HPA;
+				PressureUnitProto currUnit = OpenMeteoClient.getPressureUnit();
 
 				dayBuilder.pressure(
 						dayBuilder.pressure.newBuilder().pressure(

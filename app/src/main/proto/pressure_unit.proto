@@ -5,7 +5,7 @@ option java_multiple_files = true;
 option java_outer_classname = "PressureUnitProto";
 
 enum PressureUnitProto {
-  MM_HG = 0; // Millimeters of mercury column
+  MMHG = 0; // Millimeters of mercury column
   HPA = 1; // Hectopascals
-  IN_HG = 2; // Inches of mercury column
+  INHG = 2; // Inches of mercury column
 }

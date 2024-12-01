@@ -99,17 +99,19 @@ public class TodayWeatherFragment extends Fragment {
 				binding.tvPressureHpa.setText(formatPressureUnit(df.pressure.pressure, df.pressure.pressureUnit));
 				binding.tvUv.setText(df.uvIndex.uvIndexDiff + "");
 
-				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
-				formatTemperatureList.set(0,
-						formatTemperatureList.get(0).newBuilder().time(getString(R.string.text_now)).build());
-				hourlyTempForecastAdapter.submitList(formatTemperatureList);
+//				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
+//				formatTemperatureList.set(0,
+//						formatTemperatureList.get(0).newBuilder().time(getString(R.string.text_now)).build());
+//				hourlyTempForecastAdapter.submitList(formatTemperatureList);
+				hourlyTempForecastAdapter.submitList(df.hourlyTempForecast);
 
 				createWeekDayForecast(resource.getData().weekTempForecast);
 
-				List<PrecipitationChanceProto> formatPrecipitationList = new ArrayList<>(df.precipitationChanceForecast);
-				formatPrecipitationList.set(0,
-						formatPrecipitationList.get(0).newBuilder().time(getString(R.string.text_now)).build());
-				createPrecipitationForecast(formatPrecipitationList);
+//				List<PrecipitationChanceProto> formatPrecipitationList = new ArrayList<>(df.precipitationChanceForecast);
+//				formatPrecipitationList.set(0,
+//						formatPrecipitationList.get(0).newBuilder().time(getString(R.string.text_now)).build());
+//				createPrecipitationForecast(formatPrecipitationList);
+				createPrecipitationForecast(df.precipitationChanceForecast);
 
 				binding.tvWindDiff.setText(formatSpeedUnit(df.windSpeed.speedDiff, df.windSpeed.speedUnit));
 				binding.tvRainDiff.setText(df.precipitationChance.percentDiff + "%");
@@ -227,9 +229,9 @@ public class TodayWeatherFragment extends Fragment {
 
 	private String formatPressureUnit(int pressure, PressureUnitProto pressureUnit) {
 		switch (pressureUnit) {
-			case IN_HG:
+			case INHG:
 				return getString(R.string.air_pressure_insert_inhg, pressure);
-			case MM_HG:
+			case MMHG:
 				return getString(R.string.air_pressure_insert_mmhg, pressure);
 			default:
 				return getString(R.string.air_pressure_insert_hpa, pressure);
