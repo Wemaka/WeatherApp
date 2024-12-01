@@ -13,6 +13,8 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.data.api.GeoNamesClient;
+import com.wemaka.weatherapp.data.api.OpenMeteoClient;
+import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
 import com.wemaka.weatherapp.ui.MainActivity;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
@@ -39,9 +41,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
 		model = ((MainActivity) requireActivity()).getModel();
 
-		ListPreference listLang = getPreferenceManager().findPreference("language");
-		if (listLang != null) {
-			listLang.setOnPreferenceChangeListener((preference, newValue) -> {
+		ListPreference listLanguage = getPreferenceManager().findPreference("languagePrefs");
+		ListPreference listTemperature = getPreferenceManager().findPreference("temperaturePrefs");
+
+		if (listLanguage != null) {
+			listLanguage.setOnPreferenceChangeListener((preference, newValue) -> {
 				Log.i(TAG, "Change language: " + newValue.toString());
 
 				Locale newLocale = new Locale(newValue.toString());
@@ -55,6 +59,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 			});
 		}
 
+		if (listTemperature != null) {
+			listTemperature.setOnPreferenceChangeListener((preference, newValue) -> {
+				Log.i(TAG, "Change temperature unit: " + newValue.toString());
+
+				TemperatureUnitProto newTemperature = TemperatureUnitProto.valueOf(newValue.toString().toUpperCase());
+
+				OpenMeteoClient.setTemperatureUnit(newTemperature);
+				model.changeTemperatureUnit(newTemperature);
+
+				return true;
+			});
+		}
 
 	}
 

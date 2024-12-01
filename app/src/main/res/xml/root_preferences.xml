@@ -4,7 +4,7 @@
     <PreferenceCategory app:title="@string/title_language_category">
         <ListPreference
             app:title="@string/title_language_settings"
-            app:key="language"
+            app:key="languagePrefs"
             app:entries="@array/language_names"
             app:entryValues="@array/language_values"
             app:defaultValue="en"
@@ -14,7 +14,7 @@
     <PreferenceCategory app:title="@string/title_units_category">
         <ListPreference
             app:title="@string/title_temp_settings"
-            app:key="temperature"
+            app:key="temperaturePrefs"
             app:entries="@array/temperature_names"
             app:entryValues="@array/temperature_values"
             app:defaultValue="celsius"
@@ -22,7 +22,7 @@
 
         <ListPreference
             app:title="@string/title_wind_settings"
-            app:key="wind"
+            app:key="windSpeedPrefs"
             app:entries="@array/wind_names"
             app:entryValues="@array/wind_values"
             app:defaultValue="kmh"
@@ -30,7 +30,7 @@
 
         <ListPreference
             app:title="@string/title_air_pressure_settings"
-            app:key="air_pressure"
+            app:key="airPressurePrefs"
             app:entries="@array/air_pressure_names"
             app:entryValues="@array/air_pressure_values"
             app:defaultValue="hpa"

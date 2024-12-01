@@ -3,11 +3,11 @@ import "temperature_unit.proto";
 
 option java_package = "com.wemaka.weatherapp.store.proto";
 option java_multiple_files = true;
-option java_outer_classname = "HourlyTemperatureProto";
+option java_outer_classname = "TemperatureProto";
 
-message HourlyTemperatureProto {
-  string time = 1;
+message TemperatureProto {
+  optional string time = 1;
   int32 temperature = 2;
-  int32 imgIdWeatherCode = 3;
+  optional int32 imgIdWeatherCode = 3;
   TemperatureUnitProto temperatureUnit = 4;
 }

@@ -3,7 +3,7 @@ import "wind_speed.proto";
 import "precipitation_chance.proto";
 import "pressure.proto";
 import "uv_index.proto";
-import "hourlyTemperature.proto";
+import "temperature.proto";
 import "temperature_unit.proto";
 
 option java_package = "com.wemaka.weatherapp.store.proto";
@@ -11,18 +11,17 @@ option java_multiple_files = true;
 option java_outer_classname = "DayForecastProto";
 
 message DayForecastProto {
-  int32 temperature = 1;
-  int32 apparentTemp = 2;
-  TemperatureUnitProto temperatureUnit = 3;
-  int32 imgIdWeatherCode = 4;
-  int32 weatherCode = 5;
-  string date = 6;
-  string sunrise = 7;
-  string sunset = 8;
-  WindSpeedProto windSpeed = 9;
-  PrecipitationChanceProto precipitationChance = 10;
-  PressureProto pressure = 11;
-  UvIndexProto uvIndex = 12;
-  repeated HourlyTemperatureProto hourlyTempForecast = 13;
-  repeated PrecipitationChanceProto precipitationChanceForecast = 14;
+  TemperatureProto temperature = 1;
+  TemperatureProto apparentTemp = 2;
+  int32 imgIdWeatherCode = 3;
+  int32 weatherCode = 4;
+  string date = 5;
+  string sunrise = 6;
+  string sunset = 7;
+  WindSpeedProto windSpeed = 8;
+  PrecipitationChanceProto precipitationChance = 9;
+  PressureProto pressure = 10;
+  UvIndexProto uvIndex = 11;
+  repeated TemperatureProto hourlyTempForecast = 12;
+  repeated PrecipitationChanceProto precipitationChanceForecast = 13;
 }

@@ -17,10 +17,11 @@ import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
+import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastResponseProto;
-import com.wemaka.weatherapp.store.proto.HourlyTemperatureProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
+import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
 import com.wemaka.weatherapp.util.Resource;
 import com.wemaka.weatherapp.util.math.UnitConverter;
@@ -280,15 +281,48 @@ public class MainViewModel extends AndroidViewModel {
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
 	}
 
-	private List<HourlyTemperatureProto> convertTemperatureList(List<HourlyTemperatureProto> temperatureList,
-	                                                            TemperatureUnitProto unit) {
+
+	public void changeTemperatureUnit(TemperatureUnitProto unit) {
+		Resource<DaysForecastResponseProto> resourceForecast = daysForecast.getValue();
+
+		if (resourceForecast != null) {
+			DaysForecastResponseProto forecastResponse = resourceForecast.getData();
+
+			if (forecastResponse != null && forecastResponse.dayForecast != null && forecastResponse.weekTempForecast != null) {
+				DaysForecastResponseProto.Builder forecastResponseBuilder = forecastResponse.newBuilder();
+				DayForecastProto.Builder dayForecastBuilder = forecastResponse.dayForecast.newBuilder();
+
+				TemperatureUnitProto currTemperature = dayForecastBuilder.temperature.temperatureUnit;
+
+				dayForecastBuilder.temperature(
+						dayForecastBuilder.temperature.newBuilder().temperature(
+								Math.round(UnitConverter.convertTemperature(dayForecastBuilder.temperature.temperature, currTemperature, unit))
+						).temperatureUnit(unit).build()
+				);
+				dayForecastBuilder.apparentTemp(
+						dayForecastBuilder.apparentTemp.newBuilder().temperature(
+								Math.round(UnitConverter.convertTemperature(dayForecastBuilder.apparentTemp.temperature, currTemperature, unit))
+						).temperatureUnit(unit).build()
+				);
+				dayForecastBuilder.hourlyTempForecast(convertTemperatureList(dayForecastBuilder.hourlyTempForecast, unit));
+
+				forecastResponseBuilder.weekTempForecast(convertTemperatureList(forecastResponseBuilder.weekTempForecast, unit));
+				forecastResponseBuilder.dayForecast(dayForecastBuilder.build());
+
+				daysForecast.postValue(new Resource.Success<>(forecastResponseBuilder.build()));
+			}
+		}
+	}
+
+	private List<TemperatureProto> convertTemperatureList(List<TemperatureProto> temperatureList,
+	                                                      TemperatureUnitProto unit) {
 		if (temperatureList == null || temperatureList.isEmpty()) {
 			return null;
 		}
 
-		List<HourlyTemperatureProto> convertedList = new ArrayList<>();
+		List<TemperatureProto> convertedList = new ArrayList<>();
 
-		for (HourlyTemperatureProto temp : temperatureList) {
+		for (TemperatureProto temp : temperatureList) {
 			int newTemperature = Math.round(UnitConverter.convertTemperature(temp.temperature, temp.temperatureUnit, unit));
 
 			convertedList.add(temp.newBuilder().temperature(newTemperature).temperatureUnit(unit).build());

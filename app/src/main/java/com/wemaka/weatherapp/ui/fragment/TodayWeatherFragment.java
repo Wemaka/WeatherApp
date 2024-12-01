@@ -24,7 +24,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
-import com.wemaka.weatherapp.store.proto.HourlyTemperatureProto;
+import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.ui.MainActivity;
 import com.wemaka.weatherapp.ui.adapter.HourlyTempForecastAdapter;
@@ -94,10 +94,10 @@ public class TodayWeatherFragment extends Fragment {
 				binding.tvSunsetTime.setText(df.sunset);
 				binding.tvWindSpeed.setText(getString(R.string.speed_insert_kmh, df.windSpeed.currentWindSpeed));
 				binding.tvRainPercent.setText(df.precipitationChance.percent + "%");
-				binding.tvPressureHpa.setText(getString(R.string.air_pressure_insert_hpa, df.pressure.currentPressure));
+				binding.tvPressureHpa.setText(getString(R.string.air_pressure_insert_hpa, df.pressure.pressure));
 				binding.tvUv.setText(df.uvIndex.currentUvIndex + "");
 
-				List<HourlyTemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
+				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
 				formatTemperatureList.set(0,
 						formatTemperatureList.get(0).newBuilder().time(getString(R.string.text_now)).build());
 				hourlyTempForecastAdapter.submitList(formatTemperatureList);
@@ -125,7 +125,7 @@ public class TodayWeatherFragment extends Fragment {
 		return new TodayWeatherFragment();
 	}
 
-	private void createWeekDayForecast(List<Float> tempForecast) {
+	private void createWeekDayForecast(List<TemperatureProto> tempForecast) {
 		String[] daysOfWeek = getResources().getStringArray(R.array.days_of_week);
 		List<String> days = new ArrayList<>(Arrays.asList(daysOfWeek));
 		int firstDayOfWeek = Calendar.getInstance(Locale.getDefault()).getFirstDayOfWeek();
@@ -144,9 +144,9 @@ public class TodayWeatherFragment extends Fragment {
 			float y;
 
 			if (i == tempForecast.size()) {
-				y = tempForecast.get(i - 1);
+				y = tempForecast.get(i - 1).temperature;
 			} else {
-				y = tempForecast.get(i);
+				y = tempForecast.get(i).temperature;
 			}
 
 			points.add(new Entry(x, y));
@@ -187,7 +187,7 @@ public class TodayWeatherFragment extends Fragment {
 			timeView.setTextColor(getResources().getColor(R.color.black, null));
 			timeView.setGravity(Gravity.END);
 
-			progressBarView.setProgress(forecastRain.currentPrecipitationChance);
+			progressBarView.setProgress(forecastRain.percent);
 			TableRow.LayoutParams params = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
 			if (i == precipitationChances.size() - 1) {
 				params.setMargins(UnitConverter.dpToPx(requireActivity(), 33), 0,
