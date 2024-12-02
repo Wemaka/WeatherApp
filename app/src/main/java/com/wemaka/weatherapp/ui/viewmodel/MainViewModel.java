@@ -45,6 +45,7 @@ public class MainViewModel extends AndroidViewModel {
 	public static final String TAG = "MainViewModel";
 	private final WeatherForecastRepository repository;
 	private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+	private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplication());
 	@Getter
 	private final MutableLiveData<Resource<DaysForecastProto>> daysForecast = new MutableLiveData<>();
 	@Getter
@@ -103,6 +104,13 @@ public class MainViewModel extends AndroidViewModel {
 						}
 				)
 		);
+
+		OpenMeteoClient.setTemperatureUnit(
+				TemperatureUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_TEMPERATURE, "celsius").toUpperCase()));
+		OpenMeteoClient.setSpeedUnit(
+				SpeedUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_WIND_SPEED, "kmh").toUpperCase()));
+		OpenMeteoClient.setPressureUnit(
+				PressureUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_AIR_PRESSURE, "hpa").toUpperCase()));
 	}
 
 	public LocationCoordProto getLocation() {
@@ -237,13 +245,10 @@ public class MainViewModel extends AndroidViewModel {
 			// always in open-meteo api
 			PressureUnitProto currUnit = PressureUnitProto.HPA;
 
-			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
-			PressureUnitProto toUnit = PressureUnitProto.valueOf(sharedPreferences.getString(SettingsFragment.PREF_KEY_AIR_PRESSURE,
-					"hpa").toUpperCase());
-
 			dayBuilder.pressure(
 					dayBuilder.pressure.newBuilder().pressure(
-							Math.round(UnitConverter.convertPressure(dayBuilder.pressure.pressure, currUnit, toUnit))
+							Math.round(UnitConverter.convertPressure(dayBuilder.pressure.pressure, currUnit,
+									OpenMeteoClient.getPressureUnit()))
 					).build()
 			);
 
@@ -323,7 +328,6 @@ public class MainViewModel extends AndroidViewModel {
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
 	}
-
 
 	public void changeTemperatureUnit(TemperatureUnitProto unit) {
 		Resource<DaysForecastProto> resource = daysForecast.getValue();
