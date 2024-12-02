@@ -62,7 +62,6 @@
     <string name="no_internet_connection">Включите мобильную передачу данных или подключитесь к сети Wi-Fi</string>
     <string name="overcast">Пасмурно</string>
     <string name="partly_cloudy">Переменная облачность</string>
-    <string name="pressure_diff">5гПа</string>
     <string name="rain">Дождь</string>
     <string name="showers">Ливни</string>
     <string name="snow">Снег</string>
@@ -99,6 +98,7 @@
     <string name="title_uv_index">УФ индекс</string>
     <string name="title_wind_settings">Ветер</string>
     <string name="title_wind_speed">Скорость ветра</string>
+    <string name="provider_absence_notification">Разрешите службе определения местоположения получать актуальные
+        данные о погоде.</string>
     <string name="weather_type_default">Облачно</string>
-    <string name="wind_speed_diff">2км/ч</string>
 </resources>

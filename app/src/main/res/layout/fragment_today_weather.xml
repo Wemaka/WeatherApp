@@ -73,7 +73,7 @@
                         android:fontFamily="@font/productsans"
                         android:text="@string/speed_insert_kmh"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgWindIcon"
                         app:layout_constraintTop_toBottomOf="@+id/tvWindSpeedTitle" />
@@ -136,7 +136,7 @@
                         app:layout_constraintEnd_toStartOf="@+id/tvRainDiff"
                         app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toEndOf="@+id/tvRainChanceTitle"
+                        app:layout_constraintStart_toEndOf="@+id/tvRainPercent"
                         app:layout_constraintTop_toTopOf="@+id/tvRainDiff"
                         app:srcCompat="@drawable/ic_arrow_unchanged" />
 
@@ -172,7 +172,7 @@
                         android:fontFamily="@font/productsans"
                         android:text="@string/rain_percent"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgRainIcon"
                         app:layout_constraintTop_toBottomOf="@+id/tvRainChanceTitle" />
@@ -224,7 +224,7 @@
                         android:fontFamily="@font/productsans"
                         android:text="@string/air_pressure_insert_hpa"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgPressureIcon"
                         app:layout_constraintTop_toBottomOf="@+id/tvPressureTitle" />
@@ -275,7 +275,6 @@
                         android:fontFamily="@font/productsans"
                         android:text="@string/uv_diff"
                         android:textColor="@color/black"
-                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgUvIndexIndicator" />
@@ -325,7 +324,7 @@
                         android:fontFamily="@font/productsans"
                         android:text="@string/uv_index_reading"
                         android:textColor="@color/textPrimary"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/imgSunIcon"
                         app:layout_constraintTop_toBottomOf="@+id/tvUvIndexTitle" />

@@ -98,24 +98,12 @@ public class TodayWeatherFragment extends Fragment {
 				binding.tvRainPercent.setText(df.precipitationChance.percent + "%");
 				binding.tvPressureHpa.setText(formatPressureUnit(df.pressure.pressure, df.pressure.pressureUnit));
 				binding.tvUv.setText(df.uvIndex.uvIndexDiff + "");
-
-//				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
-//				formatTemperatureList.set(0,
-//						formatTemperatureList.get(0).newBuilder().time(getString(R.string.text_now)).build());
-//				hourlyTempForecastAdapter.submitList(formatTemperatureList);
 				hourlyTempForecastAdapter.submitList(df.hourlyTempForecast);
-
 				createWeekDayForecast(resource.getData().weekTempForecast);
-
-//				List<PrecipitationChanceProto> formatPrecipitationList = new ArrayList<>(df.precipitationChanceForecast);
-//				formatPrecipitationList.set(0,
-//						formatPrecipitationList.get(0).newBuilder().time(getString(R.string.text_now)).build());
-//				createPrecipitationForecast(formatPrecipitationList);
 				createPrecipitationForecast(df.precipitationChanceForecast);
-
-				binding.tvWindDiff.setText(formatSpeedUnit(df.windSpeed.speedDiff, df.windSpeed.speedUnit));
-				binding.tvRainDiff.setText(df.precipitationChance.percentDiff + "%");
-				binding.tvPressureDiff.setText(formatPressureUnit(df.pressure.pressureDiff, df.pressure.pressureUnit));
+				binding.tvWindDiff.setText(df.windSpeed.speedDiff + "");
+				binding.tvRainDiff.setText(df.precipitationChance.percentDiff + "");
+				binding.tvPressureDiff.setText(df.pressure.pressureDiff + "");
 				binding.tvUvDiff.setText(df.uvIndex.uvIndexDiff + "");
 				binding.imgWindSpeedIndicator.setImageResource(df.windSpeed.imgIdChangeWindSpeed);
 				binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);

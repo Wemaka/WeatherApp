@@ -254,8 +254,7 @@ public class MainFragment extends Fragment {
 		LocationManager lm =
 				(LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
 		if (!(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || lm.isProviderEnabled(LocationManager.GPS_PROVIDER))) {
-			Snackbar.make(binding.clMain, "Enables the location service " +
-									"to retrieve weather data for the current location.",
+			Snackbar.make(binding.clMain, R.string.provider_absence_notification,
 							Snackbar.LENGTH_LONG)
 					.setAction("Settings", click -> startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
 					.setMaxInlineActionWidth(1)

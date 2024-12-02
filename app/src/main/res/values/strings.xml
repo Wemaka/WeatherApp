@@ -66,9 +66,9 @@
     <string name="no_internet_connection">Turn on mobile data or connect to a Wi-Fi network</string>
     <string name="overcast">Overcast</string>
     <string name="partly_cloudy">Partly Cloudy</string>
-    <string name="pressure_diff">5hpa</string>
+    <string name="pressure_diff" translatable="false">5</string>
     <string name="rain">Rain</string>
-    <string name="rain_diff" translatable="false">0%</string>
+    <string name="rain_diff" translatable="false">0</string>
     <string name="rain_percent" translatable="false">0%</string>
     <string name="search_menu_location_name" translatable="false" />
     <string name="showers">Showers</string>
@@ -108,6 +108,7 @@
     <string name="title_wind_speed">Wind speed</string>
     <string name="uv_diff" translatable="false">0</string>
     <string name="uv_index_reading" translatable="false">1.0</string>
+    <string name="provider_absence_notification">Enables the location service to retrieve weather data for the current location.</string>
     <string name="weather_type_default">Cloudy</string>
-    <string name="wind_speed_diff">2km/h</string>
+    <string name="wind_speed_diff" translatable="false">2</string>
 </resources>

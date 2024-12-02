@@ -221,17 +221,15 @@ public class OpenMeteoClient {
 
 	private static WindSpeedProto getWindSpeed(VariablesWithTime minutely15, int index) {
 		int currWindSpeed = Math.round(getVariableValue(minutely15, Variable.wind_speed, index));
-		int diffWindSpeed = currWindSpeed - Math.round(getVariableValue(minutely15, Variable.wind_speed, index - 1));
+		int diffWindSpeed = currWindSpeed - Math.round(getVariableValue(minutely15, Variable.wind_speed, index - 24));
 
 		return new WindSpeedProto(currWindSpeed, Math.abs(diffWindSpeed),
 				ChangeIndicator.getIndicatorValue(diffWindSpeed), speedUnit);
 	}
 
 	private static PrecipitationChanceProto getPrecipitationChance(VariablesWithTime minutely15, int index) {
-		int currPrecipitationChance =
-				Math.round(getVariableValue(minutely15, Variable.precipitation_probability, index));
-		int diffPrecipitationChance =
-				currPrecipitationChance - Math.round(getVariableValue(minutely15, Variable.precipitation_probability, index - 1));
+		int currPrecipitationChance = Math.round(getVariableValue(minutely15, Variable.precipitation_probability, index));
+		int diffPrecipitationChance = currPrecipitationChance - Math.round(getVariableValue(minutely15, Variable.precipitation_probability, index - 24));
 
 		return new PrecipitationChanceProto("", currPrecipitationChance, Math.abs(diffPrecipitationChance),
 				ChangeIndicator.getIndicatorValue(diffPrecipitationChance));
@@ -239,17 +237,17 @@ public class OpenMeteoClient {
 
 	private static PressureProto getPressure(VariablesWithTime minutely15, int index) {
 		int currPressure = Math.round(getVariableValue(minutely15, Variable.pressure_msl, index));
-		int diffPressure = currPressure - Math.round(getVariableValue(minutely15, Variable.pressure_msl, index - 1));
+		int diffPressure = currPressure - Math.round(getVariableValue(minutely15, Variable.pressure_msl, index - 24));
 
-		return new PressureProto(currPressure, diffPressure,
+		return new PressureProto(currPressure, Math.abs(diffPressure),
 				ChangeIndicator.getIndicatorValue(diffPressure), pressureUnit);
 	}
 
 	private static UvIndexProto getUvIndex(VariablesWithTime minutely15, int index) {
 		int currUvIndex = Math.round(getVariableValue(minutely15, Variable.uv_index, index));
-		int diffUvIndex = currUvIndex - Math.round(getVariableValue(minutely15, Variable.uv_index, index - 1));
+		int diffUvIndex = currUvIndex - Math.round(getVariableValue(minutely15, Variable.uv_index, index - 24));
 
-		return new UvIndexProto(currUvIndex, diffUvIndex,
+		return new UvIndexProto(currUvIndex, Math.abs(diffUvIndex),
 				ChangeIndicator.getIndicatorValue(diffUvIndex));
 	}
 
