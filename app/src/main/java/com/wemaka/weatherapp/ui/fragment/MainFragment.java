@@ -185,6 +185,7 @@ public class MainFragment extends Fragment {
 						calendar.get(Calendar.DAY_OF_MONTH),
 						timeFormat.format(calendar.getTime())));
 
+				binding.tvDayDegrees.setText(getString(R.string.degree_day_night, df.dayTemp.temperature, df.nightTemp.temperature));
 			} else if (resource.isError() && resource.getMessage() != null) {
 				binding.swipeRefresh.setRefreshing(false);
 				showToast(resource.getMessage());

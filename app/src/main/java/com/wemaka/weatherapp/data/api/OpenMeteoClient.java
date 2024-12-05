@@ -150,6 +150,7 @@ public class OpenMeteoClient {
 		int currIndexDay = getIndexDaily();
 
 		int isDay = getIsDay(hourly, currIndexHourly);
+		TemperatureProto[] dayNightTemp = getDayNightTemp(hourly, calendar, currIndexHourly);
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
@@ -157,6 +158,8 @@ public class OpenMeteoClient {
 				new DayForecastProto(
 						getTemp(minutely15, currIndexMinutely15),
 						getApparentTemp(minutely15, currIndexMinutely15),
+						dayNightTemp[0],
+						dayNightTemp[1],
 						getImgWeatherCode(minutely15, currIndexMinutely15, isDay),
 						getWeatherCode(minutely15, currIndexMinutely15),
 						dateFormat.format(Calendar.getInstance()),
@@ -169,7 +172,7 @@ public class OpenMeteoClient {
 						getHourlyTempForecast(hourly, currIndexHourly, isDay),
 						getPrecipitationChanceForecast(hourly, currIndexHourly)
 				),
-				getWeekTempForecast(hourly, Calendar.getInstance(), currIndexHourly)
+				getWeekTempForecast(hourly, calendar, currIndexHourly)
 		);
 
 		Log.i(TAG, "RESPONSE dayForecastResponse: " + daysForecastResponse);
@@ -208,6 +211,58 @@ public class OpenMeteoClient {
 				null,
 				temperatureUnit
 		);
+	}
+
+	private static TemperatureProto[] getDayNightTemp(VariablesWithTime hourly, Calendar calendar, int index) {
+		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
+		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
+		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
+		int maxDayTemp = Integer.MIN_VALUE;
+		int maxNightTemp = Integer.MAX_VALUE;
+
+		for (int i = inxStartDay; i < inxStartDay + 24; i++) {
+			if (isDay.values(i) == 1.0) {
+				maxDayTemp = Math.max(maxDayTemp, (int) hourlyTemp.values(i));
+			} else {
+				maxNightTemp = Math.min(maxNightTemp, (int) hourlyTemp.values(i));
+			}
+		}
+
+		return new TemperatureProto[]{
+				new TemperatureProto(null, maxDayTemp, null, temperatureUnit),
+				new TemperatureProto(null, maxNightTemp, null, temperatureUnit)
+		};
+	}
+
+	private static TemperatureProto getDayTemp(VariablesWithTime hourly, Calendar calendar, int index) {
+		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
+		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
+		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
+		int maxDayTemp = Integer.MIN_VALUE;
+
+		for (int i = inxStartDay; i < inxStartDay + 24; i++) {
+			if (isDay.values(i) == 1.0) {
+				maxDayTemp = Math.max(maxDayTemp, (int) hourlyTemp.values(i));
+			}
+		}
+
+		return new TemperatureProto(null, maxDayTemp, null, temperatureUnit);
+	}
+
+	private static TemperatureProto getNightTemp(VariablesWithTime hourly, Calendar calendar, int index) {
+		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
+		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
+		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
+		int maxNightTemp = Integer.MAX_VALUE;
+
+		for (int i = inxStartDay; i < inxStartDay + 24; i++) {
+
+			if (isDay.values(i) == 0.0) {
+				maxNightTemp = Math.min(maxNightTemp, (int) hourlyTemp.values(i));
+			}
+		}
+
+		return new TemperatureProto(null, maxNightTemp, null, temperatureUnit);
 	}
 
 	private static int getImgWeatherCode(VariablesWithTime minutely15, int index, int isDay) {
