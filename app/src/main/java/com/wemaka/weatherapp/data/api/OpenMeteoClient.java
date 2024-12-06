@@ -137,7 +137,6 @@ public class OpenMeteoClient {
 		VariablesWithTime minutely15 = response.minutely15();
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();
-		VariablesWithTime current = response.current();
 
 		timeZone = TimeZone.getTimeZone(response.timezone());
 		timeFormat.setTimeZone(timeZone);
@@ -218,19 +217,19 @@ public class OpenMeteoClient {
 		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
 		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
 		int maxDayTemp = Integer.MIN_VALUE;
-		int maxNightTemp = Integer.MAX_VALUE;
+		int minNightTemp = Integer.MAX_VALUE;
 
 		for (int i = inxStartDay; i < inxStartDay + 24; i++) {
-			if (isDay.values(i) == 1.0) {
+			if (isDay.values(i) == 1) {
 				maxDayTemp = Math.max(maxDayTemp, (int) hourlyTemp.values(i));
 			} else {
-				maxNightTemp = Math.min(maxNightTemp, (int) hourlyTemp.values(i));
+				minNightTemp = Math.min(minNightTemp, (int) hourlyTemp.values(i));
 			}
 		}
 
 		return new TemperatureProto[]{
 				new TemperatureProto(null, maxDayTemp, null, temperatureUnit),
-				new TemperatureProto(null, maxNightTemp, null, temperatureUnit)
+				new TemperatureProto(null, minNightTemp, null, temperatureUnit)
 		};
 	}
 

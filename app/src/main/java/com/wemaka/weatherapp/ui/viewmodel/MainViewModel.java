@@ -339,21 +339,33 @@ public class MainViewModel extends AndroidViewModel {
 				DaysForecastProto.Builder daysBuilder = days.newBuilder();
 				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
 
-				TemperatureUnitProto currUnit = dayBuilder.temperature.temperatureUnit;
-
 				dayBuilder.temperature(
 						dayBuilder.temperature.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(dayBuilder.temperature.temperature, currUnit, unit))
+								Math.round(UnitConverter.convertTemperature(
+										dayBuilder.temperature.temperature, dayBuilder.temperature.temperatureUnit, unit))
 						).temperatureUnit(unit).build()
 				);
 				dayBuilder.apparentTemp(
 						dayBuilder.apparentTemp.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(dayBuilder.apparentTemp.temperature, currUnit, unit))
+								Math.round(UnitConverter.convertTemperature(
+										dayBuilder.apparentTemp.temperature, dayBuilder.apparentTemp.temperatureUnit, unit))
+						).temperatureUnit(unit).build()
+				);
+				dayBuilder.dayTemp(
+						dayBuilder.dayTemp.newBuilder().temperature(
+								Math.round(UnitConverter.convertTemperature(
+										dayBuilder.dayTemp.temperature, dayBuilder.dayTemp.temperatureUnit, unit))
+						).temperatureUnit(unit).build()
+				);
+				dayBuilder.nightTemp(
+						dayBuilder.nightTemp.newBuilder().temperature(
+								Math.round(UnitConverter.convertTemperature(
+										dayBuilder.nightTemp.temperature, dayBuilder.nightTemp.temperatureUnit, unit))
 						).temperatureUnit(unit).build()
 				);
 				dayBuilder.hourlyTempForecast(convertTemperatureList(dayBuilder.hourlyTempForecast, unit));
-
 				daysBuilder.weekTempForecast(convertTemperatureList(daysBuilder.weekTempForecast, unit));
+
 				daysBuilder.dayForecast(dayBuilder.build());
 
 				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
@@ -361,8 +373,7 @@ public class MainViewModel extends AndroidViewModel {
 		}
 	}
 
-	private List<TemperatureProto> convertTemperatureList(List<TemperatureProto> temperatureList,
-	                                                      TemperatureUnitProto unit) {
+	private List<TemperatureProto> convertTemperatureList(List<TemperatureProto> temperatureList, TemperatureUnitProto unit) {
 		if (temperatureList == null || temperatureList.isEmpty()) {
 			return null;
 		}
