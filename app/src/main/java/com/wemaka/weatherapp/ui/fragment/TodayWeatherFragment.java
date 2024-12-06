@@ -26,6 +26,7 @@ import com.wemaka.weatherapp.databinding.FragmentTodayWeatherBinding;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
+import com.wemaka.weatherapp.store.proto.SunriseSunsetProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.ui.MainActivity;
@@ -92,15 +93,23 @@ public class TodayWeatherFragment extends Fragment {
 			if (resource.isSuccess() && resource.getData() != null) {
 				DayForecastProto df = resource.getData().dayForecast;
 
-				binding.tvSunriseTime.setText(df.sunrise);
-				binding.tvSunsetTime.setText(df.sunset);
 				binding.tvWindSpeed.setText(formatSpeedUnit(df.windSpeed.speed, df.windSpeed.speedUnit));
 				binding.tvRainPercent.setText(df.precipitationChance.percent + "%");
 				binding.tvPressureHpa.setText(formatPressureUnit(df.pressure.pressure, df.pressure.pressureUnit));
 				binding.tvUv.setText(df.uvIndex.uvIndexDiff + "");
-				hourlyTempForecastAdapter.submitList(df.hourlyTempForecast);
+
+				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
+				formatTemperatureList.set(0,
+						formatTemperatureList.get(0).newBuilder().time(getString(R.string.text_now)).build());
+				hourlyTempForecastAdapter.submitList(formatTemperatureList);
+
 				createWeekDayForecast(resource.getData().weekTempForecast);
-				createPrecipitationForecast(df.precipitationChanceForecast);
+
+				List<PrecipitationChanceProto> formatPrecipitationList = new ArrayList<>(df.precipitationChanceForecast);
+				formatPrecipitationList.set(0,
+						formatPrecipitationList.get(0).newBuilder().time(getString(R.string.text_now)).build());
+				createPrecipitationForecast(formatPrecipitationList);
+
 				binding.tvWindDiff.setText(df.windSpeed.speedDiff + "");
 				binding.tvRainDiff.setText(df.precipitationChance.percentDiff + "");
 				binding.tvPressureDiff.setText(df.pressure.pressureDiff + "");
@@ -109,6 +118,10 @@ public class TodayWeatherFragment extends Fragment {
 				binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);
 				binding.imgPressureIndicator.setImageResource(df.pressure.imgIdChangePressure);
 				binding.imgUvIndexIndicator.setImageResource(df.uvIndex.imgIdChangeUvIndex);
+				binding.tvSunriseTime.setText(df.sunrise.time);
+				binding.tvSunsetTime.setText(df.sunset.time);
+				binding.tvSunriseThrough.setText(formatSunriseSunset(df.sunrise));
+				binding.tvSunsetThrough.setText(formatSunriseSunset(df.sunset));
 			}
 		});
 	}
@@ -223,6 +236,20 @@ public class TodayWeatherFragment extends Fragment {
 				return getString(R.string.air_pressure_insert_mmhg, pressure);
 			default:
 				return getString(R.string.air_pressure_insert_hpa, pressure);
+		}
+	}
+
+	private String formatSunriseSunset(SunriseSunsetProto sun) {
+		int time = sun.hoursDiff == 0 ? sun.minutesDiff : sun.hoursDiff;
+
+		if (sun.isFuture) {
+			return getString(
+					sun.hoursDiff == 0 ? R.string.sunrise_sunset_minutes_future : R.string.sunrise_sunset_hours_future,
+					time);
+		} else {
+			return getString(
+					sun.hoursDiff == 0 ? R.string.sunrise_sunset_minutes_past : R.string.sunrise_sunset_hours_past,
+					time);
 		}
 	}
 }

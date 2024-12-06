@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "com.wemaka.weatherapp.store.proto";
+option java_multiple_files = true;
+option java_outer_classname = "SunriseSunsetProto";
+
+message SunriseSunsetProto {
+  string time = 1;
+  optional int32 hoursDiff = 2;
+  optional int32 minutesDiff = 3;
+  optional bool isFuture = 4;
+}

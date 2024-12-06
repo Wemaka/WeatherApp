@@ -81,10 +81,11 @@
     <string name="speed_name_kmh">Kilometers per hour (km/h)</string>
     <string name="speed_name_mph">Miles per hour (mph)</string>
     <string name="speed_name_ms">Meters per second (m/s)</string>
-    <string name="sunrise_through_default">4h ago</string>
-    <string name="sunrise_time_default">4:15 AM</string>
-    <string name="sunset_through_default">in 9h</string>
-    <string name="sunset_time_default">9:00 PM</string>
+    <string name="sunrise_sunset_hours_future">in %1$dh</string>
+    <string name="sunrise_sunset_hours_past">%1$dh ago</string>
+    <string name="sunrise_sunset_minutes_future">in %1$dmin</string>
+    <string name="sunrise_sunset_minutes_past">%1$dmin ago</string>
+    <string name="sunrise_sunset_time_default">4:15 AM</string>
     <string name="temperature_name_celsius">Degrees Celsius (°C)</string>
     <string name="temperature_name_fahrenheit">Degrees Fahrenheit (°F)</string>
     <string name="text_now">Now</string>

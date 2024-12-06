@@ -252,17 +252,6 @@ public class MainViewModel extends AndroidViewModel {
 					).build()
 			);
 
-			List<TemperatureProto> formatTemperatureList = new ArrayList<>(dayBuilder.hourlyTempForecast);
-			formatTemperatureList.set(0, formatTemperatureList.get(0).newBuilder().time(getApplication().getString(R.string.text_now)).build());
-
-			dayBuilder.hourlyTempForecast(formatTemperatureList);
-
-			List<PrecipitationChanceProto> formatPrecipitationList = new ArrayList<>(dayBuilder.precipitationChanceForecast);
-			formatPrecipitationList.set(0, formatPrecipitationList.get(0).newBuilder().time(getApplication().getString(R.string.text_now)).build());
-
-			dayBuilder.precipitationChanceForecast(formatPrecipitationList);
-
-
 			return daysBuilder.dayForecast(dayBuilder.build()).build();
 		}
 

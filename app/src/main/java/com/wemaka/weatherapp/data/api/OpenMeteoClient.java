@@ -18,6 +18,7 @@ import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.store.proto.PressureProto;
+import com.wemaka.weatherapp.store.proto.SunriseSunsetProto;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
@@ -162,8 +163,8 @@ public class OpenMeteoClient {
 						getImgWeatherCode(minutely15, currIndexMinutely15, isDay),
 						getWeatherCode(minutely15, currIndexMinutely15),
 						dateFormat.format(Calendar.getInstance()),
-						timeFormat.format(new Date(getSunrise(daily, currIndexDay))),
-						timeFormat.format(new Date(getSunset(daily, currIndexDay))),
+						getSunrise(daily, calendar, currIndexDay),
+						getSunset(daily, calendar, currIndexDay),
 						getWindSpeed(minutely15, currIndexMinutely15),
 						getPrecipitationChance(hourly, currIndexHourly),
 						getPressure(hourly, currIndexHourly),
@@ -173,6 +174,7 @@ public class OpenMeteoClient {
 				),
 				getWeekTempForecast(hourly, calendar, currIndexHourly)
 		);
+
 
 		Log.i(TAG, "RESPONSE dayForecastResponse: " + daysForecastResponse);
 
@@ -188,10 +190,7 @@ public class OpenMeteoClient {
 	}
 
 	private static int getTimeIndex(long startTime, Calendar calendar, int interval) {
-		Calendar startCalendar = Calendar.getInstance();
-		startCalendar.setTimeInMillis(startTime * 1000L);
-
-		return Math.round((calendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (float) interval);
+		return Math.round((calendar.getTimeInMillis() - startTime * 1000L) / (float) interval);
 	}
 
 	private static TemperatureProto getTemp(VariablesWithTime minutely15, int index) {
@@ -312,12 +311,34 @@ public class OpenMeteoClient {
 		return pastDays;
 	}
 
-	private static long getSunrise(VariablesWithTime daily, int index) {
-		return getVariableWithValues(daily, Variable.sunrise).valuesInt64(index) * 1000;
+	private static SunriseSunsetProto getSunrise(VariablesWithTime daily, Calendar calendar, int index) {
+		long sunsetMills = getVariableWithValues(daily, Variable.sunset).valuesInt64(index) * 1000;
+		Calendar sunrise = Calendar.getInstance();
+
+		if (calendar.getTimeInMillis() > sunsetMills) {
+			sunrise.setTimeInMillis(getVariableWithValues(daily, Variable.sunrise).valuesInt64(index + 1) * 1000);
+		} else {
+			sunrise.setTimeInMillis(getVariableWithValues(daily, Variable.sunrise).valuesInt64(index) * 1000);
+		}
+
+		return new SunriseSunsetProto(
+				timeFormat.format(sunrise.getTime()),
+				Math.abs(sunrise.get(Calendar.HOUR_OF_DAY) - calendar.get(Calendar.HOUR_OF_DAY)),
+				Math.abs(sunrise.get(Calendar.MINUTE) - calendar.get(Calendar.MINUTE)),
+				calendar.getTimeInMillis() < sunrise.getTimeInMillis()
+		);
 	}
 
-	private static long getSunset(VariablesWithTime daily, int index) {
-		return getVariableWithValues(daily, Variable.sunset).valuesInt64(index) * 1000;
+	private static SunriseSunsetProto getSunset(VariablesWithTime daily, Calendar calendar, int index) {
+		Calendar sunset = Calendar.getInstance();
+		sunset.setTimeInMillis(getVariableWithValues(daily, Variable.sunset).valuesInt64(index) * 1000);
+
+		return new SunriseSunsetProto(
+				timeFormat.format(sunset.getTime()),
+				Math.abs(sunset.get(Calendar.HOUR_OF_DAY) - calendar.get(Calendar.HOUR_OF_DAY)),
+				Math.abs(sunset.get(Calendar.MINUTE) - calendar.get(Calendar.MINUTE)),
+				calendar.getTimeInMillis() < sunset.getTimeInMillis()
+		);
 	}
 
 	private static List<TemperatureProto> getHourlyTempForecast(VariablesWithTime hourly, int hourlyIndex, int isDay) {

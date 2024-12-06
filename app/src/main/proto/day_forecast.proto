@@ -5,6 +5,7 @@ import "pressure.proto";
 import "uv_index.proto";
 import "temperature.proto";
 import "temperature_unit.proto";
+import "sunrise_sunset.proto";
 
 option java_package = "com.wemaka.weatherapp.store.proto";
 option java_multiple_files = true;
@@ -18,8 +19,8 @@ message DayForecastProto {
   int32 imgIdWeatherCode = 5;
   int32 weatherCode = 6;
   string date = 7;
-  string sunrise = 8;
-  string sunset = 9;
+  SunriseSunsetProto sunrise = 8;
+  SunriseSunsetProto sunset = 9;
   WindSpeedProto windSpeed = 10;
   PrecipitationChanceProto precipitationChance = 11;
   PressureProto pressure = 12;

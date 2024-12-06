@@ -73,10 +73,11 @@
     <string name="speed_name_kmh">Километры в час (км/ч)</string>
     <string name="speed_name_mph">Миль в час (миль/ч)</string>
     <string name="speed_name_ms">Метры в секунду (м/с)</string>
-    <string name="sunrise_through_default">через 5ч</string>
-    <string name="sunrise_time_default">06:00</string>
-    <string name="sunset_through_default">через 2ч</string>
-    <string name="sunset_time_default">21:00</string>
+    <string name="sunrise_sunset_hours_future">через %1$dч</string>
+    <string name="sunrise_sunset_hours_past">%1$dч назад</string>
+    <string name="sunrise_sunset_minutes_future">через %1$dмин</string>
+    <string name="sunrise_sunset_minutes_past">%1$dмин назад</string>
+    <string name="sunrise_sunset_time_default">06:00</string>
     <string name="temperature_name_celsius">Градусы Цельсия (°C)</string>
     <string name="temperature_name_fahrenheit">Градусы Фаренгейта (°F)</string>
     <string name="text_now">Сейчас</string>
