@@ -33,6 +33,7 @@ The app design is based on a mockup from <a href="https://www.figma.com/communit
 <p align="center"><img src="assets/main_image_app.png" /></p>
 
 ## Demonstration
+
 https://github.com/user-attachments/assets/68beefd5-d197-4094-bb69-ef21f154f1b4
 
 ## Requirements
@@ -40,7 +41,7 @@ https://github.com/user-attachments/assets/68beefd5-d197-4094-bb69-ef21f154f1b4
 - Android studio latest version
 - JDK 8
 - Android SDK 34
-- Supports API Level +21
+- Supports API Level +24
 - Create an account on GeoNames and specify the username in the GeoNamesClient file (myName field)
 
 ## Installing
