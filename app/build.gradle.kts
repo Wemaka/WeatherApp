@@ -74,7 +74,6 @@ dependencies {
     implementation(libs.blurview)
     implementation(libs.locale.helper.android)
 
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

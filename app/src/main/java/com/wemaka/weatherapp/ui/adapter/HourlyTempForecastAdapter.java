@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.store.proto.TemperatureProto;
 
+import java.util.Locale;
+
 public class HourlyTempForecastAdapter extends ListAdapter<TemperatureProto,
 		HourlyTempForecastAdapter.ViewHolder> {
 	public HourlyTempForecastAdapter() {
@@ -48,7 +50,7 @@ public class HourlyTempForecastAdapter extends ListAdapter<TemperatureProto,
 
 		public void bindTo(TemperatureProto item) {
 			timeView.setText(item.time);
-			degreeView.setText(item.temperature + "°");
+			degreeView.setText(timeView.getContext().getString(R.string.temperature_format, item.temperature));
 			iconView.setImageResource(item.imgIdWeatherCode);
 		}
 	}

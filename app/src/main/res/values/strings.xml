@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="air_pressure_insert_hpa">%1$d hpa</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="air_pressure_insert_hpa" tools:ignore="PluralsCandidate">%1$d hpa</string>
     <string name="air_pressure_insert_mmhg">%1$d mmHg</string>
     <string name="air_pressure_insert_inhg">%1$d inHg</string>
     <string name="air_pressure_name_hpa">Hectopascals (hPa)</string>
@@ -71,6 +71,7 @@
     <string name="rain_diff" translatable="false">0</string>
     <string name="rain_percent" translatable="false">0%</string>
     <string name="search_menu_location_name" translatable="false" />
+    <string name="search_title">Search</string>
     <string name="showers">Showers</string>
     <string name="snow">Snow</string>
     <string name="snow_grains">Snow Grains</string>
@@ -86,6 +87,7 @@
     <string name="sunrise_sunset_minutes_future">in %1$dmin</string>
     <string name="sunrise_sunset_minutes_past">%1$dmin ago</string>
     <string name="sunrise_sunset_time_default">4:15 AM</string>
+    <string name="temperature_format" translatable="false">%1$d°</string>
     <string name="temperature_name_celsius">Degrees Celsius (°C)</string>
     <string name="temperature_name_fahrenheit">Degrees Fahrenheit (°F)</string>
     <string name="text_now">Now</string>

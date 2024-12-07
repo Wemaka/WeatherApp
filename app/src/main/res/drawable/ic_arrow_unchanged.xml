@@ -1,16 +1,10 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="16dp"
-    android:height="16dp"
-    android:viewportWidth="16"
-    android:viewportHeight="16">
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="16dp" android:height="16dp" android:viewportWidth="16" android:viewportHeight="16">
     <group>
-        <!-- Устанавливаем область клипа для прямоугольника размером 8x3, центрированного внутри 16x16 -->
-        <clip-path
-            android:pathData="M4,6h8v3h-8z"/> <!-- Прямоугольник размером 8x3, центрированный -->
-
-        <!-- Рисуем прямоугольник, который будет обрезан по области клипа -->
-        <path
-            android:pathData="M0,0h16v16h-16z"
-            android:fillColor="#A0A0A0"/> <!-- Серый цвет -->
+<!--Устанавливаем область клипа для прямоугольника размером 8x3, центрированного внутри 16x16-->
+        <clip-path android:pathData="M4 6h8v3H4z"/>
+<!--Прямоугольник размером 8x3, центрированный-->
+<!--Рисуем прямоугольник, который будет обрезан по области клипа-->
+        <path android:pathData="M0 0h16v16H0z" android:fillColor="#A0A0A0"/>
+<!--Серый цвет-->
     </group>
 </vector>

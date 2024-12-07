@@ -1,5 +1,6 @@
 package com.wemaka.weatherapp.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -55,6 +56,7 @@ public class TodayWeatherFragment extends Fragment {
 		return binding.getRoot();
 	}
 
+	@SuppressLint("DefaultLocale")
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -94,9 +96,9 @@ public class TodayWeatherFragment extends Fragment {
 				DayForecastProto df = resource.getData().dayForecast;
 
 				binding.tvWindSpeed.setText(formatSpeedUnit(df.windSpeed.speed, df.windSpeed.speedUnit));
-				binding.tvRainPercent.setText(df.precipitationChance.percent + "%");
+				binding.tvRainPercent.setText(String.format("%d%%", df.precipitationChance.percent));
 				binding.tvPressureHpa.setText(formatPressureUnit(df.pressure.pressure, df.pressure.pressureUnit));
-				binding.tvUv.setText(df.uvIndex.uvIndexDiff + "");
+				binding.tvUv.setText(String.format("%d", df.uvIndex.uvIndexDiff));
 
 				List<TemperatureProto> formatTemperatureList = new ArrayList<>(df.hourlyTempForecast);
 				formatTemperatureList.set(0,
@@ -110,10 +112,10 @@ public class TodayWeatherFragment extends Fragment {
 						formatPrecipitationList.get(0).newBuilder().time(getString(R.string.text_now)).build());
 				createPrecipitationForecast(formatPrecipitationList);
 
-				binding.tvWindDiff.setText(df.windSpeed.speedDiff + "");
-				binding.tvRainDiff.setText(df.precipitationChance.percentDiff + "");
-				binding.tvPressureDiff.setText(df.pressure.pressureDiff + "");
-				binding.tvUvDiff.setText(df.uvIndex.uvIndexDiff + "");
+				binding.tvWindDiff.setText(String.format("%d", df.windSpeed.speedDiff));
+				binding.tvRainDiff.setText(String.format("%d", df.precipitationChance.percentDiff));
+				binding.tvPressureDiff.setText(String.format("%d", df.pressure.pressureDiff));
+				binding.tvUvDiff.setText(String.format("%d", df.uvIndex.uvIndexDiff));
 				binding.imgWindSpeedIndicator.setImageResource(df.windSpeed.imgIdChangeWindSpeed);
 				binding.imgRainChanceIndicator.setImageResource(df.precipitationChance.imgIdPrecipitationChance);
 				binding.imgPressureIndicator.setImageResource(df.pressure.imgIdChangePressure);
@@ -170,6 +172,7 @@ public class TodayWeatherFragment extends Fragment {
 		lineChart.getChart().setMarker(new LineChartView.CustomMarkerView(binding.getRoot().getContext(), R.layout.marker_layout));
 	}
 
+	@SuppressLint("DefaultLocale")
 	private void createPrecipitationForecast(List<PrecipitationChanceProto> precipitationChances) {
 		TableLayout tableLayout = binding.tlChanceOfRain;
 		tableLayout.removeAllViews();
@@ -203,7 +206,7 @@ public class TodayWeatherFragment extends Fragment {
 			}
 			progressBarView.setLayoutParams(params);
 
-			percentView.setText(forecastRain.percent + "%");
+			percentView.setText(String.format("%d%%", forecastRain.percent));
 			percentView.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			percentView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
 			percentView.setTextColor(getResources().getColor(R.color.black, null));

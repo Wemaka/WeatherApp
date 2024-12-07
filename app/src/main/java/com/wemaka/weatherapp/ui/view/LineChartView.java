@@ -170,7 +170,7 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		public MPPointF getOffset() {
 			if (mOffset == null) {
 				// center the marker horizontally and vertically
-				mOffset = new MPPointF(-(getWidth() / 2), -getHeight() - 10);
+				mOffset = new MPPointF(-((float) getWidth() / 2), -getHeight() - 10);
 			}
 			return mOffset;
 		}
@@ -178,7 +178,7 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		@Override
 		public void refreshContent(Entry e, Highlight highlight) {
 			Log.i(TAG, "refreshContent: " + e.getY());
-			tvContent.setText((int) e.getY() + "°");
+			tvContent.setText(getContext().getString(R.string.temperature_format, (int) e.getY()));
 
 			super.refreshContent(e, highlight);
 		}

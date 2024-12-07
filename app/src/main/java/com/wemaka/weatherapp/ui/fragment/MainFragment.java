@@ -174,7 +174,7 @@ public class MainFragment extends Fragment {
 
 				DayForecastProto df = resource.getData().dayForecast;
 
-				binding.tvMainDegree.setText(df.temperature.temperature + "°");
+				binding.tvMainDegree.setText(getString(R.string.temperature_format, df.temperature.temperature));
 				binding.tvFeelsLike.setText(getString(R.string.degree_feels_like, df.apparentTemp.temperature + "°"));
 				binding.imgMainWeatherIcon.setImageResource(df.imgIdWeatherCode);
 				binding.tvWeatherMainText.setText(getString(df.weatherCode));

@@ -63,6 +63,7 @@
     <string name="overcast">Пасмурно</string>
     <string name="partly_cloudy">Переменная облачность</string>
     <string name="rain">Дождь</string>
+    <string name="search_title">Поиск</string>
     <string name="showers">Ливни</string>
     <string name="snow">Снег</string>
     <string name="snow_grains">Снежная крупа</string>
