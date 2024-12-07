@@ -2,6 +2,7 @@ package com.wemaka.weatherapp.ui.view;
 
 import static com.wemaka.weatherapp.ui.MainActivity.TAG;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -28,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.Getter;
+
+@Getter
 public class LineChartView implements OnChartGestureListener, OnChartValueSelectedListener {
-	private LineChart chart;
-	private List<Entry> points = new ArrayList<>();
+	private final LineChart chart;
 	private LineDataSet dataSet;
 
 	public LineChartView(LineChart chart) {
@@ -51,14 +54,6 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		chart.getDescription().setEnabled(false);
 		chart.getAxisRight().setEnabled(false);
 		chart.animateY(1000, Easing.EaseInOutQuad);
-	}
-
-	public LineChart getChart() {
-		return chart;
-	}
-
-	public LineDataSet getDataSet() {
-		return dataSet;
 	}
 
 	public void setData(LineDataSet dataSet) {
@@ -145,20 +140,16 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 
 	@Override
 	public void onValueSelected(Entry e, Highlight h) {
-//		Log.i(TAG, "onValueSelected: " + e.getX() + ":" + e.getY() + " highLight: " + h);
-//		lineData.getDataSetByIndex(h.getDataSetIndex());
-//		lineData.setDrawValues(true);
 	}
 
 	@Override
 	public void onNothingSelected() {
-//		Log.i(TAG, "onNothingSelected");
-//		lineData.setDrawValues(false);
 	}
 
 
+	@SuppressLint("ViewConstructor")
 	public static class CustomMarkerView extends MarkerView {
-		private TextView tvContent;
+		private final TextView tvContent;
 		private MPPointF mOffset;
 
 		public CustomMarkerView(Context context, int layoutResource) {

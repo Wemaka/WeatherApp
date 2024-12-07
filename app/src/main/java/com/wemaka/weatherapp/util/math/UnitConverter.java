@@ -1,7 +1,6 @@
 package com.wemaka.weatherapp.util.math;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.TypedValue;
 
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;

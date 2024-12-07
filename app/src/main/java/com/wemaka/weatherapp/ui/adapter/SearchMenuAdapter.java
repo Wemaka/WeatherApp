@@ -68,9 +68,7 @@ public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.
 			this.listener = listener;
 
 			if (this.listener != null) {
-				itemView.setOnClickListener(v -> {
-					this.listener.click(item);
-				});
+				itemView.setOnClickListener(v -> this.listener.click(item));
 			}
 		}
 	}

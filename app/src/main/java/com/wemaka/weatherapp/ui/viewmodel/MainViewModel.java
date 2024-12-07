@@ -23,7 +23,6 @@ import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
-import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
@@ -45,7 +44,7 @@ public class MainViewModel extends AndroidViewModel {
 	public static final String TAG = "MainViewModel";
 	private final WeatherForecastRepository repository;
 	private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-	private SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplication());
+	private final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplication());
 	@Getter
 	private final MutableLiveData<Resource<DaysForecastProto>> daysForecast = new MutableLiveData<>();
 	@Getter

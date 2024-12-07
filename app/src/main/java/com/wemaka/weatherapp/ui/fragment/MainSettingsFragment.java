@@ -16,8 +16,6 @@ import com.wemaka.weatherapp.R;
 import com.wemaka.weatherapp.databinding.FragmentMainSettingsBinding;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
 
-import java.util.Objects;
-
 public class MainSettingsFragment extends Fragment {
 	public static final String TAG = "MainSettingsFragment";
 	private FragmentMainSettingsBinding binding;
@@ -44,9 +42,7 @@ public class MainSettingsFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		binding.backBtn.setOnClickListener(v -> {
-			backAnimation();
-		});
+		binding.backBtn.setOnClickListener(v -> backAnimation());
 
 		requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
 				new OnBackPressedCallback(true) {

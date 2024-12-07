@@ -14,7 +14,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.Task;
-import com.wemaka.weatherapp.data.repository.ProtoDataStoreRepository;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 
 import io.reactivex.rxjava3.core.Single;
@@ -91,10 +90,8 @@ public class LocationService {
 
 			if (isProviderEnabled()) {
 				getCurrentLocation()
-						.addOnSuccessListener(location -> {
-							emitter.onSuccess(handleLocation(location,
-									() -> Log.i(TAG, "Current location is null")));
-						})
+						.addOnSuccessListener(location -> emitter.onSuccess(handleLocation(location,
+								() -> Log.i(TAG, "Current location is null"))))
 						.addOnFailureListener(e -> {
 							Log.e(TAG, "Failed to get current location", e);
 							emitter.onError(e);
@@ -102,10 +99,8 @@ public class LocationService {
 
 			} else {
 				getLastLocation()
-						.addOnSuccessListener(location -> {
-							emitter.onSuccess(handleLocation(location,
-									() -> Log.i(TAG, "Last location is null")));
-						})
+						.addOnSuccessListener(location -> emitter.onSuccess(handleLocation(location,
+								() -> Log.i(TAG, "Last location is null"))))
 						.addOnFailureListener(e -> {
 							Log.e(TAG, "Failed to get last location", e);
 							emitter.onError(e);

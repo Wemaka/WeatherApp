@@ -13,7 +13,7 @@ public enum ChangeIndicator {
 	UNCHANGED(R.drawable.ic_arrow_unchanged),
 	;
 
-	int iconId;
+	private final int iconId;
 
 	public static int getIndicatorValue(int value) {
 		return value > 0 ? UP.getIconId() :

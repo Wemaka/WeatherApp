@@ -1,6 +1,5 @@
 package com.wemaka.weatherapp.data.api;
 
-import android.content.SharedPreferences;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
@@ -18,10 +17,10 @@ import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.PrecipitationChanceProto;
 import com.wemaka.weatherapp.store.proto.PressureProto;
-import com.wemaka.weatherapp.store.proto.SunriseSunsetProto;
-import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
+import com.wemaka.weatherapp.store.proto.SunriseSunsetProto;
+import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
 import com.wemaka.weatherapp.store.proto.UvIndexProto;
 import com.wemaka.weatherapp.store.proto.WindSpeedProto;
@@ -55,7 +54,7 @@ public class OpenMeteoClient {
 	private static final String baseUrl = "https://api.open-meteo.com/v1/forecast";
 	private static final int pastDays = 6;
 	private static final int forecastDays = 10;
-	private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 	private static TimeZone timeZone = TimeZone.getDefault();
 	private static final OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(10, TimeUnit.SECONDS)

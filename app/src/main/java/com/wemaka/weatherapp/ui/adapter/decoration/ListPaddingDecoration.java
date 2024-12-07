@@ -48,6 +48,6 @@ public class ListPaddingDecoration extends RecyclerView.ItemDecoration {
 
 	public enum Orientation {
 		HORIZONTAL,
-		VERTICAL;
+		VERTICAL
 	}
 }

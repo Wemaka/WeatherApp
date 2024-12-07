@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.codegen.intrinsics.ArrayOf
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.wire)
