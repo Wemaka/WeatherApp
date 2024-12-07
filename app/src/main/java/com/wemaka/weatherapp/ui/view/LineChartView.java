@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.MarkerView;
@@ -36,7 +38,7 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 	private final LineChart chart;
 	private LineDataSet dataSet;
 
-	public LineChartView(LineChart chart) {
+	public LineChartView(@NonNull LineChart chart) {
 		this.chart = chart;
 		this.onCreate();
 	}
@@ -56,7 +58,7 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		chart.animateY(1000, Easing.EaseInOutQuad);
 	}
 
-	public void setData(LineDataSet dataSet) {
+	public void setData(@NonNull LineDataSet dataSet) {
 		this.dataSet = dataSet;
 
 		dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
@@ -74,15 +76,15 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		chart.setData(new LineData(this.dataSet));
 	}
 
-	public void changeAxisY(String[] arr) {
+	public void changeAxisY(@NonNull String[] arr) {
 		chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(arr));
 	}
 
-	public void changeAxisY(Collection<String> lst) {
+	public void changeAxisY(@NonNull Collection<String> lst) {
 		chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(lst));
 	}
 
-	public void setPosition(XAxis.XAxisPosition pos) {
+	public void setPosition(@NonNull XAxis.XAxisPosition pos) {
 		chart.getXAxis().setPosition(pos);
 	}
 
@@ -152,11 +154,12 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		private final TextView tvContent;
 		private MPPointF mOffset;
 
-		public CustomMarkerView(Context context, int layoutResource) {
+		public CustomMarkerView(@NonNull Context context, int layoutResource) {
 			super(context, layoutResource);
 			tvContent = (TextView) findViewById(R.id.tvCurrDegree);
 		}
 
+		@NonNull
 		@Override
 		public MPPointF getOffset() {
 			if (mOffset == null) {
@@ -167,7 +170,7 @@ public class LineChartView implements OnChartGestureListener, OnChartValueSelect
 		}
 
 		@Override
-		public void refreshContent(Entry e, Highlight highlight) {
+		public void refreshContent(@NonNull Entry e, @NonNull Highlight highlight) {
 			Log.i(TAG, "refreshContent: " + e.getY());
 			tvContent.setText(getContext().getString(R.string.temperature_format, (int) e.getY()));
 

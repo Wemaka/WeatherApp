@@ -3,6 +3,7 @@ package com.wemaka.weatherapp.ui;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -17,6 +18,7 @@ import com.wemaka.weatherapp.ui.viewmodel.MainViewModelProviderFactory;
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 public class MainActivity extends LocaleAwareCompatActivity {
 	public static final String TAG = "MainActivity";
@@ -25,7 +27,7 @@ public class MainActivity extends LocaleAwareCompatActivity {
 	private MainViewModel model;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		EdgeToEdge.enable(this);
 		binding = ActivityMainBinding.inflate(getLayoutInflater());

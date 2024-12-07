@@ -1,5 +1,7 @@
 package com.wemaka.weatherapp.util;
 
+import androidx.annotation.NonNull;
+
 import java.util.Optional;
 
 import lombok.Getter;
@@ -26,6 +28,7 @@ public class Resource<T> {
 		return this instanceof Resource.Loading;
 	}
 
+	@NonNull
 	public Optional<T> getSuccessData() {
 		if (isSuccess()) {
 			return Optional.ofNullable(this.getData());
@@ -34,6 +37,7 @@ public class Resource<T> {
 		return Optional.empty();
 	}
 
+	@NonNull
 	public Optional<String> getErrorMes() {
 		if (isError()) {
 			return Optional.ofNullable(this.getMessage());
@@ -46,7 +50,7 @@ public class Resource<T> {
 	public static class Success<T> extends Resource<T> {
 		private final T data;
 
-		public Success(T data) {
+		public Success(@NonNull T data) {
 			super(data, null);
 
 			this.data = data;
@@ -57,7 +61,7 @@ public class Resource<T> {
 	public static class Error<T> extends Resource<T> {
 		private final String message;
 
-		public Error(String message) {
+		public Error(@NonNull String message) {
 			super(null, message);
 
 			this.message = message;

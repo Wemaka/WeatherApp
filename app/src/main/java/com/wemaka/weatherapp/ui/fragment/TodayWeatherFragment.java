@@ -128,11 +128,12 @@ public class TodayWeatherFragment extends Fragment {
 		});
 	}
 
+	@NonNull
 	public static TodayWeatherFragment newInstance() {
 		return new TodayWeatherFragment();
 	}
 
-	private void createWeekDayForecast(List<TemperatureProto> tempForecast) {
+	private void createWeekDayForecast(@NonNull List<TemperatureProto> tempForecast) {
 		String[] daysOfWeek = getResources().getStringArray(R.array.days_of_week);
 		List<String> days = new ArrayList<>(Arrays.asList(daysOfWeek));
 		int firstDayOfWeek = Calendar.getInstance(Locale.getDefault()).getFirstDayOfWeek();
@@ -173,7 +174,7 @@ public class TodayWeatherFragment extends Fragment {
 	}
 
 	@SuppressLint("DefaultLocale")
-	private void createPrecipitationForecast(List<PrecipitationChanceProto> precipitationChances) {
+	private void createPrecipitationForecast(@NonNull List<PrecipitationChanceProto> precipitationChances) {
 		TableLayout tableLayout = binding.tlChanceOfRain;
 		tableLayout.removeAllViews();
 
@@ -220,7 +221,8 @@ public class TodayWeatherFragment extends Fragment {
 		}
 	}
 
-	private String formatSpeedUnit(int speed, SpeedUnitProto speedUnit) {
+	@NonNull
+	private String formatSpeedUnit(int speed, @NonNull SpeedUnitProto speedUnit) {
 		switch (speedUnit) {
 			case MS:
 				return getString(R.string.speed_insert_ms, speed);
@@ -231,7 +233,8 @@ public class TodayWeatherFragment extends Fragment {
 		}
 	}
 
-	private String formatPressureUnit(int pressure, PressureUnitProto pressureUnit) {
+	@NonNull
+	private String formatPressureUnit(int pressure, @NonNull PressureUnitProto pressureUnit) {
 		switch (pressureUnit) {
 			case INHG:
 				return getString(R.string.air_pressure_insert_inhg, pressure);
@@ -242,7 +245,8 @@ public class TodayWeatherFragment extends Fragment {
 		}
 	}
 
-	private String formatSunriseSunset(SunriseSunsetProto sun) {
+	@NonNull
+	private String formatSunriseSunset(@NonNull SunriseSunsetProto sun) {
 		int time = sun.hoursDiff == 0 ? sun.minutesDiff : sun.hoursDiff;
 
 		if (sun.isFuture) {

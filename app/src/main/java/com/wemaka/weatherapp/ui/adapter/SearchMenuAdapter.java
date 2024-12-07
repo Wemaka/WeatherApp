@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,20 +52,20 @@ public class SearchMenuAdapter extends ListAdapter<PlaceInfo, SearchMenuAdapter.
 		private final TextView textView;
 		private ItemClickListener listener;
 
-		public ViewHolder(@NonNull View itemView, ItemClickListener listener) {
+		public ViewHolder(@NonNull View itemView, @NonNull ItemClickListener listener) {
 			super(itemView);
 			this.textView = itemView.findViewById(R.id.tvLocationName);
 			this.listener = listener;
 		}
 
 		@SuppressLint("SetTextI18n")
-		public void bindTo(PlaceInfo item) {
+		public void bindTo(@NonNull PlaceInfo item) {
 			textView.setText(item.getToponymName() + ", " +
 					(item.getAdminName1().isEmpty() ? "" : item.getAdminName1() + ", ") +
 					item.getCountryName());
 		}
 
-		public void setListener(ItemClickListener listener, PlaceInfo item) {
+		public void setListener(@Nullable ItemClickListener listener, @NonNull PlaceInfo item) {
 			this.listener = listener;
 
 			if (this.listener != null) {

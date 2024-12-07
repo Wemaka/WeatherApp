@@ -1,5 +1,7 @@
 package com.wemaka.weatherapp.util;
 
+import androidx.annotation.NonNull;
+
 import com.wemaka.weatherapp.R;
 
 import java.util.Optional;
@@ -45,6 +47,7 @@ public enum WeatherCode {
 	private final int iconDayId;
 	private final int iconNightId;
 
+	@NonNull
 	public static Optional<WeatherCode> searchWeatherCode(int code) {
 		WeatherCode[] weatherValues = WeatherCode.values();
 
@@ -67,10 +70,12 @@ public enum WeatherCode {
 		return Optional.empty();
 	}
 
+	@NonNull
 	public static Optional<Integer> getResIdByCode(int code) {
 		return searchWeatherCode(code).map(w -> w.resId);
 	}
 
+	@NonNull
 	public static Optional<Integer> getIconIdByCode(int code, boolean isDay) {
 		return searchWeatherCode(code).map(w -> isDay ? w.iconDayId : w.iconNightId);
 	}

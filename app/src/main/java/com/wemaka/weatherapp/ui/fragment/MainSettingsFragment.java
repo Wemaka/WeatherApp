@@ -66,6 +66,7 @@ public class MainSettingsFragment extends Fragment {
 		requireActivity().getSupportFragmentManager().popBackStack();
 	}
 
+	@NonNull
 	public static MainSettingsFragment newInstance() {
 		return new MainSettingsFragment();
 	}

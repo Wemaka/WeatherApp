@@ -10,6 +10,7 @@ import android.net.NetworkCapabilities;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -112,16 +113,17 @@ public class MainViewModel extends AndroidViewModel {
 				PressureUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_AIR_PRESSURE, "hpa").toUpperCase()));
 	}
 
+	@NonNull
 	public LocationCoordProto getLocation() {
 		return repository.getLocation();
 	}
 
-	public void setLocation(LocationCoordProto location) {
+	public void setLocation(@NonNull LocationCoordProto location) {
 		Log.i(TAG, "SET LOCATION: " + location);
 		repository.setLocation(location);
 	}
 
-	public void saveDataStore(DataStoreProto dataStoreProto) {
+	public void saveDataStore(@NonNull DataStoreProto dataStoreProto) {
 		compositeDisposable.add(repository.saveDataStore(dataStoreProto)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
@@ -132,6 +134,7 @@ public class MainViewModel extends AndroidViewModel {
 		);
 	}
 
+	@NonNull
 	public LiveData<LocationCoordProto> getSavedLocationCoord() {
 		MutableLiveData<LocationCoordProto> liveData = new MutableLiveData<>();
 
@@ -157,6 +160,7 @@ public class MainViewModel extends AndroidViewModel {
 		return liveData;
 	}
 
+	@NonNull
 	public LiveData<SettingsProto> getSavedSettings() {
 		MutableLiveData<SettingsProto> liveData = new MutableLiveData<>();
 
@@ -169,6 +173,7 @@ public class MainViewModel extends AndroidViewModel {
 		return liveData;
 	}
 
+	@NonNull
 	public LiveData<DaysForecastProto> getSavedDaysForecast() {
 		MutableLiveData<DaysForecastProto> liveData = new MutableLiveData<>();
 
@@ -194,7 +199,7 @@ public class MainViewModel extends AndroidViewModel {
 		);
 	}
 
-	public void fetchWeatherAndPlace(LocationCoordProto location) {
+	public void fetchWeatherAndPlace(@NonNull LocationCoordProto location) {
 		setLocation(location);
 		safeFetchWeatherForecast(location.latitude, location.longitude);
 		safeFetchNearestPlaceInfo(location.latitude, location.longitude);
@@ -236,7 +241,8 @@ public class MainViewModel extends AndroidViewModel {
 		);
 	}
 
-	private DaysForecastProto formatDaysForecast(DaysForecastProto daysForecastProto) {
+	@Nullable
+	private DaysForecastProto formatDaysForecast(@Nullable DaysForecastProto daysForecastProto) {
 		if (daysForecastProto != null && daysForecastProto.dayForecast != null) {
 			DaysForecastProto.Builder daysBuilder = daysForecastProto.newBuilder();
 			DayForecastProto.Builder dayBuilder = daysForecastProto.dayForecast.newBuilder();
@@ -276,7 +282,8 @@ public class MainViewModel extends AndroidViewModel {
 		);
 	}
 
-	public LiveData<Resource<List<PlaceInfo>>> searchLocation(String query) {
+	@NonNull
+	public LiveData<Resource<List<PlaceInfo>>> searchLocation(@NonNull String query) {
 		MutableLiveData<Resource<List<PlaceInfo>>> liveData = new MutableLiveData<>();
 
 		liveData.postValue(new Resource.Loading<>());
@@ -317,7 +324,7 @@ public class MainViewModel extends AndroidViewModel {
 				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
 	}
 
-	public void changeTemperatureUnit(TemperatureUnitProto unit) {
+	public void changeTemperatureUnit(@NonNull TemperatureUnitProto unit) {
 		Resource<DaysForecastProto> resource = daysForecast.getValue();
 
 		if (resource != null) {
@@ -361,8 +368,9 @@ public class MainViewModel extends AndroidViewModel {
 		}
 	}
 
-	private List<TemperatureProto> convertTemperatureList(List<TemperatureProto> temperatureList, TemperatureUnitProto unit) {
-		if (temperatureList == null || temperatureList.isEmpty()) {
+	@Nullable
+	private List<TemperatureProto> convertTemperatureList(@NonNull List<TemperatureProto> temperatureList, @NonNull TemperatureUnitProto unit) {
+		if (temperatureList.isEmpty()) {
 			return null;
 		}
 
@@ -377,7 +385,7 @@ public class MainViewModel extends AndroidViewModel {
 		return convertedList;
 	}
 
-	public void changeSpeedUnit(SpeedUnitProto unit) {
+	public void changeSpeedUnit(@NonNull SpeedUnitProto unit) {
 		Resource<DaysForecastProto> resource = daysForecast.getValue();
 
 		if (resource != null) {
@@ -402,7 +410,7 @@ public class MainViewModel extends AndroidViewModel {
 		}
 	}
 
-	public void changePressureUnit(PressureUnitProto unit) {
+	public void changePressureUnit(@NonNull PressureUnitProto unit) {
 		Resource<DaysForecastProto> resource = daysForecast.getValue();
 
 		if (resource != null) {

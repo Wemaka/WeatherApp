@@ -32,7 +32,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 	private MainViewModel model;
 
 	@Override
-	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+	public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
 		setPreferencesFromResource(R.xml.root_preferences, rootKey);
 	}
 
@@ -51,6 +51,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		setSettingsListeners();
 	}
 
+	@NonNull
 	public static SettingsFragment newInstance() {
 		return new SettingsFragment();
 	}
@@ -78,6 +79,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		}
 	}
 
+	@NonNull
 	private Preference.OnPreferenceChangeListener getLanguagePrefsListener() {
 		return (preference, newValue) -> {
 			Log.i(TAG, "Change language: " + newValue.toString());
@@ -93,6 +95,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		};
 	}
 
+	@NonNull
 	private Preference.OnPreferenceChangeListener getTemperaturePrefsListener() {
 		return (preference, newValue) -> {
 			Log.i(TAG, "Change temperature unit: " + newValue.toString());
@@ -106,6 +109,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		};
 	}
 
+	@NonNull
 	private Preference.OnPreferenceChangeListener getWindSpeedPrefsListener() {
 		return (preference, newValue) -> {
 			Log.i(TAG, "Change wind speed unit: " + newValue.toString());
@@ -119,6 +123,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		};
 	}
 
+	@NonNull
 	private Preference.OnPreferenceChangeListener getPressureListener() {
 		return (preference, newValue) -> {
 			Log.i(TAG, "Change pressure unit: " + newValue.toString());

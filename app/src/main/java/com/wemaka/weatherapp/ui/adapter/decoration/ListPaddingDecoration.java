@@ -13,7 +13,7 @@ public class ListPaddingDecoration extends RecyclerView.ItemDecoration {
 	private final int padding;
 	private final Orientation orientation;
 
-	public ListPaddingDecoration(@NonNull Context context, int paddingDp, Orientation orientation) {
+	public ListPaddingDecoration(@NonNull Context context, int paddingDp, @NonNull Orientation orientation) {
 		this.padding = UnitConverter.dpToPx(context, paddingDp);
 		this.orientation = orientation;
 	}
@@ -24,7 +24,7 @@ public class ListPaddingDecoration extends RecyclerView.ItemDecoration {
 	}
 
 	@Override
-	public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, RecyclerView parent, @NonNull RecyclerView.State state) {
+	public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
 		final int itemPosition = parent.getChildAdapterPosition(view);
 		final RecyclerView.Adapter adapter = parent.getAdapter();
 

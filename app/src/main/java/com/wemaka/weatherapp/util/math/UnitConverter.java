@@ -3,6 +3,8 @@ package com.wemaka.weatherapp.util.math;
 import android.content.Context;
 import android.util.TypedValue;
 
+import androidx.annotation.NonNull;
+
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
@@ -16,7 +18,7 @@ public class UnitConverter {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
 	}
 
-	public static float convertTemperature(float temperature, TemperatureUnitProto fromUnit, TemperatureUnitProto toUnit) {
+	public static float convertTemperature(float temperature, @NonNull TemperatureUnitProto fromUnit, @NonNull TemperatureUnitProto toUnit) {
 		float tempCelsius;
 
 		switch (fromUnit) {
@@ -35,7 +37,7 @@ public class UnitConverter {
 		}
 	}
 
-	public static float convertSpeed(float speed, SpeedUnitProto fromUnit, SpeedUnitProto toUnit) {
+	public static float convertSpeed(float speed, @NonNull SpeedUnitProto fromUnit, @NonNull SpeedUnitProto toUnit) {
 		float tempMetersPerSecond;
 
 		switch (fromUnit) {
@@ -59,7 +61,7 @@ public class UnitConverter {
 		}
 	}
 
-	public static float convertPressure(float pressure, PressureUnitProto fromUnit, PressureUnitProto toUnit) {
+	public static float convertPressure(float pressure, @NonNull PressureUnitProto fromUnit, @NonNull PressureUnitProto toUnit) {
 		float tempHpa;
 
 		switch (fromUnit) {

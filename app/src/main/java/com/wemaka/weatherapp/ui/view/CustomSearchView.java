@@ -47,7 +47,7 @@ public class CustomSearchView extends SearchView {
 	}
 
 	@Override
-	public void setOnSearchClickListener(OnClickListener listener) {
+	public void setOnSearchClickListener(@Nullable OnClickListener listener) {
 		super.setOnSearchClickListener(v -> {
 			if (listener != null) {
 				listener.onClick(v);
@@ -56,7 +56,7 @@ public class CustomSearchView extends SearchView {
 	}
 
 	@Override
-	public void setOnCloseListener(OnCloseListener listener) {
+	public void setOnCloseListener(@Nullable OnCloseListener listener) {
 		super.setOnCloseListener(() -> {
 			if (listener != null) {
 				listener.onClose();
@@ -72,13 +72,13 @@ public class CustomSearchView extends SearchView {
 		}
 	}
 
-	public void setColorFilter(ColorFilter cf) {
+	public void setColorFilter(@NonNull ColorFilter cf) {
 		if (searchIcon != null) {
 			searchIcon.setColorFilter(cf);
 		}
 	}
 
-	public void setColorFilter(int color, PorterDuff.Mode mode) {
+	public void setColorFilter(int color, @NonNull PorterDuff.Mode mode) {
 		if (searchIcon != null) {
 			searchIcon.setColorFilter(color, mode);
 		}

@@ -102,6 +102,7 @@ public class MainFragment extends Fragment {
 		}
 	}
 
+	@NonNull
 	public static MainFragment newInstance() {
 		return new MainFragment();
 	}
@@ -202,7 +203,8 @@ public class MainFragment extends Fragment {
 		});
 	}
 
-	private Calendar parseDate(String formattedDate) {
+	@NonNull
+	private Calendar parseDate(@NonNull String formattedDate) {
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
@@ -214,11 +216,11 @@ public class MainFragment extends Fragment {
 		return calendar;
 	}
 
-	private void showToast(String message) {
+	private void showToast(@NonNull String message) {
 		Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
 	}
 
-	private void onLocationPermissionResult(Map<String, Boolean> result) {
+	private void onLocationPermissionResult(@NonNull Map<String, Boolean> result) {
 		Boolean fineLocationGranted = result.getOrDefault(
 				Manifest.permission.ACCESS_FINE_LOCATION, false);
 		Boolean coarseLocationGranted = result.getOrDefault(

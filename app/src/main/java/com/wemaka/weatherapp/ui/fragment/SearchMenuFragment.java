@@ -92,7 +92,7 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 
 	@NonNull
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
+	public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 		BottomSheetDialog dialog = new BottomSheetDialog(requireContext(), getTheme());
 		dialog.setOnShowListener(dialogInterface -> {
 			BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
@@ -107,11 +107,12 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 		return dialog;
 	}
 
+	@NonNull
 	public static SearchMenuFragment newInstance() {
 		return new SearchMenuFragment();
 	}
 
-	private void setupFullHeight(View bottomSheet) {
+	private void setupFullHeight(@NonNull View bottomSheet) {
 		ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
 		layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
 		bottomSheet.setLayoutParams(layoutParams);
@@ -139,7 +140,7 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 		binding.blurView.setClipToOutline(true);
 	}
 
-	private void showToast(String message) {
+	private void showToast(@NonNull String message) {
 		Toast.makeText(requireActivity(), message, Toast.LENGTH_SHORT).show();
 	}
 }
