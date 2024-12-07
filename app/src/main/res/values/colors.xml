@@ -6,10 +6,7 @@
     <color name="backgroundPinkLight">#F6EDFF</color>
     <color name="backgroundPink">#E2D3FA</color>
     <color name="backgroundPurpleSecond">#65558F</color>
-    <color name="textButtonPurple">#21005D</color>
-    <color name="backgroundButtonPurpleSelect">#CFBCFF</color>
     <color name="textPrimary">#1D1B20</color>
     <color name="dartPurple20">#332B00A5</color>
     <color name="darkPurple">#21005D</color>
-    <color name="ColorTransparent">#00FFFFFF</color>
 </resources>

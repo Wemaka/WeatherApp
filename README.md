@@ -1,19 +1,19 @@
 <a name="readme-top"></a>
 <br />
-<div align="center">
+<div style="text-align: center;">
     <a href="https://github.com/Wemaka/WeatherApp">
-        <img src="assets/main_logo.png" alt="Logo" width="160" height="160" align ="center">
+        <img src="assets/main_logo.png" alt="Logo" width="160" height="160" style="text-align: center;">
     </a>
 
-<h1 align="center">WeatherApp</h1>
+<h1 style="text-align: center;">WeatherApp</h1>
 
 <div>
-        <h3 align="center">This is a Java-based weather forecast app for Android. It collects weather data from 
+        <h3 style="text-align: center;">This is a Java-based weather forecast app for Android. It collects weather data from 
 <a href="https://open-meteo.com/">OpenMeteo</a> and <a href="https://www.geonames.org/">GeoNames</a> public api
             to search and retrieve data about localities</h3>
 </div>
 
-<p align="center">
+<p style="text-align: center;">
 The app design is based on a mockup from <a href="https://www.figma.com/community/file/1249443729401540968/google-weather-app-redesign">Figma</a>
 </p>
 
@@ -30,7 +30,7 @@ The app design is based on a mockup from <a href="https://www.figma.com/communit
 
 ## Screenshots
 
-<p align="center"><img src="assets/main_image_app.png" /></p>
+<p style="text-align: center;"><img src="assets/main_image_app.png"  alt="Screenshots app"/></p>
 
 ## Demonstration
 

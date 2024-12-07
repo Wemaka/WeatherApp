@@ -47,7 +47,6 @@
     <string name="fog">Fog</string>
     <string name="freezing_drizzle">Freezing Drizzle</string>
     <string name="freezing_rain">Freezing Rain</string>
-    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="heavy_drizzle">Heavy Drizzle</string>
     <string name="heavy_rain">Heavy Rain</string>
     <string name="heavy_showers">Heavy Showers</string>

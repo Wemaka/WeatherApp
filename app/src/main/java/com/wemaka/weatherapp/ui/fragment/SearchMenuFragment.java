@@ -71,8 +71,6 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 		binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
-				Log.i(TAG, "Click request search");
-
 				model.searchLocation(query).observe(getViewLifecycleOwner(), resource -> {
 					if (resource.isSuccess() && resource.getData() != null) {
 						searchMenuAdapter.submitList(resource.getData());

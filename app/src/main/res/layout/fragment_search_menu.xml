@@ -25,6 +25,7 @@
         android:layout_marginTop="23dp"
         android:layout_marginEnd="23dp"
         android:layout_marginBottom="23dp"
+        android:text="@string/search_title"
         app:iconifiedByDefault="false"
         app:layout_constraintBottom_toTopOf="@+id/rvSearchList"
         app:layout_constraintEnd_toEndOf="parent"
