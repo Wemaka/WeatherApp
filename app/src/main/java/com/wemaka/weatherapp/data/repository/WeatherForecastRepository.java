@@ -11,6 +11,8 @@ import com.wemaka.weatherapp.store.proto.SettingsProto;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
@@ -18,6 +20,7 @@ import io.reactivex.rxjava3.core.Single;
 public class WeatherForecastRepository {
 	private final LocationService locationService;
 
+	@Inject
 	public WeatherForecastRepository(LocationService locationService) {
 		this.locationService = locationService;
 	}

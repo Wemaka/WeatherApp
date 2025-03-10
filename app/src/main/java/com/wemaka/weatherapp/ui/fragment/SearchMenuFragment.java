@@ -123,7 +123,6 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 
 		View decorView = requireActivity().getWindow().getDecorView();
 		ViewGroup rootView = decorView.findViewById(android.R.id.content);
-//		Drawable windowBackground = decorView.getBackground();
 
 		BlurViewFacade blur;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

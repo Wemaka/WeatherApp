@@ -6,6 +6,9 @@ import com.wemaka.weatherapp.data.store.DataStoreSerializer;
 import com.wemaka.weatherapp.data.repository.ProtoDataStoreRepository;
 import com.zeugmasolutions.localehelper.LocaleAwareApplication;
 
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class App extends LocaleAwareApplication {
 
 	@Override

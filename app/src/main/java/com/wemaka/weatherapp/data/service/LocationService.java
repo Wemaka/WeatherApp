@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -16,6 +17,10 @@ import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.Task;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ActivityContext;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import io.reactivex.rxjava3.core.Single;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +36,8 @@ public class LocationService {
 	@Setter
 	private LocationCoordProto location = new LocationCoordProto(DEFAULT_COORD[0], DEFAULT_COORD[1]);
 
-	public LocationService(Context context) {
+	@Inject
+	public LocationService(@ApplicationContext @NonNull Context context) {
 		this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		this.context = context;
 		this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);

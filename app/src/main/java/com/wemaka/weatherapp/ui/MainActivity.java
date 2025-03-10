@@ -9,17 +9,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.wemaka.weatherapp.data.service.LocationService;
 import com.wemaka.weatherapp.databinding.ActivityMainBinding;
-import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
 import com.wemaka.weatherapp.ui.fragment.MainFragment;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
-import com.wemaka.weatherapp.ui.viewmodel.MainViewModelProviderFactory;
 import com.zeugmasolutions.localehelper.LocaleAwareCompatActivity;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import lombok.Getter;
-import lombok.NonNull;
 
+@AndroidEntryPoint
 public class MainActivity extends LocaleAwareCompatActivity {
 	public static final String TAG = "MainActivity";
 	private ActivityMainBinding binding;
@@ -33,12 +31,7 @@ public class MainActivity extends LocaleAwareCompatActivity {
 		binding = ActivityMainBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 
-		LocationService locationService = new LocationService(this);
-		WeatherForecastRepository repository = new WeatherForecastRepository(locationService);
-		MainViewModelProviderFactory viewModelProviderFactory =
-				new MainViewModelProviderFactory(repository, this.getApplication());
-
-		model = new ViewModelProvider(this, viewModelProviderFactory).get(MainViewModel.class);
+		model = new ViewModelProvider(this).get(MainViewModel.class);
 
 		if (savedInstanceState == null) {
 			getSupportFragmentManager()

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.wire)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -18,8 +19,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-
 
     buildTypes {
         release {
@@ -50,27 +49,28 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.gridlayout)
-
     implementation(libs.mpandroidChart)
     implementation(libs.roundCornerprogressbar)
-    implementation(libs.legacy.support.v4)
+    implementation(libs.swiperefreshlayout)
+    implementation(libs.fragment)
+    implementation(libs.blurview)
+
     implementation(libs.okhttp)
     implementation(libs.open.meteo)
     implementation(libs.play.services.location)
-    implementation(libs.swiperefreshlayout)
-    implementation(libs.fragment)
+    implementation(libs.locale.helper.android)
 
-    implementation(libs.lombok)
     implementation(libs.preference)
-    annotationProcessor(libs.lombok)
-
     implementation(libs.datastore.core)
     implementation(libs.datastore.rxjava3)
     implementation(libs.rxandroid)
 
-    implementation(libs.blurview)
-    implementation(libs.locale.helper.android)
+    implementation(libs.lombok)
+    annotationProcessor(libs.lombok)
+
+    implementation(libs.hilt.android)
+    annotationProcessor(libs.hilt.compiler)
+    androidTestAnnotationProcessor(libs.hilt.android.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

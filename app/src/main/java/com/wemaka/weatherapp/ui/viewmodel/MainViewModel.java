@@ -36,11 +36,15 @@ import com.wemaka.weatherapp.util.math.UnitConverter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import lombok.Getter;
 
+@HiltViewModel
 public class MainViewModel extends AndroidViewModel {
 	public static final String TAG = "MainViewModel";
 	private final WeatherForecastRepository repository;
@@ -51,7 +55,8 @@ public class MainViewModel extends AndroidViewModel {
 	@Getter
 	private final MutableLiveData<Resource<String>> placeName = new MutableLiveData<>();
 
-	public MainViewModel(WeatherForecastRepository repository, @NonNull Application app) {
+	@Inject
+	public MainViewModel(@NonNull WeatherForecastRepository repository, @NonNull Application app) {
 		super(app);
 		this.repository = repository;
 		initData();

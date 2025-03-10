@@ -1,7 +1,10 @@
 [versions]
-agp = "8.5.2"
-blurview = "version-2.0.5"
+agp = "8.7.3"
+blurview = "version-2.0.6"
 datastorePreferences = "1.1.1"
+gradle = "8.7.3"
+hiltAndroidGradlePlugin = "2.51.1"
+hiltVersion = "2.51.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -10,10 +13,8 @@ localeHelperAndroid = "1.5.1"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
-gridlayout = "1.0.0"
 mpandroidChart = "v3.1.0"
 roundCornerprogressbar = "2.2.1"
-legacySupportV4 = "1.0.0"
 okhttp = "4.12.0"
 openMeteo = "1.14.1"
 playServicesLocation = "21.3.0"
@@ -24,10 +25,16 @@ lombok = "1.18.30"
 wire = "5.0.0"
 preference = "1.2.1"
 
+
 [libraries]
 blurview = { module = "com.github.Dimezis:BlurView", version.ref = "blurview" }
 datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastorePreferences" }
 datastore-rxjava3 = { module = "androidx.datastore:datastore-rxjava3", version.ref = "datastorePreferences" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltVersion" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidGradlePlugin" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltVersion" }
+hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hiltAndroidGradlePlugin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -36,10 +43,8 @@ locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-help
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 mpandroidChart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidChart" }
 roundCornerprogressbar = { group = "com.akexorcist", name = "round-corner-progress-bar", version.ref = "roundCornerprogressbar" }
-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 open-meteo = { group = "com.open-meteo", name = "sdk", version.ref = "openMeteo" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
@@ -53,3 +58,4 @@ preference = { group = "androidx.preference", name = "preference", version.ref =
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 wire = { id = "com.squareup.wire", version.ref = "wire" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
