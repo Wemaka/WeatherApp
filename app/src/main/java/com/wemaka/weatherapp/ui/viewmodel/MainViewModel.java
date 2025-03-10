@@ -425,7 +425,7 @@ public class MainViewModel extends AndroidViewModel {
 				DaysForecastProto.Builder daysBuilder = days.newBuilder();
 				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
 
-				PressureUnitProto currUnit = OpenMeteoClient.getPressureUnit();
+				PressureUnitProto currUnit = dayBuilder.pressure.pressureUnit;
 
 				dayBuilder.pressure(
 						dayBuilder.pressure.newBuilder().pressure(
