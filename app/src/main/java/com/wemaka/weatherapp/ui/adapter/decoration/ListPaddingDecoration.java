@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.wemaka.weatherapp.util.math.UnitConverter;
+import com.wemaka.weatherapp.util.UnitConverter;
 
 public class ListPaddingDecoration extends RecyclerView.ItemDecoration {
 	private final int padding;

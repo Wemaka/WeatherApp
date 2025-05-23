@@ -2,11 +2,7 @@ package com.wemaka.weatherapp.ui.viewmodel;
 
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,9 +13,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.preference.PreferenceManager;
 
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.data.api.OpenMeteoClient;
 import com.wemaka.weatherapp.data.model.PlaceInfo;
 import com.wemaka.weatherapp.data.repository.WeatherForecastRepository;
+import com.wemaka.weatherapp.network.NetworkChecker;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
 import com.wemaka.weatherapp.store.proto.DaysForecastProto;
@@ -31,10 +27,13 @@ import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
 import com.wemaka.weatherapp.ui.fragment.SettingsFragment;
 import com.wemaka.weatherapp.util.Resource;
-import com.wemaka.weatherapp.util.math.UnitConverter;
+import com.wemaka.weatherapp.util.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -54,11 +53,13 @@ public class MainViewModel extends AndroidViewModel {
 	private final MutableLiveData<Resource<DaysForecastProto>> daysForecast = new MutableLiveData<>();
 	@Getter
 	private final MutableLiveData<Resource<String>> placeName = new MutableLiveData<>();
+	private final NetworkChecker networkChecker;
 
 	@Inject
-	public MainViewModel(@NonNull WeatherForecastRepository repository, @NonNull Application app) {
+	public MainViewModel(@NonNull WeatherForecastRepository repository, @NonNull Application app, @NonNull NetworkChecker networkChecker) {
 		super(app);
 		this.repository = repository;
+		this.networkChecker = networkChecker;
 		initData();
 	}
 
@@ -72,8 +73,6 @@ public class MainViewModel extends AndroidViewModel {
 	}
 
 	private void initData() {
-		Log.i(TAG, "INIT DATA");
-
 		compositeDisposable.add(repository.getDaysForecastResponse()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
@@ -85,18 +84,10 @@ public class MainViewModel extends AndroidViewModel {
 		compositeDisposable.add(repository.getSettings()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(
-						settings -> placeName.postValue(new Resource.Success<>(settings.locationName))
-				)
-		);
-
-		compositeDisposable.add(repository.getSettings()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
 				.doAfterTerminate(this::fetchCurrentWeatherAndPlace)
 				.subscribe(
 						settings -> {
-							Log.i(TAG, "init getSettings: " + settings);
+							placeName.postValue(new Resource.Success<>(settings.locationName));
 							setLocation(settings.locationCoord);
 						},
 						throwable -> {
@@ -104,17 +95,16 @@ public class MainViewModel extends AndroidViewModel {
 							setLocation(getLocation());
 						},
 						() -> {
-							Log.i(TAG, "init getSettings complete");
 							setLocation(getLocation());
 						}
 				)
 		);
 
-		OpenMeteoClient.setTemperatureUnit(
+		repository.setTemperatureUnit(
 				TemperatureUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_TEMPERATURE, "celsius").toUpperCase()));
-		OpenMeteoClient.setSpeedUnit(
+		repository.setSpeedUnit(
 				SpeedUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_WIND_SPEED, "kmh").toUpperCase()));
-		OpenMeteoClient.setPressureUnit(
+		repository.setPressureUnit(
 				PressureUnitProto.valueOf(sp.getString(SettingsFragment.PREF_KEY_AIR_PRESSURE, "hpa").toUpperCase()));
 	}
 
@@ -124,7 +114,6 @@ public class MainViewModel extends AndroidViewModel {
 	}
 
 	public void setLocation(@NonNull LocationCoordProto location) {
-		Log.i(TAG, "SET LOCATION: " + location);
 		repository.setLocation(location);
 	}
 
@@ -133,7 +122,7 @@ public class MainViewModel extends AndroidViewModel {
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
-						() -> Log.i(TAG, "SAVE FORECAST DATASTORE: datastore"),
+						() -> Log.d(TAG, "SAVE FORECAST DATASTORE: datastore"),
 						error -> Log.e(TAG, "Error saving data", error)
 				)
 		);
@@ -148,7 +137,6 @@ public class MainViewModel extends AndroidViewModel {
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(
 						settings -> {
-							Log.i(TAG, "getLocationCoord 1: " + settings);
 							liveData.postValue(settings.locationCoord);
 						},
 						throwable -> {
@@ -156,7 +144,7 @@ public class MainViewModel extends AndroidViewModel {
 							liveData.postValue(getLocation());
 						},
 						() -> {
-							Log.e(TAG, "getSavedLocationCoord Complete");
+							Log.d(TAG, "getSavedLocationCoord Complete");
 							liveData.postValue(getLocation());
 						}
 				)
@@ -192,8 +180,6 @@ public class MainViewModel extends AndroidViewModel {
 	}
 
 	public void fetchCurrentWeatherAndPlace() {
-		Log.i(TAG, "fetchCurrentWeatherAndPlace()");
-
 		compositeDisposable.add(repository.requestLocation()
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
@@ -205,33 +191,88 @@ public class MainViewModel extends AndroidViewModel {
 	}
 
 	public void fetchWeatherAndPlace(@NonNull LocationCoordProto location) {
-		setLocation(location);
 		safeFetchWeatherForecast(location.latitude, location.longitude);
 		safeFetchNearestPlaceInfo(location.latitude, location.longitude);
 	}
 
-	public void fetchNearestPlaceInfo(double latitude, double longitude) {
-		safeFetchNearestPlaceInfo(latitude, longitude);
-	}
-
-	public void fetchWeatherForecast() {
-		LocationCoordProto loc = getLocation();
-		safeFetchWeatherForecast(loc.latitude, loc.longitude);
-	}
-
-	public void fetchNearestPlaceInfo() {
+	public void fetchNearestPlaceInfo(Locale locale) {
+		repository.setLocale(locale);
 		LocationCoordProto loc = getLocation();
 		safeFetchNearestPlaceInfo(loc.latitude, loc.longitude);
 	}
 
-	public void fetchWeatherForecast(double latitude, double longitude) {
-		safeFetchWeatherForecast(latitude, longitude);
+	@NonNull
+	public LiveData<Resource<List<PlaceInfo>>> searchLocation(@NonNull String query) {
+		MutableLiveData<Resource<List<PlaceInfo>>> liveData = new MutableLiveData<>();
+
+		liveData.postValue(new Resource.Loading<>());
+
+		if (!networkChecker.hasInternetConnection()) {
+			liveData.postValue(new Resource.Error<>(getApplication().getResources().getString(R.string.no_internet_connection)));
+
+		} else {
+			compositeDisposable.add(repository.searchLocation(query)
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(
+							response -> liveData.postValue(new Resource.Success<>(response)),
+							error -> liveData.postValue(new Resource.Error<>("Couldn't get the name of the area"))
+					)
+			);
+		}
+
+		return liveData;
+	}
+
+	public void changeTemperatureUnit(@NonNull TemperatureUnitProto unit) {
+		repository.setTemperatureUnit(unit);
+
+		updateUnit((daysBuilder, dayBuilder) -> {
+					dayBuilder.temperature(UnitConverter.updateTemperature(
+							dayBuilder.temperature,
+							dayBuilder.temperature.temperatureUnit,
+							unit));
+
+					dayBuilder.apparentTemp(UnitConverter.updateTemperature(
+							dayBuilder.apparentTemp,
+							dayBuilder.apparentTemp.temperatureUnit,
+							unit));
+
+					dayBuilder.nightTemp(UnitConverter.updateTemperature(
+							dayBuilder.nightTemp,
+							dayBuilder.nightTemp.temperatureUnit,
+							unit));
+
+					dayBuilder.hourlyTempForecast(convertTemperatureList(dayBuilder.hourlyTempForecast, unit));
+					daysBuilder.weekTempForecast(convertTemperatureList(daysBuilder.weekTempForecast, unit));
+				}
+		);
+	}
+
+	public void changeSpeedUnit(@NonNull SpeedUnitProto unit) {
+		repository.setSpeedUnit(unit);
+
+		updateUnit((daysBuilder, dayBuilder) -> dayBuilder.windSpeed(UnitConverter.updateWindSpeed(
+				dayBuilder.windSpeed,
+				dayBuilder.windSpeed.speedUnit,
+				unit))
+		);
+	}
+
+	public void changePressureUnit(@NonNull PressureUnitProto unit) {
+		repository.setPressureUnit(unit);
+
+		updateUnit((daysBuilder, dayBuilder) -> dayBuilder.pressure(UnitConverter.updatePressure(
+				dayBuilder.pressure,
+				dayBuilder.pressure.pressureUnit,
+				unit))
+		);
 	}
 
 	private void safeFetchWeatherForecast(double latitude, double longitude) {
 		daysForecast.postValue(new Resource.Loading<>());
 
-		if (!hasInternetConnection()) {
+		if (!networkChecker.hasInternetConnection()) {
 			daysForecast.postValue(new Resource.Error<>(getApplication().getResources().getString(R.string.no_internet_connection)));
 			return;
 		}
@@ -253,12 +294,12 @@ public class MainViewModel extends AndroidViewModel {
 			DayForecastProto.Builder dayBuilder = daysForecastProto.dayForecast.newBuilder();
 
 			// always in open-meteo api
-			PressureUnitProto currUnit = PressureUnitProto.HPA;
+			PressureUnitProto currUnit = dayBuilder.pressure.pressureUnit;
 
 			dayBuilder.pressure(
 					dayBuilder.pressure.newBuilder().pressure(
 							Math.round(UnitConverter.convertPressure(dayBuilder.pressure.pressure, currUnit,
-									OpenMeteoClient.getPressureUnit()))
+									repository.getPressureUnit()))
 					).build()
 			);
 
@@ -272,7 +313,7 @@ public class MainViewModel extends AndroidViewModel {
 	private void safeFetchNearestPlaceInfo(double latitude, double longitude) {
 		placeName.postValue(new Resource.Loading<>());
 
-		if (!hasInternetConnection()) {
+		if (!networkChecker.hasInternetConnection()) {
 			placeName.postValue(new Resource.Error<>(getApplication().getResources().getString(R.string.no_internet_connection)));
 			return;
 		}
@@ -287,98 +328,28 @@ public class MainViewModel extends AndroidViewModel {
 		);
 	}
 
-	@NonNull
-	public LiveData<Resource<List<PlaceInfo>>> searchLocation(@NonNull String query) {
-		MutableLiveData<Resource<List<PlaceInfo>>> liveData = new MutableLiveData<>();
-
-		liveData.postValue(new Resource.Loading<>());
-
-		if (!hasInternetConnection()) {
-			liveData.postValue(new Resource.Error<>(getApplication().getResources().getString(R.string.no_internet_connection)));
-
-		} else {
-			compositeDisposable.add(repository.searchLocation(query)
-					.subscribeOn(Schedulers.io())
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(
-							response -> liveData.postValue(new Resource.Success<>(response)),
-							error -> liveData.postValue(new Resource.Error<>("Couldn't get the name of the area"))
-					)
-			);
-		}
-
-		return liveData;
-	}
-
-	public boolean hasInternetConnection() {
-		ConnectivityManager connectivityManager =
-				(ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		Network activeNetwork = connectivityManager.getActiveNetwork();
-		if (activeNetwork == null) {
-			return false;
-		}
-
-		NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
-		if (capabilities == null) {
-			return false;
-		}
-
-		return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-				capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
-	}
-
-	public void changeTemperatureUnit(@NonNull TemperatureUnitProto unit) {
+	private void updateUnit(BiConsumer<DaysForecastProto.Builder, DayForecastProto.Builder> dayUpdater) {
 		Resource<DaysForecastProto> resource = daysForecast.getValue();
-
-		if (resource != null) {
-			DaysForecastProto days = resource.getData();
-
-			if (days != null && days.dayForecast != null && days.weekTempForecast != null) {
-				DaysForecastProto.Builder daysBuilder = days.newBuilder();
-				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
-
-				dayBuilder.temperature(
-						dayBuilder.temperature.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(
-										dayBuilder.temperature.temperature, dayBuilder.temperature.temperatureUnit, unit))
-						).temperatureUnit(unit).build()
-				);
-				dayBuilder.apparentTemp(
-						dayBuilder.apparentTemp.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(
-										dayBuilder.apparentTemp.temperature, dayBuilder.apparentTemp.temperatureUnit, unit))
-						).temperatureUnit(unit).build()
-				);
-				dayBuilder.dayTemp(
-						dayBuilder.dayTemp.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(
-										dayBuilder.dayTemp.temperature, dayBuilder.dayTemp.temperatureUnit, unit))
-						).temperatureUnit(unit).build()
-				);
-				dayBuilder.nightTemp(
-						dayBuilder.nightTemp.newBuilder().temperature(
-								Math.round(UnitConverter.convertTemperature(
-										dayBuilder.nightTemp.temperature, dayBuilder.nightTemp.temperatureUnit, unit))
-						).temperatureUnit(unit).build()
-				);
-				dayBuilder.hourlyTempForecast(convertTemperatureList(dayBuilder.hourlyTempForecast, unit));
-				daysBuilder.weekTempForecast(convertTemperatureList(daysBuilder.weekTempForecast, unit));
-
-				daysBuilder.dayForecast(dayBuilder.build());
-
-				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
-			}
+		if (resource == null) {
+			return;
 		}
+
+		DaysForecastProto days = resource.getData();
+		if (days == null || days.dayForecast == null || days.weekTempForecast == null) {
+			return;
+		}
+
+		DaysForecastProto.Builder daysBuilder = days.newBuilder();
+		DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
+
+		dayUpdater.accept(daysBuilder, dayBuilder);
+
+		daysBuilder.dayForecast(dayBuilder.build());
+		daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
 	}
 
-	@Nullable
+	@NonNull
 	private List<TemperatureProto> convertTemperatureList(@NonNull List<TemperatureProto> temperatureList, @NonNull TemperatureUnitProto unit) {
-		if (temperatureList.isEmpty()) {
-			return null;
-		}
-
 		List<TemperatureProto> convertedList = new ArrayList<>();
 
 		for (TemperatureProto temp : temperatureList) {
@@ -388,55 +359,5 @@ public class MainViewModel extends AndroidViewModel {
 		}
 
 		return convertedList;
-	}
-
-	public void changeSpeedUnit(@NonNull SpeedUnitProto unit) {
-		Resource<DaysForecastProto> resource = daysForecast.getValue();
-
-		if (resource != null) {
-			DaysForecastProto days = resource.getData();
-
-			if (days != null && days.dayForecast != null && days.weekTempForecast != null) {
-				DaysForecastProto.Builder daysBuilder = days.newBuilder();
-				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
-
-				SpeedUnitProto currUnit = dayBuilder.windSpeed.speedUnit;
-
-				dayBuilder.windSpeed(
-						dayBuilder.windSpeed.newBuilder().speed(
-								Math.round(UnitConverter.convertSpeed(dayBuilder.windSpeed.speed, currUnit, unit))
-						).speedUnit(unit).build()
-				);
-
-				daysBuilder.dayForecast(dayBuilder.build());
-
-				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
-			}
-		}
-	}
-
-	public void changePressureUnit(@NonNull PressureUnitProto unit) {
-		Resource<DaysForecastProto> resource = daysForecast.getValue();
-
-		if (resource != null) {
-			DaysForecastProto days = resource.getData();
-
-			if (days != null && days.dayForecast != null && days.weekTempForecast != null) {
-				DaysForecastProto.Builder daysBuilder = days.newBuilder();
-				DayForecastProto.Builder dayBuilder = days.dayForecast.newBuilder();
-
-				PressureUnitProto currUnit = dayBuilder.pressure.pressureUnit;
-
-				dayBuilder.pressure(
-						dayBuilder.pressure.newBuilder().pressure(
-								Math.round(UnitConverter.convertPressure(dayBuilder.pressure.pressure, currUnit, unit))
-						).pressureUnit(unit).build()
-				);
-
-				daysBuilder.dayForecast(dayBuilder.build());
-
-				daysForecast.postValue(new Resource.Success<>(daysBuilder.build()));
-			}
-		}
 	}
 }

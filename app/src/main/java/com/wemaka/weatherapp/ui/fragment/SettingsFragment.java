@@ -13,8 +13,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.data.api.GeoNamesClient;
-import com.wemaka.weatherapp.data.api.OpenMeteoClient;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
@@ -57,83 +55,58 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 	}
 
 	private void setSettingsListeners() {
-		ListPreference languageList = getPreferenceManager().findPreference(PREF_KEY_LANGUAGE);
-		ListPreference temperatureList = getPreferenceManager().findPreference(PREF_KEY_TEMPERATURE);
-		ListPreference windSpeedList = getPreferenceManager().findPreference(PREF_KEY_WIND_SPEED);
-		ListPreference pressureList = getPreferenceManager().findPreference(PREF_KEY_AIR_PRESSURE);
+		ListPreference languageList = findPreference(PREF_KEY_LANGUAGE);
+		ListPreference temperatureList = findPreference(PREF_KEY_TEMPERATURE);
+		ListPreference windSpeedList = findPreference(PREF_KEY_WIND_SPEED);
+		ListPreference pressureList = findPreference(PREF_KEY_AIR_PRESSURE);
 
 		if (languageList != null) {
-			languageList.setOnPreferenceChangeListener(getLanguagePrefsListener());
+			languageList.setOnPreferenceChangeListener(this::getLanguagePrefsListener);
 		}
 
 		if (temperatureList != null) {
-			temperatureList.setOnPreferenceChangeListener(getTemperaturePrefsListener());
+			temperatureList.setOnPreferenceChangeListener(this::getTemperaturePrefsListener);
 		}
 
 		if (windSpeedList != null) {
-			windSpeedList.setOnPreferenceChangeListener(getWindSpeedPrefsListener());
+			windSpeedList.setOnPreferenceChangeListener(this::getWindSpeedPrefsListener);
 		}
 
 		if (pressureList != null) {
-			pressureList.setOnPreferenceChangeListener(getPressureListener());
+			pressureList.setOnPreferenceChangeListener(this::getPressureListener);
 		}
 	}
 
-	@NonNull
-	private Preference.OnPreferenceChangeListener getLanguagePrefsListener() {
-		return (preference, newValue) -> {
-			Log.i(TAG, "Change language: " + newValue.toString());
+	private boolean getLanguagePrefsListener(Preference preference, Object newValue) {
+		Locale newLocale = new Locale(newValue.toString());
 
-			Locale newLocale = new Locale(newValue.toString());
+		model.fetchNearestPlaceInfo(newLocale);
+		((MainActivity) requireActivity()).updateLocale(newLocale);
 
-			GeoNamesClient.setLocale(newLocale);
-			model.fetchNearestPlaceInfo();
-
-			((MainActivity) requireActivity()).updateLocale(newLocale);
-
-			return true;
-		};
+		return true;
 	}
 
-	@NonNull
-	private Preference.OnPreferenceChangeListener getTemperaturePrefsListener() {
-		return (preference, newValue) -> {
-			Log.i(TAG, "Change temperature unit: " + newValue.toString());
+	private boolean getTemperaturePrefsListener(Preference preference, Object newValue) {
+		model.changeTemperatureUnit(
+				TemperatureUnitProto.valueOf(newValue.toString().toUpperCase())
+		);
 
-			TemperatureUnitProto newUnit = TemperatureUnitProto.valueOf(newValue.toString().toUpperCase());
-
-			OpenMeteoClient.setTemperatureUnit(newUnit);
-			model.changeTemperatureUnit(newUnit);
-
-			return true;
-		};
+		return true;
 	}
 
-	@NonNull
-	private Preference.OnPreferenceChangeListener getWindSpeedPrefsListener() {
-		return (preference, newValue) -> {
-			Log.i(TAG, "Change wind speed unit: " + newValue.toString());
+	private boolean getWindSpeedPrefsListener(Preference preference, Object newValue) {
+		model.changeSpeedUnit(
+				SpeedUnitProto.valueOf(newValue.toString().toUpperCase())
+		);
 
-			SpeedUnitProto newUnit = SpeedUnitProto.valueOf(newValue.toString().toUpperCase());
-
-			OpenMeteoClient.setSpeedUnit(newUnit);
-			model.changeSpeedUnit(newUnit);
-
-			return true;
-		};
+		return true;
 	}
 
-	@NonNull
-	private Preference.OnPreferenceChangeListener getPressureListener() {
-		return (preference, newValue) -> {
-			Log.i(TAG, "Change pressure unit: " + newValue.toString());
+	private boolean getPressureListener(Preference preference, Object newValue) {
+		model.changePressureUnit(
+				PressureUnitProto.valueOf(newValue.toString().toUpperCase())
+		);
 
-			PressureUnitProto newUnit = PressureUnitProto.valueOf(newValue.toString().toUpperCase());
-
-			OpenMeteoClient.setPressureUnit(newUnit);
-			model.changePressureUnit(newUnit);
-
-			return true;
-		};
+		return true;
 	}
 }

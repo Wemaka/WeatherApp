@@ -1,4 +1,4 @@
-package com.wemaka.weatherapp.data.service;
+package com.wemaka.weatherapp.data.location;
 
 import android.Manifest;
 import android.content.Context;
@@ -19,36 +19,72 @@ import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import io.reactivex.rxjava3.core.Single;
 import lombok.Getter;
 import lombok.Setter;
 
 
-public class LocationService {
+public class FusedLocationProvider implements LocationProvider {
 	public static final String TAG = "LocationService";
 	public static final double[] DEFAULT_COORD = {40.72, -74.00};
 	private final LocationManager locationManager;
 	private final Context context;
 	private final FusedLocationProviderClient fusedLocationClient;
-	@Getter
-	@Setter
 	private LocationCoordProto location = new LocationCoordProto(DEFAULT_COORD[0], DEFAULT_COORD[1]);
 
 	@Inject
-	public LocationService(@ApplicationContext @NonNull Context context) {
+	public FusedLocationProvider(@ApplicationContext @NonNull Context context) {
 		this.locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		this.context = context;
 		this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
 	}
 
-	private boolean isProviderEnabled() {
-		return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	@Override
+	public Single<LocationCoordProto> requestLocation() {
+		return Single.create(emitter -> {
+			if (!isPermissionGranted()) {
+				emitter.onSuccess(location);
+				return;
+			}
+
+			if (isProviderEnabled()) {
+				getCurrentLocation()
+						.addOnSuccessListener(location -> emitter.onSuccess(handleLocation(location,
+								() -> Log.d(TAG, "Current location is null"))))
+						.addOnFailureListener(e -> {
+							Log.e(TAG, "Failed to get current location", e);
+							emitter.onError(e);
+						});
+
+			} else {
+				getLastLocation()
+						.addOnSuccessListener(location -> emitter.onSuccess(handleLocation(location,
+								() -> Log.d(TAG, "Last location is null"))))
+						.addOnFailureListener(e -> {
+							Log.e(TAG, "Failed to get last location", e);
+							emitter.onError(e);
+						});
+			}
+		});
 	}
 
-	public boolean isPermissionGranted(String p) {
+	@Override
+	public LocationCoordProto getLocation() {
+		return location;
+	}
+
+	@Override
+	public void setLocation(LocationCoordProto location) {
+		this.location = location;
+	}
+
+	private boolean isPermissionGranted(String p) {
 		return ActivityCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_GRANTED;
+	}
+
+	private boolean isProviderEnabled() {
+		return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) || locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 
 	public boolean isPermissionGranted() {
@@ -60,8 +96,6 @@ public class LocationService {
 		if (loc == null) {
 			lackLocation.run();
 		} else {
-			Log.i(TAG, "Location: " + loc.getLatitude() + " - " + loc.getLongitude());
-
 			location = new LocationCoordProto(loc.getLatitude(), loc.getLongitude());
 		}
 
@@ -84,34 +118,5 @@ public class LocationService {
 
 	private Task<Location> getLastLocation() throws SecurityException {
 		return fusedLocationClient.getLastLocation();
-	}
-
-	public Single<LocationCoordProto> requestLocation() {
-		return Single.create(emitter -> {
-			if (!isPermissionGranted()) {
-				Log.i(TAG, "NO PERMISSION: " + location);
-				emitter.onSuccess(location);
-				return;
-			}
-
-			if (isProviderEnabled()) {
-				getCurrentLocation()
-						.addOnSuccessListener(location -> emitter.onSuccess(handleLocation(location,
-								() -> Log.i(TAG, "Current location is null"))))
-						.addOnFailureListener(e -> {
-							Log.e(TAG, "Failed to get current location", e);
-							emitter.onError(e);
-						});
-
-			} else {
-				getLastLocation()
-						.addOnSuccessListener(location -> emitter.onSuccess(handleLocation(location,
-								() -> Log.i(TAG, "Last location is null"))))
-						.addOnFailureListener(e -> {
-							Log.e(TAG, "Failed to get last location", e);
-							emitter.onError(e);
-						});
-			}
-		});
 	}
 }

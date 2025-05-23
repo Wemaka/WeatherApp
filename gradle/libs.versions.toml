@@ -1,8 +1,8 @@
 [versions]
-agp = "8.7.3"
+agp = "8.10.0"
 blurview = "version-2.0.6"
 datastorePreferences = "1.1.1"
-gradle = "8.7.3"
+gradle = "8.10.0"
 hiltAndroidGradlePlugin = "2.51.1"
 hiltVersion = "2.51.1"
 junit = "4.13.2"

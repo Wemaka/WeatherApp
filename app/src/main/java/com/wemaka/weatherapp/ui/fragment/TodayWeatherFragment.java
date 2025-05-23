@@ -35,7 +35,7 @@ import com.wemaka.weatherapp.ui.adapter.HourlyTempForecastAdapter;
 import com.wemaka.weatherapp.ui.adapter.decoration.ListPaddingDecoration;
 import com.wemaka.weatherapp.ui.view.LineChartView;
 import com.wemaka.weatherapp.ui.viewmodel.MainViewModel;
-import com.wemaka.weatherapp.util.math.UnitConverter;
+import com.wemaka.weatherapp.util.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;

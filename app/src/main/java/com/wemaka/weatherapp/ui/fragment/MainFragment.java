@@ -26,7 +26,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.wemaka.weatherapp.R;
-import com.wemaka.weatherapp.data.service.LocationService;
+import com.wemaka.weatherapp.data.location.FusedLocationProvider;
 import com.wemaka.weatherapp.databinding.FragmentMainBinding;
 import com.wemaka.weatherapp.store.proto.DataStoreProto;
 import com.wemaka.weatherapp.store.proto.DayForecastProto;
@@ -88,8 +88,8 @@ public class MainFragment extends Fragment {
 
 		if (coord == null) {
 			coord = new LocationCoordProto(
-					LocationService.DEFAULT_COORD[0],
-					LocationService.DEFAULT_COORD[1]);
+					FusedLocationProvider.DEFAULT_COORD[0],
+					FusedLocationProvider.DEFAULT_COORD[1]);
 		}
 
 		if (resourcePlaceInfo != null && resourcePlaceInfo.getData() != null && resourceForecast != null) {
@@ -229,7 +229,7 @@ public class MainFragment extends Fragment {
 		if ((fineLocationGranted != null && fineLocationGranted) || (coarseLocationGranted != null && coarseLocationGranted)) {
 			ensureLocationProviderEnabled();
 		} else {
-			Log.i(TAG, "No location access granted");
+			Log.d(TAG, "No location access granted");
 		}
 
 //		model.fetchCurrentWeatherAndPlace();

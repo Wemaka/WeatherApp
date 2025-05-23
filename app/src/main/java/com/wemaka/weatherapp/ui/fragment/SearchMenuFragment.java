@@ -54,14 +54,13 @@ public class SearchMenuFragment extends BottomSheetDialogFragment {
 
 		SearchMenuAdapter searchMenuAdapter = new SearchMenuAdapter();
 		searchMenuAdapter.setOnItemClickListener(item -> {
-			Log.i(TAG, "Click: " + item.getLatitude() + " : " + item.getLongitude());
-
-			model.fetchWeatherAndPlace(
-					new LocationCoordProto(
-							Double.parseDouble(item.getLatitude()),
-							Double.parseDouble(item.getLongitude())
-					)
+			LocationCoordProto location = new LocationCoordProto(
+					Double.parseDouble(item.getLatitude()),
+					Double.parseDouble(item.getLongitude())
 			);
+
+			model.setLocation(location);
+			model.fetchWeatherAndPlace(location);
 
 			dismiss();
 		});

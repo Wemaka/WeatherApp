@@ -7,6 +7,9 @@ import com.wemaka.weatherapp.store.proto.DaysForecastProto;
 import com.wemaka.weatherapp.store.proto.LocationCoordProto;
 import com.wemaka.weatherapp.store.proto.SettingsProto;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 import io.reactivex.rxjava3.core.Completable;
@@ -18,11 +21,16 @@ import lombok.Setter;
 
 public class ProtoDataStoreRepository {
 	public static final String TAG = "ProtoDataStoreRepository";
-	@Getter
-	private static final ProtoDataStoreRepository instance = new ProtoDataStoreRepository();
+	@NotNull
+	public static final ProtoDataStoreRepository INSTANCE;
+	@Nullable
 	@Setter
 	@Getter
 	private RxDataStore<DataStoreProto> dataStore;
+
+	static {
+		INSTANCE = new ProtoDataStoreRepository();
+	}
 
 	private ProtoDataStoreRepository() {
 	}

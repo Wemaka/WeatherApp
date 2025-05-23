@@ -15,7 +15,7 @@ public class App extends LocaleAwareApplication {
 	public void onCreate() {
 		super.onCreate();
 
-		ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.getInstance();
+		ProtoDataStoreRepository dataStoreRepository = ProtoDataStoreRepository.INSTANCE;
 
 		if (dataStoreRepository.getDataStore() == null) {
 			dataStoreRepository.setDataStore(

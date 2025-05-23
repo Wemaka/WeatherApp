@@ -49,7 +49,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 
-public class OpenMeteoClient {
+public class OpenMeteoClient implements WeatherClient {
 	public static final String TAG = "OpenMeteoClient";
 	private static final String baseUrl = "https://api.open-meteo.com/v1/forecast";
 	private static final int pastDays = 6;
@@ -60,19 +60,14 @@ public class OpenMeteoClient {
 			.connectTimeout(10, TimeUnit.SECONDS)
 			.readTimeout(30, TimeUnit.SECONDS)
 			.build();
-	@Getter
-	@Setter
-	private static TemperatureUnitProto temperatureUnit = TemperatureUnitProto.CELSIUS;
-	@Getter
-	@Setter
-	private static SpeedUnitProto speedUnit = SpeedUnitProto.KMH;
-	@Getter
-	@Setter
-	private static PressureUnitProto pressureUnit = PressureUnitProto.HPA;
+	private TemperatureUnitProto temperatureUnit = TemperatureUnitProto.CELSIUS;
+	private SpeedUnitProto speedUnit = SpeedUnitProto.KMH;
+	private PressureUnitProto pressureUnit = PressureUnitProto.HPA;
 
-	public static Single<DaysForecastProto> fetchWeatherForecast(double latitude, double longitude) {
+	@Override
+	public Single<DaysForecastProto> fetchWeatherForecast(double latitude, double longitude) {
 		return Single.create(emitter -> {
-			HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
+			HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(baseUrl)).newBuilder();
 			urlBuilder
 					.addQueryParameter("latitude", String.valueOf(latitude))
 					.addQueryParameter("longitude", String.valueOf(longitude))
@@ -90,7 +85,7 @@ public class OpenMeteoClient {
 
 			String url = urlBuilder.build().toString();
 
-			Log.i(TAG, "URL open-meteo: " + url);
+//			Log.i(TAG, "URL open-meteo: " + url);
 
 			TrafficStats.setThreadStatsTag(111);
 			Request request = new Request.Builder()
@@ -133,7 +128,37 @@ public class OpenMeteoClient {
 		});
 	}
 
-	private static DaysForecastProto parseWeatherData(WeatherApiResponse response) {
+	@Override
+	public TemperatureUnitProto getTemperatureUnit() {
+		return temperatureUnit;
+	}
+
+	@Override
+	public SpeedUnitProto getSpeedUnit() {
+		return speedUnit;
+	}
+
+	@Override
+	public PressureUnitProto getPressureUnit() {
+		return pressureUnit;
+	}
+
+	@Override
+	public void setTemperatureUnit(TemperatureUnitProto temperatureUnit) {
+		this.temperatureUnit = temperatureUnit;
+	}
+
+	@Override
+	public void setSpeedUnit(SpeedUnitProto speedUnit) {
+		this.speedUnit = speedUnit;
+	}
+
+	@Override
+	public void setPressureUnit(PressureUnitProto pressureUnit) {
+		this.pressureUnit = pressureUnit;
+	}
+
+	private DaysForecastProto parseWeatherData(WeatherApiResponse response) {
 		VariablesWithTime minutely15 = response.minutely15();
 		VariablesWithTime hourly = response.hourly();
 		VariablesWithTime daily = response.daily();
@@ -180,19 +205,19 @@ public class OpenMeteoClient {
 		return daysForecastResponse;
 	}
 
-	private static VariableWithValues getVariableWithValues(VariablesWithTime variable, int variableId) {
+	private VariableWithValues getVariableWithValues(VariablesWithTime variable, int variableId) {
 		return Objects.requireNonNull(new VariablesSearch(variable).variable(variableId).first());
 	}
 
-	private static float getVariableValue(VariablesWithTime variable, int variableId, int index) {
+	private float getVariableValue(VariablesWithTime variable, int variableId, int index) {
 		return getVariableWithValues(variable, variableId).values(index);
 	}
 
-	private static int getTimeIndex(long startTime, Calendar calendar, int interval) {
+	private int getTimeIndex(long startTime, Calendar calendar, int interval) {
 		return Math.round((calendar.getTimeInMillis() - startTime * 1000L) / (float) interval);
 	}
 
-	private static TemperatureProto getTemp(VariablesWithTime minutely15, int index) {
+	private TemperatureProto getTemp(VariablesWithTime minutely15, int index) {
 		return new TemperatureProto(
 				null,
 				Math.round(getVariableValue(minutely15, Variable.temperature, index)),
@@ -201,7 +226,7 @@ public class OpenMeteoClient {
 		);
 	}
 
-	private static TemperatureProto getApparentTemp(VariablesWithTime minutely15, int index) {
+	private TemperatureProto getApparentTemp(VariablesWithTime minutely15, int index) {
 		return new TemperatureProto(
 				null,
 				Math.round(getVariableValue(minutely15, Variable.apparent_temperature, index)),
@@ -210,7 +235,7 @@ public class OpenMeteoClient {
 		);
 	}
 
-	private static TemperatureProto[] getDayNightTemp(VariablesWithTime hourly, Calendar calendar, int index) {
+	private TemperatureProto[] getDayNightTemp(VariablesWithTime hourly, Calendar calendar, int index) {
 		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
 		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
 		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
@@ -231,7 +256,7 @@ public class OpenMeteoClient {
 		};
 	}
 
-	private static TemperatureProto getDayTemp(VariablesWithTime hourly, Calendar calendar, int index) {
+	private TemperatureProto getDayTemp(VariablesWithTime hourly, Calendar calendar, int index) {
 		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
 		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
 		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
@@ -246,7 +271,7 @@ public class OpenMeteoClient {
 		return new TemperatureProto(null, maxDayTemp, null, temperatureUnit);
 	}
 
-	private static TemperatureProto getNightTemp(VariablesWithTime hourly, Calendar calendar, int index) {
+	private TemperatureProto getNightTemp(VariablesWithTime hourly, Calendar calendar, int index) {
 		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
 		VariableWithValues isDay = getVariableWithValues(hourly, Variable.is_day);
 		int inxStartDay = index - calendar.get(Calendar.HOUR_OF_DAY) - 1;
@@ -262,15 +287,15 @@ public class OpenMeteoClient {
 		return new TemperatureProto(null, maxNightTemp, null, temperatureUnit);
 	}
 
-	private static int getImgWeatherCode(VariablesWithTime minutely15, int index, int isDay) {
+	private int getImgWeatherCode(VariablesWithTime minutely15, int index, int isDay) {
 		return WeatherCode.getIconIdByCode((int) getVariableValue(minutely15, Variable.weather_code, index), isDay == 1).get();
 	}
 
-	private static int getWeatherCode(VariablesWithTime minutely15, int index) {
+	private int getWeatherCode(VariablesWithTime minutely15, int index) {
 		return WeatherCode.getResIdByCode((int) getVariableValue(minutely15, Variable.weather_code, index)).get();
 	}
 
-	private static WindSpeedProto getWindSpeed(VariablesWithTime variables, int index) {
+	private WindSpeedProto getWindSpeed(VariablesWithTime variables, int index) {
 		int currWindSpeed = Math.round(getVariableValue(variables, Variable.wind_speed, index));
 		int diffWindSpeed = currWindSpeed - Math.round(getVariableValue(variables, Variable.wind_speed, index - 24));
 
@@ -278,7 +303,7 @@ public class OpenMeteoClient {
 				ChangeIndicator.getIndicatorValue(diffWindSpeed), speedUnit);
 	}
 
-	private static PrecipitationChanceProto getPrecipitationChance(VariablesWithTime variables, int index) {
+	private PrecipitationChanceProto getPrecipitationChance(VariablesWithTime variables, int index) {
 		int currPrecipitationChance = Math.round(getVariableValue(variables, Variable.precipitation_probability, index));
 		int diffPrecipitationChance = currPrecipitationChance - Math.round(getVariableValue(variables, Variable.precipitation_probability, index - 24));
 
@@ -286,7 +311,7 @@ public class OpenMeteoClient {
 				ChangeIndicator.getIndicatorValue(diffPrecipitationChance));
 	}
 
-	private static PressureProto getPressure(VariablesWithTime variables, int index) {
+	private PressureProto getPressure(VariablesWithTime variables, int index) {
 		int currPressure = Math.round(getVariableValue(variables, Variable.pressure_msl, index));
 		int diffPressure = currPressure - Math.round(getVariableValue(variables, Variable.pressure_msl, index - 24));
 
@@ -294,7 +319,7 @@ public class OpenMeteoClient {
 				ChangeIndicator.getIndicatorValue(diffPressure), pressureUnit);
 	}
 
-	private static UvIndexProto getUvIndex(VariablesWithTime variables, int index) {
+	private UvIndexProto getUvIndex(VariablesWithTime variables, int index) {
 		int currUvIndex = Math.round(getVariableValue(variables, Variable.uv_index, index));
 		int diffUvIndex = currUvIndex - Math.round(getVariableValue(variables, Variable.uv_index, index - 24));
 
@@ -302,15 +327,15 @@ public class OpenMeteoClient {
 				ChangeIndicator.getIndicatorValue(diffUvIndex));
 	}
 
-	private static int getIsDay(VariablesWithTime variables, int index) {
+	private int getIsDay(VariablesWithTime variables, int index) {
 		return (int) getVariableValue(variables, Variable.is_day, index);
 	}
 
-	private static int getIndexDaily() {
+	private int getIndexDaily() {
 		return pastDays;
 	}
 
-	private static SunriseSunsetProto getSunrise(VariablesWithTime daily, Calendar calendar, int index) {
+	private SunriseSunsetProto getSunrise(VariablesWithTime daily, Calendar calendar, int index) {
 		long sunsetMills = getVariableWithValues(daily, Variable.sunset).valuesInt64(index) * 1000;
 		Calendar sunrise = Calendar.getInstance();
 
@@ -328,7 +353,7 @@ public class OpenMeteoClient {
 		);
 	}
 
-	private static SunriseSunsetProto getSunset(VariablesWithTime daily, Calendar calendar, int index) {
+	private SunriseSunsetProto getSunset(VariablesWithTime daily, Calendar calendar, int index) {
 		Calendar sunset = Calendar.getInstance();
 		sunset.setTimeInMillis(getVariableWithValues(daily, Variable.sunset).valuesInt64(index) * 1000);
 
@@ -340,7 +365,7 @@ public class OpenMeteoClient {
 		);
 	}
 
-	private static List<TemperatureProto> getHourlyTempForecast(VariablesWithTime hourly, int hourlyIndex, int isDay) {
+	private List<TemperatureProto> getHourlyTempForecast(VariablesWithTime hourly, int hourlyIndex, int isDay) {
 		List<TemperatureProto> hourlyForecastList = new ArrayList<>();
 
 		VariableWithValues variableWeatherCode = new VariablesSearch(hourly).variable(Variable.weather_code).first();
@@ -362,7 +387,7 @@ public class OpenMeteoClient {
 		return hourlyForecastList;
 	}
 
-	private static List<TemperatureProto> getWeekTempForecast(VariablesWithTime hourly, Calendar calendar, int index) {
+	private List<TemperatureProto> getWeekTempForecast(VariablesWithTime hourly, Calendar calendar, int index) {
 		VariableWithValues hourlyTemp = getVariableWithValues(hourly, Variable.temperature);
 
 		int weekDayIndex = calendar.get(Calendar.DAY_OF_WEEK) - 1;
@@ -383,7 +408,7 @@ public class OpenMeteoClient {
 		return weekTempForecast;
 	}
 
-	private static List<PrecipitationChanceProto> getPrecipitationChanceForecast(VariablesWithTime hourly, int hourlyIndex) {
+	private List<PrecipitationChanceProto> getPrecipitationChanceForecast(VariablesWithTime hourly, int hourlyIndex) {
 		List<PrecipitationChanceProto> precipitationChanceList = new ArrayList<>();
 
 		VariableWithValues hourlyPrecipitation = Objects.requireNonNull(new VariablesSearch(hourly)

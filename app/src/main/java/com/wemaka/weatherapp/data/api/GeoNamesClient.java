@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Single;
@@ -28,8 +29,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-
-public class GeoNamesClient {
+public class GeoNamesClient implements GeoLocationClient {
 	public static final String TAG = "GeoNamesClient";
 	private static final String baseUrl = "http://api.geonames.org";
 	private static final String myName = "my_weather_app";
@@ -37,13 +37,12 @@ public class GeoNamesClient {
 			.connectTimeout(10, TimeUnit.SECONDS)
 			.readTimeout(30, TimeUnit.SECONDS)
 			.build();
-	@Getter
-	@Setter
-	private static Locale locale = Locale.getDefault();
+	private Locale locale = Locale.getDefault();
 
-	public static Single<PlaceInfo> fetchNearestPlaceInfo(double latitude, double longitude) {
+	@Override
+	public Single<PlaceInfo> fetchNearestPlaceInfo(double latitude, double longitude) {
 		return Single.create(emitter -> {
-			HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
+			HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(baseUrl)).newBuilder();
 			urlBuilder.addPathSegment("findNearbyPlaceNameJSON")
 					.addQueryParameter("lat", String.valueOf(latitude))
 					.addQueryParameter("lng", String.valueOf(longitude))
@@ -99,6 +98,16 @@ public class GeoNamesClient {
 		});
 	}
 
+	@Override
+	public Locale getLocale() {
+		return locale;
+	}
+
+	@Override
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
 	private static PlaceInfo parsePlaceInfoJson(JSONObject jsonObject) throws JSONException {
 		return new PlaceInfo(
 				jsonObject.getString("name"),
@@ -113,9 +122,9 @@ public class GeoNamesClient {
 		);
 	}
 
-	public static Single<List<PlaceInfo>> searchLocation(String query) {
+	public Single<List<PlaceInfo>> searchLocation(String query) {
 		return Single.create(emitter -> {
-			HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder();
+			HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(baseUrl)).newBuilder();
 			urlBuilder.addPathSegment("searchJSON")
 					.addQueryParameter("q", query)
 					.addQueryParameter("style", "LONG")

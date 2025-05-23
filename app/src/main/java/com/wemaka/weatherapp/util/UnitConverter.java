@@ -1,13 +1,16 @@
-package com.wemaka.weatherapp.util.math;
+package com.wemaka.weatherapp.util;
 
 import android.content.Context;
 import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 
+import com.wemaka.weatherapp.store.proto.PressureProto;
 import com.wemaka.weatherapp.store.proto.PressureUnitProto;
 import com.wemaka.weatherapp.store.proto.SpeedUnitProto;
+import com.wemaka.weatherapp.store.proto.TemperatureProto;
 import com.wemaka.weatherapp.store.proto.TemperatureUnitProto;
+import com.wemaka.weatherapp.store.proto.WindSpeedProto;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -83,5 +86,27 @@ public class UnitConverter {
 			default:
 				return tempHpa;
 		}
+	}
+
+	public static TemperatureProto updateTemperature(TemperatureProto temperature, TemperatureUnitProto from,
+	                                                 TemperatureUnitProto to) {
+		return temperature.newBuilder()
+				.temperature(Math.round(convertTemperature(temperature.temperature, from, to)))
+				.temperatureUnit(to)
+				.build();
+	}
+
+	public static WindSpeedProto updateWindSpeed(WindSpeedProto windSpeed, SpeedUnitProto from, SpeedUnitProto to) {
+		return windSpeed.newBuilder()
+				.speed(Math.round(convertSpeed(windSpeed.speed, from, to)))
+				.speedUnit(to)
+				.build();
+	}
+
+	public static PressureProto updatePressure(PressureProto pressure, PressureUnitProto from, PressureUnitProto to) {
+		return pressure.newBuilder()
+				.pressure(Math.round(convertPressure(pressure.pressure, from, to)))
+				.pressureUnit(to)
+				.build();
 	}
 }
